@@ -27,6 +27,6 @@ _도서 정보 공유 및 독서 모임 커뮤니티 플랫폼_
 > 프론트 개발 환경 설정법법
 ```
 1. pnpm install or pnpm update
-2. .env 추가(설정 내용 참조)
+2. .env 및 vite.config.ts 추가(설정 내용 참조)
 3. pnpm run dev
 ```
