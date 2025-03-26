@@ -1,0 +1,39 @@
+{
+  "name": "BookTalk_FE",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router": "^7.4.0",
+    "react-router-dom": "^7.4.0",
+    "vitawind": "^2.3.0",
+    "zustand": "^5.0.3"
+  },
+  "packageManager": "pnpm@10.6.5",
+  "devDependencies": {
+    "@savvywombat/tailwindcss-grid-areas": "^4.0.0",
+    "@tailwindcss/vite": "^4.0.16",
+    "@types/node": "^22.13.13",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
+    "@types/react-router-dom": "^5.3.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "daisyui": "^5.0.9",
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.5",
+    "eslint-plugin-react": "^7.37.4",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.3"
+  }
+}
