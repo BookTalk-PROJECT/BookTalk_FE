@@ -1,3 +1,3 @@
 export interface HelloTestResponse {
-    hello: string;
+  hello: string;
 }
