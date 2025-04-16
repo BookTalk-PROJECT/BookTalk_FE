@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-route
 import "./index.css";
 import PrivateRoute from "./common/component/PrivateRoute";
 import DashBoardPage from "./dashboard/pages/DashBoardPage";
+import GatheringPage from "./gathering/pages/GatheringPage";
 
 const AppContent = () => {
   const location = useLocation();
@@ -10,7 +11,7 @@ const AppContent = () => {
   return (
     <div>
       <div>
-     {/* <div className="flex justify-center bg-gray-100 min-h-screen">
+        {/* <div className="flex justify-center bg-gray-100 min-h-screen">
        <div className="grid grid-areas-layout grid-cols-layout grid-rows-layout gap-x-4 relative max-w-[390px] w-full bg-white shadow-md selection:bg-green-900 font-[pretendard]"> */}
         {/* {location.pathname !== "/login" && <Header />} */}
         <main className={`grid-in-main ${location.pathname !== "/login" ? "my-3 px-[24px]" : ""}`}>
@@ -20,6 +21,7 @@ const AppContent = () => {
               {/* <Route path="/" element={<HomePage />} /> */}
               <Route path="" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<DashBoardPage />} />
+              <Route path="/gathering" element={<GatheringPage />} /> {/* ✅ 추가된 라우트 */}
             </Route>
           </Routes>
         </main>
