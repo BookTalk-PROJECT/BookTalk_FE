@@ -52,7 +52,7 @@ const App: React.FC = () => {
             setHasMore(newPosts.length === POSTS_PER_PAGE);
             setLoading(false);
             setPage(prev => prev + 1);
-        }, 1000);
+        }, 500);
     };
 
     useEffect(() => {
@@ -267,8 +267,8 @@ const App: React.FC = () => {
                 <div className={`container mx-auto px-4 overflow-hidden transition-all duration-300 ${isFooterHovered ? 'py-6' : 'py-2'}`}>
                     <div className="flex justify-between items-center">
                         <div className="flex items-center">
-                            <h2 className="text-lg font-bold">톡톡</h2>
-                            <p className="text-sm text-gray-600 ml-4">© 2025 톡톡 커뮤니티</p>
+                            <h2 className="text-lg font-bold">책톡</h2>
+                            <p className="text-sm text-gray-600 ml-4">© 2025 책톡 커뮤니티</p>
                         </div>
                         <div className="flex space-x-4">
                             <a href="#" className="text-gray-600 hover:text-red-500">
@@ -300,7 +300,8 @@ const App: React.FC = () => {
                                     <a href="#" className="hover:text-red-500">개인정보 처리방침</a>
                                     <a href="#" className="hover:text-red-500">문의하기</a>
                                 </div>
-                                <p>서울특별시 강남구 테헤란로 123 톡톡빌딩 4층</p>
+                                <p>창원시 의창구 반계로104-8
+                                </p>
                             </div>
                         </div>
                     </div>
