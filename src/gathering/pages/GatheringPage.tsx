@@ -1,24 +1,19 @@
-// The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 const App: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [statusFilter, setStatusFilter] = useState<string>('전체');
+    const [statusFilter, setStatusFilter] = useState('전체');
     const [isFooterHovered, setIsFooterHovered] = useState(false);
     const [posts, setPosts] = useState<any[]>([]);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-    const observer = useRef<IntersectionObserver | null>(null);
     const lastPostElementRef = useRef<HTMLDivElement | null>(null);
 
     const statuses = ["모집중", "진행중", "완료"];
 
-    const filteredPosts = statusFilter === '전체'
-        ? posts
-        : posts.filter(post => post.status === statusFilter);
+    const POSTS_PER_PAGE = 9; //무한 스크롤 시 로딩될 모임게시물 수
 
     const generateMockPost = (index: number) => {
         const status = statuses[Math.floor(Math.random() * statuses.length)];
@@ -35,51 +30,70 @@ const App: React.FC = () => {
         };
     };
 
+    const fetchFilteredPosts = (pageNum: number) => {
+        const generatedPosts = Array.from({ length: 100 }, (_, i) =>
+            generateMockPost(i + 1)
+        );
 
-    const POSTS_PER_PAGE = 9; //무한 스크롤 시 로딩될 모임게시물 수
+        return generatedPosts.filter(post => {
+            const matchStatus = statusFilter === '전체' || post.status === statusFilter;
+            const matchSearch = post.title.includes(searchQuery);
+            return matchStatus && matchSearch;
+        }).slice((pageNum - 1) * POSTS_PER_PAGE, pageNum * POSTS_PER_PAGE);
+    };
 
     const loadMorePosts = () => {
         if (loading || !hasMore) return;
         setLoading(true);
+
         setTimeout(() => {
-            const newPosts = Array.from({ length: POSTS_PER_PAGE }, (_, i) =>
-                generateMockPost((page - 1) * POSTS_PER_PAGE + i + 1)
-            );
+            const newPosts = fetchFilteredPosts(page);
             setPosts(prev => [...prev, ...newPosts]);
-            setHasMore(page < 5);
+            setHasMore(newPosts.length === POSTS_PER_PAGE);
             setLoading(false);
             setPage(prev => prev + 1);
         }, 1000);
     };
 
     useEffect(() => {
-        loadMorePosts();
-    }, []);
+        setPosts([]);
+        setPage(1);
+        setHasMore(true);
+    }, [statusFilter]);
 
     useEffect(() => {
+        if (page === 1) {
+            loadMorePosts();
+        }
+    }, [page]);
+
+    const handleSearch = () => {
+        setPosts([]);
+        setPage(1);
+        setHasMore(true);
+    };
+
+    useEffect(() => {
+        if (!lastPostElementRef.current) return;
+
         const options = {
             root: null,
             rootMargin: '20px',
             threshold: 1.0
         };
 
-        observer.current = new IntersectionObserver((entries) => {
+        const currentObserver = new IntersectionObserver((entries) => {
             const first = entries[0];
             if (first.isIntersecting) {
                 loadMorePosts();
             }
         }, options);
 
-        if (lastPostElementRef.current) {
-            observer.current.observe(lastPostElementRef.current);
-        }
+        currentObserver.observe(lastPostElementRef.current);
 
-        return () => {
-            if (observer.current) {
-                observer.current.disconnect();
-            }
-        };
-    }, [loading, hasMore]);
+        return () => currentObserver.disconnect();
+    }, [posts, loading, hasMore]);
+
 
     return (
         <div className="min-h-screen bg-white">
@@ -95,16 +109,6 @@ const App: React.FC = () => {
                         </nav>
                     </div>
                     <div className="flex items-center space-x-4">
-                        <div className="relative">
-                            <input
-                                type="text"
-                                className="border border-gray-300 rounded-full py-2 px-4 text-sm w-[200px] focus:outline-none focus:ring-2 focus:ring-red-300"
-                                placeholder="검색..."
-                            />
-                            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors">
-                                <i className="fas fa-search text-sm"></i>
-                            </button>
-                        </div>
                         <button className="bg-gray-50 hover:bg-gray-200 px-4 py-1.5 rounded-full text-sm text-gray-700 shadow-sm transition-all">
                             로그인
                         </button>
@@ -162,23 +166,33 @@ const App: React.FC = () => {
                                 <div className="relative">
                                     <input
                                         type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleSearch(); // ⌨️ 엔터 시 검색
+                                            }
+                                        }}
                                         className="border border-l-0 border-gray-300 py-2 px-4 pr-10 text-sm text-gray-700 rounded-r-full focus:outline-none focus:ring-2 focus:ring-red-300"
                                         placeholder="검색어를 입력해주세요..."
                                     />
-                                    <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-black transition-colors">
-                                        <i className="fas fa-search text-sm"></i>
+                                    <button
+                                        onClick={handleSearch}
+                                        className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-3 py-1 rounded-full hover:bg-gray-800 transition-all shadow-sm"
+                                    >
+                                        검색
                                     </button>
+
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
-                    <div className="grid grid-wcols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredPosts.map((post, index) => (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {posts.map((post, index) => (
                             <div
                                 key={post.id}
-                                ref={index === filteredPosts.length - 1 ? lastPostElementRef : null}
+                                // 마지막 게시물에 ref를 걸어 무한 스크롤 감지
+                                ref={index === posts.length - 1 ? lastPostElementRef : null}
                                 className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100"
                             >
                                 <div className="relative">
@@ -191,7 +205,7 @@ const App: React.FC = () => {
                                 <div className="p-4">
                                     <h3 className="font-semibold text-lg mb-2 text-gray-800">{post.title}</h3>
                                     <div className="flex flex-col space-y-3">
-                                        {/* 인원수 & 조회수 */}
+                                        {/* 인원 및 조회수 */}
                                         <div className="flex items-center justify-between text-sm">
                                             <div className="flex items-center">
                                                 <i className="fas fa-users text-red-500 mr-2"></i>
@@ -201,10 +215,8 @@ const App: React.FC = () => {
                                             </div>
                                             <span className="text-gray-500">조회수 {post.views}</span>
                                         </div>
-
-                                        {/* 해시태그 + 상태 뱃지 */}
+                                        {/* 해시태그 및 상태 뱃지 */}
                                         <div className="flex items-center justify-between">
-                                            {/* 해시태그 */}
                                             <div className="flex flex-wrap gap-2">
                                                 {post.hashtags.map((tag: string, tagIndex: number) => (
                                                     <span
@@ -215,8 +227,6 @@ const App: React.FC = () => {
                                                     </span>
                                                 ))}
                                             </div>
-
-                                            {/* 상태 뱃지 */}
                                             <span
                                                 className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap
                 ${post.status === "모집중"
@@ -234,7 +244,6 @@ const App: React.FC = () => {
                             </div>
                         ))}
                     </div>
-
 
                     {loading && (
                         <div className="flex justify-center items-center mt-8">
