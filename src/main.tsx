@@ -3,7 +3,8 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-route
 import "./index.css";
 import PrivateRoute from "./common/component/PrivateRoute";
 import DashBoardPage from "./dashboard/pages/DashBoardPage";
-import GatheringPage from "./gathering/pages/GatheringPage";
+import GatheringListPage from "./gathering/pages/GatheringListPage";
+import GatheringDetailPage from "./gathering/pages/GatheringDetailPage";
 
 const AppContent = () => {
   const location = useLocation();
@@ -21,7 +22,8 @@ const AppContent = () => {
               {/* <Route path="/" element={<HomePage />} /> */}
               <Route path="" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<DashBoardPage />} />
-              <Route path="/gathering" element={<GatheringPage />} /> {/* ✅ 추가된 라우트 */}
+              <Route path="/gatheringlist" element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
+              <Route path="/gathering/:id" element={<GatheringDetailPage />} />
             </Route>
           </Routes>
         </main>

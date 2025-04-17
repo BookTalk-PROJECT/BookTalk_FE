@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Header from './Header';
+import Footer from './Footer';
+
 
 const App: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -10,6 +13,7 @@ const App: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const lastPostElementRef = useRef<HTMLDivElement | null>(null);
+    const navigate = useNavigate();
 
     const statuses = ["모집중", "진행중", "완료"];
 
@@ -97,30 +101,7 @@ const App: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-white">
-            <header className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
-                <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-                    <div className="flex items-center">
-                        <Link to="/" className="text-2xl font-extrabold text-black-500 mr-6 tracking-tight">책톡</Link>
-
-                        <nav className="hidden md:flex space-x-4">
-                            <a href="#" className="text-gray-700 hover:text-red-500">커뮤니티</a>
-                            <a href="#" className="text-gray-700 hover:text-red-500">모임</a>
-                            <a href="#" className="text-gray-700 hover:text-red-500">책리뷰</a>
-                        </nav>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <button className="bg-gray-50 hover:bg-gray-200 px-4 py-1.5 rounded-full text-sm text-gray-700 shadow-sm transition-all">
-                            로그인
-                        </button>
-                        <button className="bg-black text-white hover:bg-gray-800 px-4 py-1.5 rounded-full text-sm shadow-sm transition-all">
-                            회원가입
-                        </button>
-
-
-                    </div>
-                </div>
-            </header>
-
+            <Header />
             <main className="container mx-auto px-4 py-8 mb-[280px]">
                 <section className="mb-12">
                     <h2 className="text-3xl font-bold text-center mb-2">독서모임</h2>
@@ -191,9 +172,9 @@ const App: React.FC = () => {
                         {posts.map((post, index) => (
                             <div
                                 key={post.id}
-                                // 마지막 게시물에 ref를 걸어 무한 스크롤 감지
+                                onClick={() => navigate(`/gathering/${post.id}`)}
                                 ref={index === posts.length - 1 ? lastPostElementRef : null}
-                                className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100"
+                                className="cursor-pointer bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-gray-100"
                             >
                                 <div className="relative">
                                     <img
@@ -259,54 +240,7 @@ const App: React.FC = () => {
                 </section>
             </main>
 
-            <footer
-                className="bg-gray-100 border-t border-gray-200 fixed bottom-0 w-full transition-all duration-300"
-                onMouseEnter={() => setIsFooterHovered(true)}
-                onMouseLeave={() => setIsFooterHovered(false)}
-            >
-                <div className={`container mx-auto px-4 overflow-hidden transition-all duration-300 ${isFooterHovered ? 'py-6' : 'py-2'}`}>
-                    <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                            <h2 className="text-lg font-bold">책톡</h2>
-                            <p className="text-sm text-gray-600 ml-4">© 2025 책톡 커뮤니티</p>
-                        </div>
-                        <div className="flex space-x-4">
-                            <a href="#" className="text-gray-600 hover:text-red-500">
-                                <i className="fab fa-facebook-f"></i>
-                            </a>
-                            <a href="#" className="text-gray-600 hover:text-red-500">
-                                <i className="fab fa-twitter"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div className={`transition-all duration-300 ${isFooterHovered ? 'opacity-100 max-h-40' : 'opacity-0 max-h-0'}`}>
-                        <div className="mt-6 pt-6 border-t border-gray-200">
-                            <div className="flex flex-col md:flex-row justify-between items-center">
-                                <div className="mb-4 md:mb-0">
-                                    <p className="text-sm text-gray-600">모든 권리 보유.</p>
-                                </div>
-                                <div className="flex space-x-6">
-                                    <a href="#" className="text-gray-600 hover:text-red-500">
-                                        <i className="fab fa-instagram"></i>
-                                    </a>
-                                    <a href="#" className="text-gray-600 hover:text-red-500">
-                                        <i className="fab fa-youtube"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div className="mt-4 text-center text-sm text-gray-600">
-                                <div className="flex justify-center space-x-4 mb-2">
-                                    <a href="#" className="hover:text-red-500">서비스 약관</a>
-                                    <a href="#" className="hover:text-red-500">개인정보 처리방침</a>
-                                    <a href="#" className="hover:text-red-500">문의하기</a>
-                                </div>
-                                <p>창원시 의창구 반계로104-8
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }
