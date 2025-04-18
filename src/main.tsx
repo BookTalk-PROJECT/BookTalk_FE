@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-route
 import PrivateRoute from "./common/component/PrivateRoute";
 import Footer from "./dashboard/pages/Footer";
 import Header from "./dashboard/pages/Header";
-import JoinPage from "./dashboard/pages/JoinPage";
+import MyPage from "./dashboard/pages/MyPage";
 import "./index.css";
 
 const AppContent = () => {
@@ -22,7 +22,7 @@ const AppContent = () => {
             <Route element={<PrivateRoute />}>
               {/* <Route path="/" element={<HomePage />} /> */}
               <Route path="" element={<Navigate to="/dashboard" />} />
-              <Route path="/dashboard" element={<JoinPage />} />
+              <Route path="/dashboard" element={<MyPage />} />
             </Route>
           </Routes>
         </main>
