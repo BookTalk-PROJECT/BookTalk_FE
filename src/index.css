@@ -7,3 +7,30 @@
   font-display: swap;
   src: url("../static/font/PretendardVariable.woff2") format("woff2-variations");
 }
+
+/* 3. 스크롤바 커스터마이징 */
+.books-container {
+  -ms-overflow-style: none;
+  /* IE, Edge */
+  scrollbar-width: thin;
+  /* Firefox */
+}
+
+.books-container::-webkit-scrollbar {
+  height: 6px;
+  /* 수평 스크롤 높이 */
+}
+
+.books-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.books-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.books-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

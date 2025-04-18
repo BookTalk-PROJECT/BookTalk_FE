@@ -1,5 +1,4 @@
-// The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -10,7 +9,6 @@ interface Book {
     author: string;
     status: string;
     date: string;
-    views: number;
 }
 interface Post {
     id: number;
@@ -22,10 +20,11 @@ interface Post {
 const App: React.FC = () => {
     const [selectedBook, setSelectedBook] = useState<number>(1);
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const { id } = useParams();
     const books = [
-        { id: 1, title: '책이름1', author: '저자명', status: '완료', date: '2023-02-24', views: 33 },
-        { id: 2, title: '책이름2', author: '저자명', status: '읽는중', date: '2023-03-15', views: 45 },
-        { id: 3, title: '책이름3', author: '저자명', status: '예정', date: '2023-04-01', views: 27 },
+        { id: 1, title: '책이름1', author: '저자명', status: '완료', date: '2023-02-24' },
+        { id: 2, title: '책이름2', author: '저자명', status: '읽는중', date: '2023-03-15' },
+        { id: 3, title: '책이름3', author: '저자명', status: '예정', date: '2023-04-01' },
     ];
     const posts = [
         { id: 32, title: '독서모임 후기 1', date: '2023-02-24', author: '이름님', views: 33 },
@@ -75,41 +74,62 @@ const App: React.FC = () => {
                             <div className="flex items-center justify-between mb-6">
                                 <h2 className="text-lg font-bold">독서 목록</h2>
                                 <div className="flex space-x-2">
-                                    <button className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200">
+                                    <button
+                                        onClick={() => {
+                                            const container = document.querySelector('.books-container') as HTMLElement;
+
+                                            if (container) {
+                                                container.scrollLeft -= container.offsetWidth;
+                                            }
+                                        }}
+                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200"
+                                    >
                                         <i className="fas fa-chevron-left"></i>
                                     </button>
-                                    <button className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200">
+                                    <button
+                                        onClick={() => {
+                                            const container = document.querySelector('.books-container') as HTMLElement;
+                                            if (container) {
+                                                container.scrollLeft += container.offsetWidth;
+                                            }
+                                        }}
+                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200"
+                                    >
                                         <i className="fas fa-chevron-right"></i>
                                     </button>
                                 </div>
                             </div>
-                            <div className="flex flex-wrap gap-6">
-                                {books.map((book) => (
-                                    <div key={book.id} className="w-[calc(33.33%-1rem)] relative group cursor-pointer">
-                                        <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
-                                            <div className="aspect-w-1 aspect-h-1 rounded-lg overflow-hidden mb-4">
-                                                <img
-                                                    src={`https://readdy.ai/api/search-image?query=modern%20minimalist%20book%20cover%20design%20with%20abstract%20geometric%20patterns%20and%20sophisticated%20typography%20on%20clean%20background%20professional%20publishing%20quality&width=400&height=400&seq=${book.id}&orientation=squarish`}
-                                                    alt={book.title}
-                                                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <div className="flex justify-between items-start">
-                                                    <h3 className="text-lg font-semibold text-gray-900">{book.title}</h3>
-                                                    <span className={`px-3 py-1 rounded-full text-white text-xs ${getStatusColor(book.status)}`}>
-                                                        {book.status}
-                                                    </span>
+                            <div className="books-container overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" style={{ scrollbarWidth: 'thin', msOverflowStyle: 'none' }}>
+                                <div className="inline-flex gap-6 min-w-max pb-4">
+                                    {[...books, ...books, ...books].map((book, index) => (
+                                        <div key={`${book.id}-${index}`} className="w-[300px] relative group cursor-pointer">
+                                            <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+                                                <div className="aspect-w-1 aspect-h-1 rounded-lg overflow-hidden mb-4">
+                                                    <img
+                                                        src={`https://readdy.ai/api/search-image?query=modern%20minimalist%20book%20cover%20design%20with%20abstract%20geometric%20patterns%20and%20sophisticated%20typography%20on%20clean%20background%20professional%20publishing%20quality&width=400&height=400&seq=${book.id}&orientation=squarish`}
+                                                        alt={book.title}
+                                                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                                                    />
                                                 </div>
-                                                <p className="text-gray-600">{book.author}</p>
-                                                <div className="flex items-center text-sm text-gray-500">
-                                                    <i className="fas fa-calendar ml-4 mr-2"></i>
-                                                    <span>{book.date}</span>
+                                                <div>
+                                                    <div className="flex justify-between items-start mb-2">
+                                                        <h3 className="text-lg font-semibold text-gray-900">{book.title}</h3>
+                                                        <span className={`px-3 py-1 rounded-full text-white text-xs ${getStatusColor(book.status)}`}>
+                                                            {book.status}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex justify-between items-center text-sm">
+                                                        <p className="text-gray-600">{book.author}</p>
+                                                        <div className="flex items-center text-gray-500">
+                                                            <i className="fas fa-calendar mr-2"></i>
+                                                            <span>{book.date}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
                         </div>
                         <div className="p-6 border-t">
@@ -133,7 +153,7 @@ const App: React.FC = () => {
                                         {posts.map((post) => (
                                             <tr key={post.id} className="hover:bg-gray-50 transition-colors duration-200">
                                                 <td className="px-6 py-4">
-                                                    <a href={`/gatheringList/gatheringboard${post.id}`} className="text-gray-900 hover:text-blue-600">
+                                                    <a href={`/gatheringlist/${id}/gatheringboard/${post.id}`} className="text-gray-900 hover:text-blue-600">
                                                         {post.title}
                                                     </a>
                                                 </td>
@@ -160,7 +180,6 @@ const App: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <br /><br />
             <Footer />
         </div>
     );

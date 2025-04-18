@@ -210,7 +210,7 @@ const App: React.FC = () => {
                                             </div>
                                             <span
                                                 className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap
-                ${post.status === "모집중"
+                                                    ${post.status === "모집중"
                                                         ? "bg-green-100 text-green-600"
                                                         : post.status === "진행중"
                                                             ? "bg-yellow-100 text-yellow-600"
