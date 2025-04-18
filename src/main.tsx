@@ -7,12 +7,16 @@ import DashBoardPage from "./dashboard/pages/DashBoardPage";
 import GatheringListPage from "./gathering/pages/GatheringListPage";
 import GatheringDetailPage from "./gathering/pages/GatheringDetailPage";
 import GatheringBoardDetailPage from "./gathering/pages/GatheringBoardDetailPage";
+import GatheringCreateBoardPage from "./gathering/pages/GatheringCreateBoardPage";
+import Header from './gathering/pages/Header';
+import Footer from './gathering/pages/Footer';
 
 const AppContent = () => {
   const location = useLocation();
 
   return (
     <div>
+      <Header />
       <div>
         {/* <div className="flex justify-center bg-gray-100 min-h-screen">
        <div className="grid grid-areas-layout grid-cols-layout grid-rows-layout gap-x-4 relative max-w-[390px] w-full bg-white shadow-md selection:bg-green-900 font-[pretendard]"> */}
@@ -26,12 +30,15 @@ const AppContent = () => {
               <Route path="/dashboard" element={<DashBoardPage />} />
               <Route path="/gatheringlist" element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
               <Route path="/gatheringlist/:id" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
-              <Route path="/gatheringlist/:id/gatheringboard/:postId" element={<GatheringBoardDetailPage />} /> {/* 이성종 모임 게시판판 상세 */}
+              <Route path="/gatheringlist/:id/gatheringboard/:postId" element={<GatheringBoardDetailPage />} /> {/* 이성종 모임 게시판 상세 */}
+              <Route path="/gatheringlist/:id/gatheringboard/create" element={<GatheringCreateBoardPage />} /> {/* 이성종 모임 게시판 글쓰기 */}
+
             </Route>
           </Routes>
         </main>
         {/* {location.pathname !== "/login" && <NavBar />} */}
       </div>
+      <Footer />
     </div>
   );
 };

@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import Header from './Header';
-import Footer from './Footer';
+import { useParams, useNavigate } from 'react-router-dom';
 
 interface Book {
     id: number;
@@ -21,6 +19,7 @@ const App: React.FC = () => {
     const [selectedBook, setSelectedBook] = useState<number>(1);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const { id } = useParams();
+    const navigate = useNavigate();
     const books = [
         { id: 1, title: '책이름1', author: '저자명', status: '완료', date: '2023-02-24' },
         { id: 2, title: '책이름2', author: '저자명', status: '읽는중', date: '2023-03-15' },
@@ -48,7 +47,6 @@ const App: React.FC = () => {
     };
     return (
         <div className="min-h-screen bg-white">
-            <Header />
             <div className="min-h-screen bg-gray-50">
                 <div className="max-w-7xl mx-auto px-4 py-8">
                     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -135,9 +133,12 @@ const App: React.FC = () => {
                         <div className="p-6 border-t">
                             <div className="flex items-center justify-between mb-6">
                                 <h2 className="text-lg font-bold">게시판</h2>
-                                <button className="px-4 py-2 bg-gray-800 text-white rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-900">
+                                <button
+                                    onClick={() => navigate(`/gatheringlist/${id}/gatheringboard/create`)}
+                                    className="px-4 py-2 bg-gray-800 text-white rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-900">
                                     <i className="fas fa-pen mr-2"></i>글쓰기
                                 </button>
+
                             </div>
                             <div className="overflow-hidden rounded-lg border">
                                 <table className="w-full">
@@ -180,7 +181,7 @@ const App: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <Footer />
+            <br /><br />
         </div>
     );
 };

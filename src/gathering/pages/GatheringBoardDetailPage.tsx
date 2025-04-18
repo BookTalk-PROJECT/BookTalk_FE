@@ -1,4 +1,3 @@
-// The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 interface Book {
@@ -197,17 +196,17 @@ const App: React.FC = () => {
                                 <div className="flex items-start space-x-4">
                                     <div className="flex-grow">
                                         <textarea
-                                            className="w-full p-4 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-gray-200"
-                                            rows={3}
+                                            className="w-full h-[90px] p-4 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-gray-200"
                                             placeholder="댓글을 작성해주세요."
                                         ></textarea>
                                     </div>
-                                    <button className="px-6 py-3 bg-gray-800 text-white rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-900">
+                                    <button
+                                        className="h-[90px] px-6 bg-gray-800 text-white rounded-lg whitespace-nowrap cursor-pointer hover:bg-gray-900 flex items-center justify-center"
+                                    >
                                         등록
                                     </button>
                                 </div>
                             </div>
-
                             <div className="space-y-6">
                                 {[
                                     { author: "김독서", content: "좋은 후기 감사합니다. 다음 모임이 기대되네요!", date: "2023-02-24", likes: 5 },
@@ -249,6 +248,7 @@ const App: React.FC = () => {
                     </div>
                 </div>
             </div>
+            <br /><br />
         </div>
     );
 };

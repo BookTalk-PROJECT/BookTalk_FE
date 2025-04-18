@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Header from './Header';
-import Footer from './Footer';
 
 
 const App: React.FC = () => {
@@ -101,7 +99,6 @@ const App: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-white">
-            <Header />
             <main className="container mx-auto px-4 py-8 mb-[280px]">
                 <section className="mb-12">
                     <h2 className="text-3xl font-bold text-center mb-2">독서모임</h2>
@@ -172,7 +169,7 @@ const App: React.FC = () => {
                         {posts.map((post, index) => (
                             <div
                                 key={post.id}
-                                onClick={() => navigate(`/gathering/${post.id}`)}
+                                onClick={() => navigate(`/gatheringlist/${post.id}`)}
                                 ref={index === posts.length - 1 ? lastPostElementRef : null}
                                 className="cursor-pointer bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-gray-100"
                             >
@@ -239,8 +236,6 @@ const App: React.FC = () => {
                     )}
                 </section>
             </main>
-
-            <Footer />
         </div>
     );
 }
