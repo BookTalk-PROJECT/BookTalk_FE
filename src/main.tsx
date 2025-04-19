@@ -4,6 +4,8 @@ import PrivateRoute from "./common/component/PrivateRoute";
 import Footer from "./dashboard/pages/Footer";
 import Header from "./dashboard/pages/Header";
 import MyPage from "./dashboard/pages/MyPage";
+import MyPageBookReviewBoard from "./dashboard/pages/MyPageBookReviewBoard";
+import AdminPageComment from "./dashboard/pages/AdminPageComment";
 import "./index.css";
 
 const AppContent = () => {
@@ -22,7 +24,7 @@ const AppContent = () => {
             <Route element={<PrivateRoute />}>
               {/* <Route path="/" element={<HomePage />} /> */}
               <Route path="" element={<Navigate to="/dashboard" />} />
-              <Route path="/dashboard" element={<MyPage />} />
+              <Route path="/dashboard" element={<AdminPageComment />} />
             </Route>
           </Routes>
         </main>
