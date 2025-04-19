@@ -551,4 +551,4 @@ const Pagination: React.FC = () => {
     </div>
   );
 }
-export default App;
+export default BoardList;

@@ -8,11 +8,15 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+<<<<<<< HEAD
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-regular-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+=======
+    "@fortawesome/fontawesome-free": "^6.7.2",
+>>>>>>> origin/gatheringTest
     "@tailwindcss/vite": "^4.1.3",
     "axios": "^1.8.4",
     "react": "^19.1.0",
@@ -26,7 +30,7 @@
   "packageManager": "pnpm@10.6.5",
   "devDependencies": {
     "@types/node": "^22.14.0",
-    "@types/react": "^19.1.0",
+    "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.1",
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^4.3.4",
