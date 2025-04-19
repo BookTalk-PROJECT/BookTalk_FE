@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-const App: React.FC = () => {
+import Footer from "../../../common/component/Footer";
+import Header from "../../../common/component/Header";
+import Pagenation from "../../../common/component/Pagination";
+import ButtonWrapper from "../../../common/component/Button";
+const BoardList: React.FC = () => {
   const [activeTab, setActiveTab] = useState("전체");
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -123,8 +127,6 @@ const App: React.FC = () => {
   }, []);
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <Header/>
       <main className="flex-grow bg-gray-50 py-6">
         <div className="container mx-auto px-4">
           <div className="bg-white rounded-lg shadow-sm">
@@ -138,10 +140,7 @@ const App: React.FC = () => {
                     <i className="fas fa-chevron-left text-gray-600"></i>
                   </button>
                 )}
-                <div
-                  ref={tabsRef}
-                  className="flex overflow-x-auto py-2 px-4"
-                  onScroll={checkScrollButtons}>
+                <div ref={tabsRef} className="flex overflow-x-auto py-2 px-4" onScroll={checkScrollButtons}>
                   {categories.map((category) => (
                     <div key={category.id} className="relative group">
                       <button
@@ -215,9 +214,12 @@ const App: React.FC = () => {
                   )}
                 </div>
               </div>
-              <button className="bg-blue-600 text-white px-4 py-1.5 rounded-button text-sm cursor-pointer whitespace-nowrap hover:bg-blue-700">
+              <ButtonWrapper
+              onClick={() => {alert("Button Clicked!!")}}>
+                <>
                 <i className="fas fa-pencil-alt mr-1"></i> 글쓰기
-              </button>
+                </>
+              </ButtonWrapper>
             </div>
             {/* Search and filter section */}
             <div className="bg-white p-4 border-b">
@@ -359,196 +361,15 @@ const App: React.FC = () => {
               </table>
             </div>
             {/* Pagination */}
-            <Pagination/>
+            <Pagenation 
+              totalPages={21}
+              loadPageByPageNum={(num) => {}}
+            />
           </div>
         </div>
       </main>
-      {/* Footer */}
-      <Footer/>
     </div>
   );
 };
 
-const Header: React.FC = () => {
-  return (
-    <header className="bg-white shadow-md">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <a href="#" className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-blue-600">LOGO</h1>
-            </a>
-            <nav className="hidden md:ml-10 md:flex space-x-8">
-              <a href="#" className="text-gray-800 hover:text-blue-600 px-3 py-2 rounded-md font-medium">
-                홈
-              </a>
-              <a href="#" className="text-blue-600 border-b-2 border-blue-600 px-3 py-2 rounded-md font-medium">
-                게시판
-              </a>
-              <a href="#" className="text-gray-800 hover:text-blue-600 px-3 py-2 rounded-md font-medium">
-                공지사항
-              </a>
-              <a href="#" className="text-gray-800 hover:text-blue-600 px-3 py-2 rounded-md font-medium">
-                마이페이지
-              </a>
-              <a href="#" className="text-gray-800 hover:text-blue-600 px-3 py-2 rounded-md font-medium">
-                고객센터
-              </a>
-            </nav>
-          </div>
-          <div className="flex items-center">
-            <div className="relative mr-4">
-              <input
-                type="text"
-                placeholder="검색어를 입력하세요"
-                className="bg-gray-100 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-              />
-              <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-            </div>
-            <div className="flex space-x-2">
-              <button className="bg-white text-blue-600 border border-blue-600 px-4 py-1 rounded-button cursor-pointer whitespace-nowrap text-sm hover:bg-blue-50">
-                로그인
-              </button>
-              <button className="bg-blue-600 text-white px-4 py-1 rounded-button cursor-pointer whitespace-nowrap text-sm hover:bg-blue-700">
-                회원가입
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="border-b border-gray-200"></div>
-    </header>
-  );
-}
-
-const Footer: React.FC = () => {
-  return (
-    <footer className="bg-gray-800 text-white">
-      <div className="container mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h2 className="text-xl font-bold mb-4">LOGO</h2>
-            <p className="text-gray-300 mb-4">
-              최고의 서비스와 콘텐츠를 제공하는 플랫폼입니다. 항상 사용자의 편의를 최우선으로 생각합니다.
-            </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-300 hover:text-white">
-                <i className="fab fa-facebook-f"></i>
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white">
-                <i className="fab fa-twitter"></i>
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white">
-                <i className="fab fa-instagram"></i>
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white">
-                <i className="fab fa-youtube"></i>
-              </a>
-            </div>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-4">사이트맵</h3>
-            <div className="grid grid-cols-2 gap-2">
-              <a href="#" className="text-gray-300 hover:text-white py-1">
-                홈
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white py-1">
-                게시판
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white py-1">
-                공지사항
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white py-1">
-                마이페이지
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white py-1">
-                고객센터
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white py-1">
-                FAQ
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white py-1">
-                이용약관
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white py-1">
-                개인정보처리방침
-              </a>
-            </div>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-4">고객센터</h3>
-            <p className="flex items-center text-gray-300 mb-2">
-              <i className="fas fa-phone-alt mr-2"></i> 1588-1234
-            </p>
-            <p className="flex items-center text-gray-300 mb-2">
-              <i className="fas fa-envelope mr-2"></i> support@example.com
-            </p>
-            <p className="flex items-center text-gray-300 mb-4">
-              <i className="fas fa-map-marker-alt mr-2"></i> 서울특별시 강남구 테헤란로 123
-            </p>
-            <p className="text-gray-400 text-sm">평일 09:00 - 18:00 (주말 및 공휴일 휴무)</p>
-          </div>
-        </div>
-        <div className="border-t border-gray-700 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">© 2025 COMPANY. All Rights Reserved.</p>
-          <div className="flex space-x-4 mt-4 md:mt-0">
-            <a href="#" className="text-gray-400 hover:text-white text-sm">
-              이용약관
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white text-sm font-bold">
-              개인정보처리방침
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white text-sm">
-              이메일무단수집거부
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-const Pagination: React.FC = () => {
-  return (
-    <div className="px-4 py-3 flex items-center justify-center border-t">
-      <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-        <a
-          href="#"
-          className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-          <span className="sr-only">이전</span>
-          <i className="fas fa-chevron-left text-xs"></i>
-        </a>
-        <a
-          href="#"
-          className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-600 text-sm font-medium text-white">
-          1
-        </a>
-        <a
-          href="#"
-          className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-          2
-        </a>
-        <a
-          href="#"
-          className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-          3
-        </a>
-        <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
-          ...
-        </span>
-        <a
-          href="#"
-          className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-          10
-        </a>
-        <a
-          href="#"
-          className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-          <span className="sr-only">다음</span>
-          <i className="fas fa-chevron-right text-xs"></i>
-        </a>
-      </nav>
-    </div>
-  );
-}
 export default BoardList;

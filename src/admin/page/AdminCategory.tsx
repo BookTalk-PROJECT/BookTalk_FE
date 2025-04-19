@@ -1,5 +1,6 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import React, { useState } from "react";
+import Pagenation from "../../common/component/Pagination";
 interface Category {
   id: number;
   name: string;
@@ -348,33 +349,11 @@ const AdminCategory: React.FC = () => {
             </div>
           ))}
         </div>
-        {/* Pagination */}
-        <div className="flex justify-center items-center space-x-2 p-4 border-t">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="!rounded-button whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
-            <i className="fas fa-chevron-left"></i>
-          </button>
-          {[...Array(totalPages)].map((_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => setCurrentPage(index + 1)}
-              className={`!rounded-button whitespace-nowrap px-3 py-1 ${
-                currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
-              }`}>
-              {index + 1}
-            </button>
-          ))}
-          <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="!rounded-button whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
-            <i className="fas fa-chevron-right"></i>
-          </button>
-        </div>
+        <Pagenation
+        totalPages={12}
+        loadPageByPageNum={(num) => {}} />
       </div>
     </div>
   );
 };
-export default App;
+export default AdminCategory;

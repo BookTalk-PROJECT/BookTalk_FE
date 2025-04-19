@@ -7,8 +7,6 @@
   font-display: swap;
   src: url("../static/font/PretendardVariable.woff2") format("woff2-variations");
 }
-<<<<<<< HEAD
-=======
 
 /* 3. 스크롤바 커스터마이징 */
 .books-container {
@@ -36,4 +34,3 @@
 .books-container::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
->>>>>>> origin/gatheringTest

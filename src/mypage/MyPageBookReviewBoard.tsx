@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MyPageSideBar from "./MyPageSideBar";
+import MyPageSideBar from "../common/component/MyPageSideBar";
 
 interface Post {
   id: number;

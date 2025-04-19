@@ -1,29 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 const JoinPage: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [address, setAddress] = useState('');
-  const [detailAddress, setDetailAddress] = useState('');
-  const [birthDate, setBirthDate] = useState('');
-  const [phone, setPhone] = useState('');
-  const [gender, setGender] = useState('male');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [address, setAddress] = useState("");
+  const [detailAddress, setDetailAddress] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [phone, setPhone] = useState("");
+  const [gender, setGender] = useState("male");
   const [agreeTerms, setAgreeTerms] = useState(false);
-  const [emailStatus, setEmailStatus] = useState<'none' | 'invalid' | 'duplicate' | 'available'>('none');
+  const [emailStatus, setEmailStatus] = useState<"none" | "invalid" | "duplicate" | "available">("none");
   const [isChecking, setIsChecking] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [passwordMatchError, setPasswordMatchError] = useState('');
+  const [passwordMatchError, setPasswordMatchError] = useState("");
 
   useEffect(() => {
     if (passwordConfirm) {
       if (password !== passwordConfirm) {
-        setPasswordMatchError('비밀번호가 일치하지 않습니다');
+        setPasswordMatchError("비밀번호가 일치하지 않습니다");
       } else {
-        setPasswordMatchError('비밀번호가 일치합니다');
+        setPasswordMatchError("비밀번호가 일치합니다");
       }
     } else {
-      setPasswordMatchError('');
+      setPasswordMatchError("");
     }
   }, [password, passwordConfirm]);
 
@@ -34,20 +34,20 @@ const JoinPage: React.FC = () => {
 
   const checkEmailDuplicate = async () => {
     if (!email.trim()) {
-      setEmailStatus('invalid');
+      setEmailStatus("invalid");
       return;
     }
     if (!validateEmail(email)) {
-      setEmailStatus('invalid');
+      setEmailStatus("invalid");
       return;
     }
     setIsChecking(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      if (email === 'test@example.com') {
-        setEmailStatus('duplicate');
+      if (email === "test@example.com") {
+        setEmailStatus("duplicate");
       } else {
-        setEmailStatus('available');
+        setEmailStatus("available");
       }
     } finally {
       setIsChecking(false);
@@ -59,53 +59,53 @@ const JoinPage: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!email) {
-      newErrors.email = '이메일을 입력하세요';
+      newErrors.email = "이메일을 입력하세요";
     } else if (!validateEmail(email)) {
-      newErrors.email = '유효한 이메일을 입력하세요';
-    } else if (emailStatus === 'duplicate') {
-      newErrors.email = '이미 사용 중인 이메일입니다';
-    } else if (emailStatus !== 'available') {
-      newErrors.email = '이메일 중복확인을 해주세요';
+      newErrors.email = "유효한 이메일을 입력하세요";
+    } else if (emailStatus === "duplicate") {
+      newErrors.email = "이미 사용 중인 이메일입니다";
+    } else if (emailStatus !== "available") {
+      newErrors.email = "이메일 중복확인을 해주세요";
     }
 
     if (!password) {
-      newErrors.password = '비밀번호를 입력하세요';
+      newErrors.password = "비밀번호를 입력하세요";
     } else if (password.length < 12) {
-      newErrors.password = '비밀번호는 12자리 이상이어야 합니다';
+      newErrors.password = "비밀번호는 12자리 이상이어야 합니다";
     }
 
     if (!passwordConfirm) {
-      newErrors.passwordConfirm = '비밀번호 확인을 입력하세요';
+      newErrors.passwordConfirm = "비밀번호 확인을 입력하세요";
     } else if (password !== passwordConfirm) {
-      newErrors.passwordConfirm = '비밀번호가 일치하지 않습니다';
+      newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다";
     }
 
     if (!phone) {
-      newErrors.phone = '연락처를 입력하세요';
+      newErrors.phone = "연락처를 입력하세요";
     }
 
     if (!address) {
-      newErrors.address = '주소를 입력하세요';
+      newErrors.address = "주소를 입력하세요";
     }
 
     if (!birthDate) {
-      newErrors.birthDate = '생년월일을 입력하세요';
+      newErrors.birthDate = "생년월일을 입력하세요";
     }
 
     if (!agreeTerms) {
-      newErrors.agreeTerms = '개인정보 수집 및 이용에 동의해주세요';
+      newErrors.agreeTerms = "개인정보 수집 및 이용에 동의해주세요";
     }
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      alert('회원가입 성공!');
+      alert("회원가입 성공!");
     }
   };
 
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    const script = document.createElement("script");
+    script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
     script.async = true;
     document.body.appendChild(script);
   }, []);
@@ -114,7 +114,7 @@ const JoinPage: React.FC = () => {
     new (window as any).daum.Postcode({
       oncomplete: function (data: any) {
         setAddress(data.address);
-      }
+      },
     }).open();
   };
 
@@ -141,7 +141,7 @@ const JoinPage: React.FC = () => {
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
-                      setEmailStatus('none');
+                      setEmailStatus("none");
                     }}
                     className="flex-1 border border-gray-300 rounded-md px-4 py-2 text-sm"
                     placeholder="이메일을 입력하세요"
@@ -150,14 +150,15 @@ const JoinPage: React.FC = () => {
                     type="button"
                     onClick={checkEmailDuplicate}
                     disabled={isChecking}
-                    className={`px-4 py-2 rounded-md text-sm transition-colors min-w-[90px] ${isChecking ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white`}
-                  >
-                    {isChecking ? '확인 중...' : '중복체크'}
+                    className={`px-4 py-2 rounded-md text-sm transition-colors min-w-[90px] ${isChecking ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"} text-white`}>
+                    {isChecking ? "확인 중..." : "중복체크"}
                   </button>
                 </div>
-                {emailStatus === 'invalid' && <p className="text-red-500 text-sm mt-1">유효한 이메일을 입력해주세요</p>}
-                {emailStatus === 'duplicate' && <p className="text-red-500 text-sm mt-1">이미 사용 중인 이메일입니다</p>}
-                {emailStatus === 'available' && <p className="text-green-500 text-sm mt-1">사용 가능한 이메일입니다</p>}
+                {emailStatus === "invalid" && <p className="text-red-500 text-sm mt-1">유효한 이메일을 입력해주세요</p>}
+                {emailStatus === "duplicate" && (
+                  <p className="text-red-500 text-sm mt-1">이미 사용 중인 이메일입니다</p>
+                )}
+                {emailStatus === "available" && <p className="text-green-500 text-sm mt-1">사용 가능한 이메일입니다</p>}
                 {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
               </div>
 
@@ -192,7 +193,12 @@ const JoinPage: React.FC = () => {
                   className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm"
                   placeholder="비밀번호를 다시 입력해주세요"
                 />
-                {passwordMatchError && <p className={`text-sm mt-1 ${passwordMatchError === '비밀번호가 일치합니다' ? 'text-green-500' : 'text-red-500'}`}>{passwordMatchError}</p>}
+                {passwordMatchError && (
+                  <p
+                    className={`text-sm mt-1 ${passwordMatchError === "비밀번호가 일치합니다" ? "text-green-500" : "text-red-500"}`}>
+                    {passwordMatchError}
+                  </p>
+                )}
                 {errors.passwordConfirm && <p className="text-red-500 text-sm mt-1">{errors.passwordConfirm}</p>}
               </div>
 
@@ -248,19 +254,21 @@ const JoinPage: React.FC = () => {
                     <input
                       type="radio"
                       value="male"
-                      checked={gender === 'male'}
-                      onChange={() => setGender('male')}
+                      checked={gender === "male"}
+                      onChange={() => setGender("male")}
                       className="mr-1"
-                    /> 남자
+                    />{" "}
+                    남자
                   </label>
                   <label className="flex items-center text-sm">
                     <input
                       type="radio"
                       value="female"
-                      checked={gender === 'female'}
-                      onChange={() => setGender('female')}
+                      checked={gender === "female"}
+                      onChange={() => setGender("female")}
                       className="mr-1"
-                    /> 여자
+                    />{" "}
+                    여자
                   </label>
                 </div>
               </div>
@@ -285,7 +293,8 @@ const JoinPage: React.FC = () => {
                     checked={agreeTerms}
                     onChange={(e) => setAgreeTerms(e.target.checked)}
                     className="mr-2"
-                  /> 개인정보 수집 및 이용에 동의합니다.
+                  />{" "}
+                  개인정보 수집 및 이용에 동의합니다.
                 </label>
                 {errors.agreeTerms && <p className="text-red-500 text-sm mt-1">{errors.agreeTerms}</p>}
               </div>
@@ -293,11 +302,9 @@ const JoinPage: React.FC = () => {
               {/* 가입 버튼 */}
               <button
                 type="submit"
-                className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition-colors mt-6"
-              >
+                className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition-colors mt-6">
                 가입하기
               </button>
-
             </form>
           </div>
         </div>

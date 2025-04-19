@@ -1,6 +1,6 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import React, { useState, useEffect } from "react";
-import MyPageSideBar from "./MyPageSideBar";
+import MyPageSideBar from "../../common/component/MyPageSideBar";
 const AdminPageComment: React.FC = () => {
   // 댓글 데이터 상태
   const [comments, setComments] = useState<any[]>([]);

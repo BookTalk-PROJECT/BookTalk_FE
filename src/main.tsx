@@ -1,18 +1,23 @@
 import "./index.css";
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router";
 import PrivateRoute from "./common/component/PrivateRoute";
-import MyPage from "./dashboard/pages/MyPage";
-import MyPageBookReviewBoard from "./dashboard/pages/MyPageBookReviewBoard";
-import AdminPageComment from "./dashboard/pages/AdminPageComment";
 import "./index.css";
 import DashBoardPage from "./dashboard/pages/DashBoardPage";
+import BoardList from "./community/board/pages/BoardList";
+import Header from "./common/component/Header";
+import Footer from "./common/component/Footer";
 import GatheringListPage from "./gathering/pages/GatheringListPage";
 import GatheringDetailPage from "./gathering/pages/GatheringDetailPage";
 import GatheringBoardDetailPage from "./gathering/pages/GatheringBoardDetailPage";
 import GatheringCreateBoardPage from "./gathering/pages/GatheringCreateBoardPage";
-import BoardList from "./community/board/pages/BoardList";
+import AdminCategory from "./admin/page/AdminCategory";
+import JoinPage from "./common/auth/page/JoinPage";
+import LoginPage from "./common/auth/page/LoginPage";
+import MyPage from "./mypage/MyPage";
+import AdminPageComment from "./admin/page/AdminPageComment";
+import MyPageBookReviewBoard from "./mypage/MyPageBookReviewBoard";
+
 
 const AppContent = () => {
   const location = useLocation();
@@ -29,17 +34,24 @@ const AppContent = () => {
           <Routes>
             {/* <Route path="/login" element={<LoginPage />} /> */}
             <Route element={<PrivateRoute />}>
-              {/* <Route path="/" element={<HomePage />} /> */}
-              {/* <Route path="" element={<Navigate to="/" />} /> */}
-              <Route path="/boardList" element={<BoardList />} />
               <Route path="" element={<Navigate to="/dashboard" />} />
-              <Route path="/dashboard" element={<AdminPageComment />} />
               <Route path="/dashboard" element={<DashBoardPage />} />
+              {/* Board */}
+              <Route path="/boardList" element={<BoardList />} />
+              {/* Gathering */}
               <Route path="/gatheringlist" element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
               <Route path="/gatheringlist/:id" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
               <Route path="/gatheringlist/:id/gatheringboard/:postId" element={<GatheringBoardDetailPage />} /> {/* 이성종 모임 게시판 상세 */}
               <Route path="/gatheringlist/:id/gatheringboard/create" element={<GatheringCreateBoardPage />} /> {/* 이성종 모임 게시판 글쓰기 */}
-
+              {/* Auth */}
+              <Route path="/join" element={<JoinPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              {/* MyPage */}
+              <Route path="/mypage" element={<MyPage />} />
+              <Route path="/mypagebookreviewboard" element={<MyPageBookReviewBoard />} />
+              {/* AdminPage */}
+              <Route path="/admincategory" element={<AdminCategory />} />
+              <Route path="/adminpagecomment" element={<AdminPageComment />} />
             </Route>
           </Routes>
         </main>
