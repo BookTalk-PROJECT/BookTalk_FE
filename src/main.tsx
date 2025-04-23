@@ -18,7 +18,6 @@ import MyPage from "./mypage/MyPage";
 import AdminPageComment from "./admin/page/AdminPageComment";
 import MyPageBookReviewBoard from "./mypage/MyPageBookReviewBoard";
 
-
 const AppContent = () => {
   const location = useLocation();
 
@@ -41,8 +40,10 @@ const AppContent = () => {
               {/* Gathering */}
               <Route path="/gatheringlist" element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
               <Route path="/gatheringlist/:id" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
-              <Route path="/gatheringlist/:id/gatheringboard/:postId" element={<GatheringBoardDetailPage />} /> {/* 이성종 모임 게시판 상세 */}
-              <Route path="/gatheringlist/:id/gatheringboard/create" element={<GatheringCreateBoardPage />} /> {/* 이성종 모임 게시판 글쓰기 */}
+              <Route path="/gatheringlist/:id/gatheringboard/:postId" element={<GatheringBoardDetailPage />} />{" "}
+              {/* 이성종 모임 게시판 상세 */}
+              <Route path="/gatheringlist/:id/gatheringboard/create" element={<GatheringCreateBoardPage />} />{" "}
+              {/* 이성종 모임 게시판 글쓰기 */}
               {/* Auth */}
               <Route path="/join" element={<JoinPage />} />
               <Route path="/login" element={<LoginPage />} />

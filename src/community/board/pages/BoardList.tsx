@@ -3,77 +3,40 @@ import Footer from "../../../common/component/Footer";
 import Header from "../../../common/component/Header";
 import Pagenation from "../../../common/component/Pagination";
 import ButtonWrapper from "../../../common/component/Button";
+import { Category, Post, SubCategory } from "../type/boardList";
+import { getCategories, getPosts } from "../api/boardList";
 const BoardList: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("전체");
+  // flag
   const [isLoading, setIsLoading] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  // category
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const [activeCategory, setActiveCategory] = useState<Category>();
+  const [activeSubCategory, setActiveSubCategory] = useState<SubCategory>();
+  // search
   const [searchTerm, setSearchTerm] = useState("");
   const [searchField, setSearchField] = useState("title");
   const [sortField, setSortField] = useState("date");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
-  const handleCategoryChange = async (categoryName: string) => {
+  // data
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  const handleCategoryChange = async (catetory: Category) => {
     setIsLoading(true);
-    setActiveTab(categoryName);
-    setActiveCategory("전체");
-    // Simulate loading delay
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    setActiveCategory(catetory);
+    setActiveSubCategory(catetory.subCategories[0]);
     setIsLoading(false);
   };
-  const [activeCategory, setActiveCategory] = useState("전체");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const tabsRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-  const categories = [
-    { id: "all", name: "전체" },
-    { id: "literature", name: "문학" },
-    { id: "humanities", name: "인문" },
-    { id: "society", name: "사회과학" },
-    { id: "science", name: "자연과학" },
-    { id: "technology", name: "기술공학" },
-    { id: "arts", name: "예술" },
-    { id: "language", name: "언어" },
-    { id: "history", name: "역사" },
-    { id: "religion", name: "종교" },
-    { id: "philosophy", name: "철학" },
-  ];
-  const subCategories = {
-    전체: ["전체"],
-    문학: ["전체", "소설", "시/에세이", "희곡", "문학론"],
-    인문: ["전체", "심리학", "교육학", "철학", "윤리학"],
-    사회과학: ["전체", "경제학", "정치학", "사회학", "법학"],
-    자연과학: ["전체", "수학", "물리학", "화학", "생물학"],
-    기술공학: ["전체", "IT/컴퓨터", "건축", "기계", "전자"],
-    예술: ["전체", "음악", "미술", "공연", "사진"],
-    언어: ["전체", "한국어", "영어", "일본어", "중국어"],
-    역사: ["전체", "한국사", "세계사", "문화사", "고고학"],
-    종교: ["전체", "불교", "기독교", "천주교", "이슬람"],
-    철학: ["전체", "동양철학", "서양철학", "현대철학", "윤리학"],
-  };
-  const posts = [
-    { id: 1, title: "신간 도서 안내", author: "관리자", date: "2025-04-16", views: 234, category: "전체" },
-    { id: 2, title: "이달의 추천도서", author: "관리자", date: "2025-04-15", views: 187, category: "문학" },
-    { id: 3, title: "독서토론 모임 안내", author: "관리자", date: "2025-04-14", views: 156, category: "인문" },
-    { id: 4, title: "봄맞이 도서 할인전", author: "마케팅팀", date: "2025-04-13", views: 142, category: "전체" },
-    { id: 5, title: "베스트셀러 순위", author: "김민수", date: "2025-04-12", views: 98, category: "문학" },
-    {
-      id: 6,
-      title: "신간 리뷰: 미래과학의 전망",
-      author: "박지훈",
-      date: "2025-04-11",
-      views: 76,
-      category: "자연과학",
-    },
-    { id: 7, title: "도서 구매 후기", author: "이영희", date: "2025-04-10", views: 112, category: "기술공학" },
-    { id: 8, title: "전자책 이용 안내", author: "최준호", date: "2025-04-09", views: 89, category: "전체" },
-    { id: 9, title: "도서 반납 연장 문의", author: "정다은", date: "2025-04-08", views: 67, category: "전체" },
-    { id: 10, title: "도서관 이용 안내", author: "홍길동", date: "2025-04-07", views: 201, category: "전체" },
-  ];
+
   const filteredPosts = posts
     .filter((post) => {
       // Category filter
-      if (activeTab !== "전체" && post.category !== activeTab) return false;
-      if (activeCategory !== "전체" && post.category !== activeCategory) return false;
+      // if (post.categoryId !== activeCategory?.id) return false;
+      if (post.categoryId !== activeSubCategory?.id) return false;
 
       // Search filter
       if (searchTerm) {
@@ -103,6 +66,7 @@ const BoardList: React.FC = () => {
       }
       return 0;
     });
+
   const handleScroll = (direction: "left" | "right") => {
     if (tabsRef.current) {
       const scrollAmount = 200;
@@ -121,10 +85,17 @@ const BoardList: React.FC = () => {
     }
   };
   useEffect(() => {
+    getCategories().then((categories) => {
+      setCategories(categories);
+      setActiveCategory(categories[0]);
+      setActiveSubCategory(categories[0].subCategories[0]);
+    });
+    getPosts().then((posts) => setPosts(posts));
     checkScrollButtons();
     window.addEventListener("resize", checkScrollButtons);
     return () => window.removeEventListener("resize", checkScrollButtons);
   }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow bg-gray-50 py-6">
@@ -145,16 +116,16 @@ const BoardList: React.FC = () => {
                     <div key={category.id} className="relative group">
                       <button
                         className={`px-4 py-2 font-medium text-sm whitespace-nowrap cursor-pointer transition-all duration-300 relative ${
-                          activeTab === category.name
+                          activeCategory === category
                             ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50 shadow-sm"
                             : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
                         }`}
                         onClick={async () => {
                           setIsLoading(true);
-                          await handleCategoryChange(category.name);
+                          await handleCategoryChange(category);
                         }}>
                         {category.name}
-                        {activeTab === category.name && (
+                        {activeCategory === category && (
                           <>
                             <span className="absolute -right-1 -top-1 flex h-3 w-3">
                               <span className="z-20 animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
@@ -185,7 +156,7 @@ const BoardList: React.FC = () => {
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center space-x-1 focus:outline-none">
                     <span>
-                      {activeTab} &gt; {activeCategory}
+                      {activeCategory?.name} &gt; {activeSubCategory?.name}
                     </span>
                     <i
                       className={`fas fa-chevron-down transition-transform duration-200 ${isDropdownOpen ? "transform rotate-180" : ""}`}></i>
@@ -193,20 +164,20 @@ const BoardList: React.FC = () => {
                   {isDropdownOpen && (
                     <div className="absolute z-30 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200">
                       <div className="py-2">
-                        {subCategories[activeTab].map((subCat, index) => (
+                        {activeCategory?.subCategories.map((subCategory, index) => (
                           <div
                             key={index}
                             className={`px-4 py-2.5 text-sm cursor-pointer transition-colors duration-150 flex items-center justify-between ${
-                              activeCategory === subCat
+                              activeSubCategory === subCategory
                                 ? "bg-blue-50 text-blue-600"
                                 : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                             }`}
                             onClick={() => {
-                              setActiveCategory(subCat);
+                              setActiveSubCategory(subCategory);
                               setIsDropdownOpen(false);
                             }}>
-                            <span>{subCat}</span>
-                            {activeCategory === subCat && <i className="fas fa-check text-blue-600"></i>}
+                            <span>{subCategory.name}</span>
+                            {activeSubCategory === subCategory && <i className="fas fa-check text-blue-600"></i>}
                           </div>
                         ))}
                       </div>
@@ -215,9 +186,11 @@ const BoardList: React.FC = () => {
                 </div>
               </div>
               <ButtonWrapper
-              onClick={() => {alert("Button Clicked!!")}}>
+                onClick={() => {
+                  alert("Button Clicked!!");
+                }}>
                 <>
-                <i className="fas fa-pencil-alt mr-1"></i> 글쓰기
+                  <i className="fas fa-pencil-alt mr-1"></i> 글쓰기
                 </>
               </ButtonWrapper>
             </div>
@@ -361,10 +334,7 @@ const BoardList: React.FC = () => {
               </table>
             </div>
             {/* Pagination */}
-            <Pagenation 
-              totalPages={21}
-              loadPageByPageNum={(num) => {}}
-            />
+            <Pagenation totalPages={21} loadPageByPageNum={(num) => {}} />
           </div>
         </div>
       </main>
