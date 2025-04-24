@@ -1,61 +1,90 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import DatePicker from 'react-datepicker';
+import { ko } from 'date-fns/locale';
+import 'react-datepicker/dist/react-datepicker.css';
+
 const GatheringCreatePage: React.FC = () => {
+    // 책 정보 타입 정의
     interface Book {
         id: number;
         name: string;
         startDate: string;
-        status: 'planned' | 'in_progress' | 'completed';
+        status: 'planned' | 'in_progress' | 'completed'; // 상태: 예정, 진행중, 완료
     }
 
-    const [books, setBooks] = useState<Book[]>([]);
-    const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchResults, setSearchResults] = useState<Array<{ id: string, title: string }>>([]);
-    const [groupName, setGroupName] = useState('');
-    const [recruitmentPeriod, setRecruitmentPeriod] = useState('');
-    const [activityPeriod, setActivityPeriod] = useState('');
-    const [location, setLocation] = useState('');
-    const [meetingFormat, setMeetingFormat] = useState('');
-    const [meetingDetails, setMeetingDetails] = useState('');
-    const [messageMethod, setMessageMethod] = useState('');
-    const [newQuestion, setNewQuestion] = useState('');
+    const navigate = useNavigate();
+
+    // 책 관련 상태
+    const [books, setBooks] = useState<Book[]>([]); // 선택된 책 목록
+    const [isSearchModalOpen, setIsSearchModalOpen] = useState(false); // 책 검색 모달 열림 여부
+    const [searchQuery, setSearchQuery] = useState(''); // 책 검색어
+    const [searchResults, setSearchResults] = useState<Array<{ id: string; title: string }>>([]); // 검색 결과
+
+    // 모임 기본 정보
+    const [groupName, setGroupName] = useState(''); // 모임명
+    const [location, setLocation] = useState(''); // 지역
+    const [meetingFormat, setMeetingFormat] = useState(''); // 모임 방법 (오프라인, 온라인 등)
+    const [meetingDetails, setMeetingDetails] = useState(''); // 모임 소개
+
+    // 모집/활동 기간
+    const [recruitmentPeriod, setRecruitmentPeriod] = useState(''); // 모집 시작 날짜 (문자열로 저장)
+    const [activityPeriod, setActivityPeriod] = useState(''); // 활동 시작 날짜 (문자열로 저장)
+    const [recruitmentDate, setRecruitmentDate] = useState<Date | null>(null); // DatePicker용 날짜 상태
+    const [activityDate, setActivityDate] = useState<Date | null>(null); // DatePicker용 날짜 상태
+    const [calendarModalTarget, setCalendarModalTarget] = useState<'recruitment' | 'activity' | null>(null); // 현재 열린 달력 종류
+
+    // 가입 질문 관련
     const [questions, setQuestions] = useState([
-        { id: 1, text: '어떤 책을 좋아하세요?', expanded: false, answer: '' },
+        { id: 1, text: '어떤 책을 좋아하세요?' }, // 기본 질문 1개
     ]);
+    const [newQuestion, setNewQuestion] = useState(''); // 새 질문 입력 값
+
+    // 질문 추가 함수 (최대 5개)
     const handleAddQuestion = () => {
         if (newQuestion.trim() && questions.length < 5) {
             const newId = Math.max(...questions.map(q => q.id), 0) + 1;
-            setQuestions([...questions, {
-                id: newId,
-                text: newQuestion,
-                expanded: false,
-                answer: ''
-            }]);
+            setQuestions([...questions, { id: newId, text: newQuestion }]);
             setNewQuestion('');
         }
     };
+
+    // 질문 삭제 함수
     const handleRemoveQuestion = (id: number) => {
         setQuestions(questions.filter(q => q.id !== id));
     };
-    const toggleQuestion = (id: number) => {
-        setQuestions(questions.map(q =>
-            q.id === id ? { ...q, expanded: !q.expanded } : q
-        ));
+
+    // 해시태그 관련
+    const [hashtagInput, setHashtagInput] = useState(''); // 입력 중인 해시태그
+    const [hashtags, setHashtags] = useState<string[]>([]); // 최종 추가된 해시태그 목록
+
+    // 해시태그 추가 함수 (Enter 입력 시)
+    const handleHashtagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && hashtagInput.trim()) {
+            e.preventDefault(); // 폼 제출 방지
+            const newTag = hashtagInput.trim();
+
+            if (!hashtags.includes(newTag)) {
+                setHashtags([...hashtags, newTag]);
+            }
+
+            setHashtagInput('');
+        }
     };
-    const handleAnswerChange = (id: number, value: string) => {
-        setQuestions(questions.map(q =>
-            q.id === id ? { ...q, answer: value } : q
-        ));
+
+    // 해시태그 제거 함수
+    const removeHashtag = (tag: string) => {
+        setHashtags(hashtags.filter(t => t !== tag));
     };
+
+    const handleCancel = () => {
+        navigate(-1);
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center">
             <div className="w-full max-w-[1440px] min-h-[1024px] bg-white mx-auto">
-                {/* 헤더 섹션 */}
-                <div className="bg-gray-100 py-12 text-center">
-                    <h1 className="text-4xl font-bold mb-2">책톡</h1>
-                    <p className="text-gray-600">독서모임 커뮤니티</p>
-                </div>
                 {/* 메인 컨텐츠 */}
                 <div className="p-8 max-w-7xl mx-auto">
                     <h2 className="text-xl font-bold mb-1">모임</h2>
@@ -99,7 +128,7 @@ const GatheringCreatePage: React.FC = () => {
 
                         {/* 검색 모달 */}
                         {isSearchModalOpen && (
-                            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                                 <div className="bg-white rounded-lg p-6 w-[480px]">
                                     <div className="flex justify-between items-center mb-4">
                                         <h2 className="text-xl font-bold">책 검색</h2>
@@ -161,36 +190,7 @@ const GatheringCreatePage: React.FC = () => {
                                         </button>
                                     </div>
                                 </div>
-                                <div className="mb-4">
-                                    <label className="block text-sm text-purple-700 mb-1">모집기간</label>
-                                    <div className="relative">
-                                        <input
-                                            type="text"
-                                            className="w-full border border-purple-300 rounded p-2"
-                                            placeholder="모집기간을 선택해주세요"
-                                            value={recruitmentPeriod}
-                                            onChange={(e) => setRecruitmentPeriod(e.target.value)}
-                                        />
-                                        <span className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                                            <i className="far fa-calendar"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="mb-4">
-                                    <label className="block text-sm text-purple-700 mb-1">활동기간</label>
-                                    <div className="relative">
-                                        <input
-                                            type="text"
-                                            className="w-full border border-purple-300 rounded p-2"
-                                            placeholder="활동기간을 선택해주세요"
-                                            value={activityPeriod}
-                                            onChange={(e) => setActivityPeriod(e.target.value)}
-                                        />
-                                        <span className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                                            <i className="far fa-calendar"></i>
-                                        </span>
-                                    </div>
-                                </div>
+
                                 <div className="mb-4">
                                     <label className="block text-sm text-purple-700 mb-1">지역</label>
                                     <div className="relative">
@@ -219,24 +219,96 @@ const GatheringCreatePage: React.FC = () => {
                                 <div className="mb-4">
                                     <label className="block text-sm text-purple-700 mb-1">모임 소개</label>
                                     <textarea
-                                        className="w-full border border-purple-300 rounded p-2"
+                                        className="w-full border border-purple-300 rounded p-2 min-h-[400px]"
                                         placeholder="모임 소개를 입력해주세요"
-                                        rows={3}
                                         value={meetingDetails}
                                         onChange={(e) => setMeetingDetails(e.target.value)}
                                     ></textarea>
                                 </div>
+
+                                <div className="flex gap-4 mb-4">
+
+                                    {/* 모집 기간 */}
+                                    <div className="flex-1">
+                                        <label className="block text-sm text-purple-700 mb-1">모집 인원</label>
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                className="w-full border border-purple-300 rounded p-2"
+                                                placeholder="인원수를 입력하세요"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* 활동 기간 */}
+                                    <div className="flex-1">
+                                        <label className="block text-sm text-purple-700 mb-1">활동 기간</label>
+                                        <div className="relative">
+                                            <DatePicker
+                                                locale={ko}
+                                                selected={activityDate}
+                                                onChange={(date) => {
+                                                    setActivityDate(date);
+                                                    if (date) {
+                                                        setActivityPeriod(date.toISOString().split('T')[0]);
+                                                    }
+                                                }}
+                                                dateFormat="yyyy-MM-dd (eee)"
+                                                placeholderText="활동기간을 선택하세요"
+                                                className="ww-full border border-purple-300 rounded p-2 pr-1"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* 모집 기간 */}
+                                    <div className="flex-1">
+                                        <label className="block text-sm text-purple-700 mb-1">모집 기간</label>
+                                        <div className="relative">
+                                            <DatePicker
+                                                locale={ko}
+                                                selected={recruitmentDate}
+                                                onChange={(date) => {
+                                                    setRecruitmentDate(date);
+                                                    if (date) {
+                                                        setRecruitmentPeriod(date.toISOString().split('T')[0]);
+                                                    }
+                                                }}
+                                                dateFormat="yyyy-MM-dd (eee)"
+                                                placeholderText="모집기간을 선택하세요"
+                                                className="w-full border border-purple-300 rounded p-2 pr-3"
+                                            />
+                                        </div>
+                                    </div>
+
+                                </div>
                                 <div className="mb-4">
-                                    <label className="block text-sm text-purple-700 mb-1">메시지 방법</label>
-                                    <input
-                                        type="text"
-                                        className="w-full border border-purple-300 rounded p-2"
-                                        placeholder="메시지 방법을 입력하세요"
-                                        value={messageMethod}
-                                        onChange={(e) => setMessageMethod(e.target.value)}
-                                    />
+                                    <label className="block text-sm text-purple-700 mb-1">해시 태그</label>
+                                    <div className="w-full border border-purple-300 rounded p-2">
+                                        <div className="flex flex-wrap gap-2 mb-2">
+                                            {hashtags.map((tag, index) => (
+                                                <span key={index} className="flex items-center bg-purple-100 text-purple-700 text-sm px-2 py-1 rounded-full">
+                                                    #{tag}
+                                                    <button onClick={() => removeHashtag(tag)} className="ml-1 text-purple-500 hover:text-purple-800">
+                                                        <i className="fas fa-times text-xs"></i>
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                        <input
+                                            type="text"
+                                            value={hashtagInput}
+                                            onChange={(e) => setHashtagInput(e.target.value)}
+                                            onKeyDown={handleHashtagKeyDown}
+                                            className="w-full focus:outline-none"
+                                            placeholder="해시태그 입력 후 엔터를 눌러주세요"
+                                        />
+                                    </div>
                                 </div>
                             </div>
+
+                            {/* 세로 구분선 */}
+                            <div className="w-px bg-gray-300" />
+
                             {/* 가입 질문 섹션 */}
                             <div className="flex-1">
                                 <div>
@@ -267,12 +339,6 @@ const GatheringCreatePage: React.FC = () => {
                                                     <p className="text-sm">{question.text}</p>
                                                     <div className="flex gap-2">
                                                         <button
-                                                            onClick={() => toggleQuestion(question.id)}
-                                                            className="bg-gray-300 text-gray-600 w-6 h-6 flex items-center justify-center rounded !rounded-button whitespace-nowrap cursor-pointer"
-                                                        >
-                                                            <i className={`fas fa-${question.expanded ? 'minus' : 'plus'}`}></i>
-                                                        </button>
-                                                        <button
                                                             onClick={() => handleRemoveQuestion(question.id)}
                                                             className="bg-red-500 text-white w-6 h-6 flex items-center justify-center rounded !rounded-button whitespace-nowrap cursor-pointer"
                                                         >
@@ -280,17 +346,6 @@ const GatheringCreatePage: React.FC = () => {
                                                         </button>
                                                     </div>
                                                 </div>
-                                                {question.expanded && (
-                                                    <div className="mt-2">
-                                                        <textarea
-                                                            className="w-full border border-gray-300 rounded p-2 text-sm"
-                                                            placeholder="답변을 입력하세요"
-                                                            rows={2}
-                                                            value={question.answer}
-                                                            onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                                                        ></textarea>
-                                                    </div>
-                                                )}
                                             </div>
                                         ))}
                                     </div>
@@ -303,7 +358,10 @@ const GatheringCreatePage: React.FC = () => {
                         <button className="bg-gray-800 text-white px-6 py-2 rounded !rounded-button whitespace-nowrap cursor-pointer">
                             신청
                         </button>
-                        <button className="bg-gray-200 text-gray-800 px-6 py-2 rounded !rounded-button whitespace-nowrap cursor-pointer">
+                        <button
+                            onClick={handleCancel}
+                            className="bg-gray-200 text-gray-800 px-6 py-2 rounded !rounded-button whitespace-nowrap cursor-pointer"
+                        >
                             취소
                         </button>
                     </div>
