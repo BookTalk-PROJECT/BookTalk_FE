@@ -6,40 +6,13 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 overflow-x-hidden">
-      {/* 📌 전체 너비 헤더 */}
-      <header className="w-full bg-white border-b border-gray-200">
-        <div className="max-w-[1440px] mx-auto px-8 flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <h1 className="text-2xl font-bold text-gray-800 mr-12">책톡</h1>
-            <nav className="flex space-x-8">
-              <a href="#" className="text-gray-600 hover:text-gray-900">
-                커뮤니티
-              </a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">
-                멤버십
-              </a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">
-                장기 모임
-              </a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">
-                고객센터
-              </a>
-            </nav>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button className="px-4 py-2 text-gray-600 hover:text-gray-900 rounded">로그인</button>
-            <button className="px-4 py-2 bg-gray-800 text-white hover:bg-gray-700 rounded">회원가입</button>
-          </div>
-        </div>
-      </header>
-
       {/* 📌 본문 */}
       <main className="flex-grow flex items-center justify-center py-10 px-4">
         <div className="w-full max-w-md">
           {/* 로고 */}
           <div className="flex justify-center mb-6">
             <img
-              src="https://readdy.ai/api/search-image?query=A%20stylized%20red%20book%20with%20gold%20trim%20details&width=120&height=120"
+              src="https://w7.pngwing.com/pngs/856/4/png-transparent-computer-icons-book-discussion-club-author-book-angle-rectangle-logo-thumbnail.png"
               alt="로고"
               className="w-24 h-24 object-contain"
             />
@@ -48,8 +21,8 @@ const LoginPage: React.FC = () => {
           {/* 로그인 박스 */}
           <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
             <div className="text-center mb-6 text-gray-500">
-              <p>아이디 또는 비밀번호가 틀렸습니다.</p>
-              <p className="text-sm">(한글x 시 입을 막히면다 메세지)</p>
+              <p> </p>
+              <p className="text-sm"> </p>
             </div>
 
             <form>
@@ -109,21 +82,6 @@ const LoginPage: React.FC = () => {
           </div>
         </div>
       </main>
-
-      {/* 📌 푸터 */}
-      <footer
-        className="w-full py-4 text-center"
-        style={{
-          backgroundImage:
-            'url("https://static.readdy.ai/image/7c947f0a614a0de80ab998c78f59b0ef/68987b76fdbe6bcc791c9ab28eb2d958.png")',
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "80px",
-        }}>
-        <div className="max-w-[1440px] mx-auto">
-          <h2 className="text-4xl font-bold text-white">독서모임 커뮤니티</h2>
-        </div>
-      </footer>
     </div>
   );
 };

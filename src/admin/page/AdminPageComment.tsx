@@ -1,6 +1,7 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import React, { useState, useEffect } from "react";
 import MyPageSideBar from "../../common/component/MyPageSideBar";
+import Pagenation from "../../common/component/Pagination";
 const AdminPageComment: React.FC = () => {
   // 댓글 데이터 상태
   const [comments, setComments] = useState<any[]>([]);
@@ -121,7 +122,6 @@ const AdminPageComment: React.FC = () => {
       });
     }
     setFilteredComments(filtered);
-    setCurrentPage(page);
   };
   // 탭 변경 핸들러
   const handleTabChange = (tab: string) => {
@@ -368,30 +368,7 @@ const AdminPageComment: React.FC = () => {
           </table>
         </div>
         {/* 페이지네이션 */}
-        <div className="px-6 py-4 flex justify-center">
-          <nav className="flex items-center space-x-1">
-            {Array.from({ length: Math.min(totalPages, 9) }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`!rounded-button whitespace-nowrap w-8 h-8 flex items-center justify-center cursor-pointer ${
-                  currentPage === page
-                    ? "bg-blue-800 text-white rounded-full"
-                    : "text-gray-500 hover:bg-gray-100 rounded-full"
-                }`}>
-                {page}
-              </button>
-            ))}
-            {totalPages > 9 && (
-              <button
-                onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
-                className="!rounded-button whitespace-nowrap w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-full cursor-pointer"
-                disabled={currentPage === totalPages}>
-                <i className="fas fa-chevron-right"></i>
-              </button>
-            )}
-          </nav>
-        </div>
+        <Pagenation totalPages={10} loadPageByPageNum={() => {}} ></Pagenation>
       </div>
     </div>
   );

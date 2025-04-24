@@ -44,14 +44,14 @@ const AppContent = () => {
               <Route path="/gatheringlist/:id/gatheringboard/:postId" element={<GatheringBoardDetailPage />} /> {/* 이성종 모임 게시판 상세 */}
               <Route path="/gatheringlist/:id/gatheringboard/create" element={<GatheringCreateBoardPage />} /> {/* 이성종 모임 게시판 글쓰기 */}
               {/* Auth */}
-              <Route path="/join" element={<JoinPage />} />
-              <Route path="/login" element={<LoginPage />} />
+              <Route path="/join" element={<JoinPage />} /> {/* 최형석 회원 가입 페이지 */}
+              <Route path="/login" element={<LoginPage />} /> {/* 최형석 로그인 페이지 */}
               {/* MyPage */}
-              <Route path="/mypage" element={<MyPage />} />
-              <Route path="/mypagebookreviewboard" element={<MyPageBookReviewBoard />} />
+              <Route path="/mypage" element={<MyPage />} /> {/* 최형석 마이 페이지 */}
+              <Route path="/mypage/bookreviewboard" element={<MyPageBookReviewBoard />} /> {/* 최형석 마이 페이지 북리뷰 게시판  */}
               {/* AdminPage */}
-              <Route path="/admincategory" element={<AdminCategory />} />
-              <Route path="/adminpagecomment" element={<AdminPageComment />} />
+              <Route path="/admin/category" element={<AdminCategory />} /> {/* 최형석 관리자 카테고리 페이지 */}
+              <Route path="/admin/comment" element={<AdminPageComment />} /> {/* 최형석 관리자 댓글 관리 페이지 */}
             </Route>
           </Routes>
         </main>

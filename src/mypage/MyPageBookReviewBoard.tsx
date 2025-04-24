@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import MyPageSideBar from "../common/component/MyPageSideBar";
+import Pagenation from "../common/component/Pagination";
 
 interface Post {
   id: number;
@@ -9,23 +10,12 @@ interface Post {
   status: string;
 }
 
-interface PaginationInfo {
-  currentPage: number;
-  totalPages: number;
-  pageSize: number;
-}
-
 const MyPageBookReviewBoard: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>("제목");
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState<boolean>(false);
   const filterOptions = ["제목", "게시글 번호", "분류", "작성 일시"];
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [posts, setPosts] = useState<Post[]>([]);
-  const [pagination, setPagination] = useState<PaginationInfo>({
-    currentPage: 1,
-    totalPages: 10,
-    pageSize: 10,
-  });
   const [sortField, setSortField] = useState<string>("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -57,11 +47,10 @@ const MyPageBookReviewBoard: React.FC = () => {
 
   useEffect(() => {
     fetchPosts();
-  }, [pagination.currentPage, searchTerm, sortField, sortOrder]);
+  }, [searchTerm, sortField, sortOrder]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setPagination((prev) => ({ ...prev, currentPage: 1 }));
   };
 
   const handleSort = (field: string) => {
@@ -71,10 +60,6 @@ const MyPageBookReviewBoard: React.FC = () => {
       setSortField(field);
       setSortOrder("asc");
     }
-  };
-
-  const handlePageChange = (page: number) => {
-    setPagination((prev) => ({ ...prev, currentPage: page }));
   };
 
   return (
@@ -183,37 +168,8 @@ const MyPageBookReviewBoard: React.FC = () => {
                 </div>
               ))}
             </div>
-
             {/* 페이지네이션 */}
-            <div className="flex justify-center mt-6 gap-2">
-              <button
-                className="w-8 h-8 flex items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 !rounded-button"
-                onClick={() => handlePageChange(pagination.currentPage - 1)}
-                disabled={pagination.currentPage === 1}>
-                <i className="fas fa-chevron-left"></i>
-              </button>
-              {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
-                .filter((num) => {
-                  const current = pagination.currentPage;
-                  return num === 1 || num === pagination.totalPages || (num >= current - 2 && num <= current + 2);
-                })
-                .map((num, index, array) => (
-                  <React.Fragment key={num}>
-                    {index > 0 && array[index - 1] !== num - 1 && <span className="w-8 text-center">...</span>}
-                    <button
-                      className={`w-8 h-8 flex items-center justify-center rounded-full ${pagination.currentPage === num ? "bg-gray-800 text-white" : "text-gray-500 hover:bg-gray-100"} !rounded-button`}
-                      onClick={() => handlePageChange(num)}>
-                      {num}
-                    </button>
-                  </React.Fragment>
-                ))}
-              <button
-                className="w-8 h-8 flex items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 !rounded-button"
-                onClick={() => handlePageChange(pagination.currentPage + 1)}
-                disabled={pagination.currentPage === pagination.totalPages}>
-                <i className="fas fa-chevron-right"></i>
-              </button>
-            </div>
+            <Pagenation totalPages={10} loadPageByPageNum={() => {}} ></Pagenation>
           </div>
         </main>
       </div>

@@ -1,7 +1,7 @@
 const MyPageSideBar = () => {
   return (
-    <aside className="w-60 bg-blue-600 text-white flex flex-col p-6 space-y-8 sticky top-0 self-start h-screen">
-      <div className="text-2xl font-bold text-center">My Page</div>
+    <aside className="w-60 bg-blue-600 text-white flex flex-col p-6  sticky top-0 self-start h-screen">
+      <div className="text-2xl font-bold text-center pb-9">My Page</div>
       <div>
         <h3 className="text-lg font-semibold mb-2">북리뷰</h3>
         <ul className="space-y-2">
