@@ -180,7 +180,7 @@ const GatheringCreatePage: React.FC = () => {
                                     <div className="relative">
                                         <input
                                             type="text"
-                                            className="w-full border border-purple-300 rounded p-2 pr-10"
+                                            className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 pr-10 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white"
                                             placeholder="모임명을 입력해세요"
                                             value={groupName}
                                             onChange={(e) => setGroupName(e.target.value)}
@@ -196,7 +196,7 @@ const GatheringCreatePage: React.FC = () => {
                                     <div className="relative">
                                         <input
                                             type="text"
-                                            className="w-full border border-purple-300 rounded p-2"
+                                            className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white"
                                             placeholder="도시 지역을 입력하세요"
                                             value={location}
                                             onChange={(e) => setLocation(e.target.value)}
@@ -210,7 +210,7 @@ const GatheringCreatePage: React.FC = () => {
                                     <label className="block text-sm text-purple-700 mb-1">모임 방법</label>
                                     <input
                                         type="text"
-                                        className="w-full border border-purple-300 rounded p-2"
+                                        className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white"
                                         placeholder="모임 방법을 입력하세요"
                                         value={meetingFormat}
                                         onChange={(e) => setMeetingFormat(e.target.value)}
@@ -219,7 +219,7 @@ const GatheringCreatePage: React.FC = () => {
                                 <div className="mb-4">
                                     <label className="block text-sm text-purple-700 mb-1">모임 소개</label>
                                     <textarea
-                                        className="w-full border border-purple-300 rounded p-2 min-h-[400px]"
+                                        className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-3 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white min-h-[400px]"
                                         placeholder="모임 소개를 입력해주세요"
                                         value={meetingDetails}
                                         onChange={(e) => setMeetingDetails(e.target.value)}
@@ -234,7 +234,7 @@ const GatheringCreatePage: React.FC = () => {
                                         <div className="relative">
                                             <input
                                                 type="text"
-                                                className="w-full border border-purple-300 rounded p-2"
+                                                className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white"
                                                 placeholder="인원수를 입력하세요"
                                             />
                                         </div>
@@ -255,7 +255,7 @@ const GatheringCreatePage: React.FC = () => {
                                                 }}
                                                 dateFormat="yyyy-MM-dd (eee)"
                                                 placeholderText="활동기간을 선택하세요"
-                                                className="ww-full border border-purple-300 rounded p-2 pr-1"
+                                                className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white"
                                             />
                                         </div>
                                     </div>
@@ -275,7 +275,7 @@ const GatheringCreatePage: React.FC = () => {
                                                 }}
                                                 dateFormat="yyyy-MM-dd (eee)"
                                                 placeholderText="모집기간을 선택하세요"
-                                                className="w-full border border-purple-300 rounded p-2 pr-3"
+                                                className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white"
                                             />
                                         </div>
                                     </div>
@@ -299,7 +299,7 @@ const GatheringCreatePage: React.FC = () => {
                                             value={hashtagInput}
                                             onChange={(e) => setHashtagInput(e.target.value)}
                                             onKeyDown={handleHashtagKeyDown}
-                                            className="w-full focus:outline-none"
+                                            className="w-full border-0 focus:outline-none placeholder:text-sm placeholder:text-gray-400 px-2 py-1"
                                             placeholder="해시태그 입력 후 엔터를 눌러주세요"
                                         />
                                     </div>
@@ -318,7 +318,7 @@ const GatheringCreatePage: React.FC = () => {
                                         <div className="relative">
                                             <input
                                                 type="text"
-                                                className="w-full border border-purple-300 rounded p-2"
+                                                className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400"
                                                 placeholder="질문 사항을 입력하세요"
                                                 value={newQuestion}
                                                 onChange={(e) => setNewQuestion(e.target.value)}
@@ -332,9 +332,9 @@ const GatheringCreatePage: React.FC = () => {
                                         </div>
                                     </div>
                                     {/* 질문 목록 */}
-                                    <div className="space-y-3">
+                                    <div className="space-y-7">
                                         {questions.map((question) => (
-                                            <div key={question.id} className="bg-gray-50 rounded-lg p-3">
+                                            <div key={question.id} className="bg-white border border-purple-200 shadow-sm rounded-lg p-4">
                                                 <div className="flex justify-between items-center">
                                                     <p className="text-sm">{question.text}</p>
                                                     <div className="flex gap-2">
