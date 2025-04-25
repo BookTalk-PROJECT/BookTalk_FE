@@ -180,7 +180,7 @@ const GatheringCreatePage: React.FC = () => {
                                     <div className="relative">
                                         <input
                                             type="text"
-                                            className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 pr-10 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white"
+                                            className="gathering-input"
                                             placeholder="모임명을 입력해세요"
                                             value={groupName}
                                             onChange={(e) => setGroupName(e.target.value)}
@@ -196,7 +196,7 @@ const GatheringCreatePage: React.FC = () => {
                                     <div className="relative">
                                         <input
                                             type="text"
-                                            className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white"
+                                            className="gathering-input"
                                             placeholder="도시 지역을 입력하세요"
                                             value={location}
                                             onChange={(e) => setLocation(e.target.value)}
@@ -210,7 +210,7 @@ const GatheringCreatePage: React.FC = () => {
                                     <label className="block text-sm text-purple-700 mb-1">모임 방법</label>
                                     <input
                                         type="text"
-                                        className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white"
+                                        className="gathering-input"
                                         placeholder="모임 방법을 입력하세요"
                                         value={meetingFormat}
                                         onChange={(e) => setMeetingFormat(e.target.value)}
@@ -219,7 +219,7 @@ const GatheringCreatePage: React.FC = () => {
                                 <div className="mb-4">
                                     <label className="block text-sm text-purple-700 mb-1">모임 소개</label>
                                     <textarea
-                                        className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-3 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white min-h-[400px]"
+                                        className="gathering-textarea"
                                         placeholder="모임 소개를 입력해주세요"
                                         value={meetingDetails}
                                         onChange={(e) => setMeetingDetails(e.target.value)}
@@ -234,7 +234,7 @@ const GatheringCreatePage: React.FC = () => {
                                         <div className="relative">
                                             <input
                                                 type="text"
-                                                className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white"
+                                                className="gathering-date"
                                                 placeholder="인원수를 입력하세요"
                                             />
                                         </div>
@@ -255,7 +255,7 @@ const GatheringCreatePage: React.FC = () => {
                                                 }}
                                                 dateFormat="yyyy-MM-dd (eee)"
                                                 placeholderText="활동기간을 선택하세요"
-                                                className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white"
+                                                className="gathering-date"
                                             />
                                         </div>
                                     </div>
@@ -275,7 +275,7 @@ const GatheringCreatePage: React.FC = () => {
                                                 }}
                                                 dateFormat="yyyy-MM-dd (eee)"
                                                 placeholderText="모집기간을 선택하세요"
-                                                className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400 bg-white"
+                                                className="gathering-date"
                                             />
                                         </div>
                                     </div>
@@ -318,7 +318,7 @@ const GatheringCreatePage: React.FC = () => {
                                         <div className="relative">
                                             <input
                                                 type="text"
-                                                className="w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300 rounded-lg px-4 py-2 transition duration-200 outline-none placeholder:text-sm placeholder:text-gray-400"
+                                                className="gathering-input"
                                                 placeholder="질문 사항을 입력하세요"
                                                 value={newQuestion}
                                                 onChange={(e) => setNewQuestion(e.target.value)}
