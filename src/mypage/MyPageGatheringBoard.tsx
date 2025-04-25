@@ -10,7 +10,7 @@ interface Post {
   status: string;
 }
 
-const MyPageCommunityBoard: React.FC = () => {
+const MyPageGatheringBoard: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>("제목");
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState<boolean>(false);
   const filterOptions = ["제목", "게시글 번호", "분류", "작성 일시"];
@@ -72,9 +72,8 @@ const MyPageCommunityBoard: React.FC = () => {
       <div className="flex-1 ml-60 bg-white rounded-lg shadow-md">
         <main className="flex-1 p-6">
           <div className="max-w-5xl mx-auto">
-            {/* 브레드크럼 네비게이션 */}
-            <div className="p-6 border-b border-gray-200">
-              <div className="text-lg font-medium text-gray-700">모임 &gt; 댓글 관리</div>
+            <div className="mb-6">
+              <h2 className="text-xl font-bold mb-2">모임 {">"} 게시글 관리</h2>
             </div>
 
             {/* 검색 및 필터 */}
@@ -181,4 +180,4 @@ const MyPageCommunityBoard: React.FC = () => {
   );
 };
 
-export default MyPageCommunityBoard;
+export default MyPageGatheringBoard;

@@ -172,7 +172,7 @@ const MyPageCommunityComment: React.FC = () => {
       <div className="flex-1 ml-60 bg-white rounded-lg shadow-md">
         {/* 브레드크럼 네비게이션 */}
         <div className="p-6 border-b border-gray-200">
-          <div className="text-lg font-medium text-gray-700">관리자 &gt; 댓글 관리</div>
+          <div className="text-lg font-medium text-gray-700">커뮤니티 &gt; 댓글 관리</div>
         </div>
         {/* 필터 및 검색 영역 */}
         <div className="p-6 flex flex-wrap justify-between items-center">
@@ -182,7 +182,7 @@ const MyPageCommunityComment: React.FC = () => {
                 <i className="fas fa-filter text-gray-400"></i>
               </div>
               <select
-                className="block w-full pl-4 pr-3 py-2 text-sm border border-gray-300 rounded-l-lg bg-gray-100 focus:outline-none"
+                className="block w-full pl-8 pr-0 py-2 text-sm border border-gray-300 rounded-l-lg bg-gray-100 focus:outline-none"
                 value={searchType}
                 onChange={(e) => setSearchType(e.target.value)}>
                 <option value="내용">내용</option>
@@ -323,20 +323,14 @@ const MyPageCommunityComment: React.FC = () => {
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => handleRestore(comment.id)}
-                        className="!rounded-button whitespace-nowrap bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 text-xs rounded cursor-pointer">
-                        복구
+                        className="!rounded-button whitespace-nowrap bg-blue-200 hover:bg-blue-400 text-gray-700 px-3 py-1 text-xs rounded cursor-pointer">
+                        수정
                       </button>
-                      <div className="relative group">
-                        {/* 정보 아이콘 (i 모양) */}
-                        <div className="w-4 h-4 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xl font-bold">
-                          i
-                        </div>
-
-                        {/* 툴팁 (아이콘에 hover 시 나타날 내용) */}
-                        <div className="absolute z-10 hidden group-hover:block w-64 p-2 bg-gray-800 text-white text-xs rounded shadow-lg left-6 top-0">
-                          <p>삭제 사유: {comment.deleteReason}</p>
-                        </div>
-                      </div>
+                      <button
+                        onClick={() => handleRestore(comment.id)}
+                        className="!rounded-button whitespace-nowrap bg-red-200 hover:bg-red-400 text-gray-700 px-3 py-1 text-xs rounded cursor-pointer">
+                        삭제
+                      </button>
                     </div>
                   </td>
                 </tr>

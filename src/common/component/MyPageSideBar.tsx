@@ -30,17 +30,29 @@ const MyPageSideBar = () => {
         <h3 className="text-lg font-semibold mb-2">모임</h3>
         <ul className="space-y-2">
           <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">내 모임</li>
+          <Link to="/mypage/gathering/board">
           <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">게시글 관리</li>
+          </Link>
+          <Link to="/mypage/gathering/comment">
           <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">댓글 관리</li>
+          </Link>
+          <Link to="/mypage/gathering/manage/request">
           <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">모임 신청 관리</li>
+          </Link>
+          <Link to="/mypage/gathering/manage/approval">
           <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">신청 승인 관리</li>
+          </Link>
         </ul>
       </div>
       <div className="pb-4">
         <h3 className="text-lg font-semibold mb-2">관리자</h3>
         <ul className="space-y-2">
+          <Link to="/admin/board">
           <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">게시글 관리</li>
+          </Link>
+          <Link to="/admin/comment">
           <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">댓글 관리</li>
+          </Link>
           <Link to="/admin/category">
             <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">카테고리 관리</li>
           </Link>

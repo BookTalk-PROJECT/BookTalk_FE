@@ -63,13 +63,13 @@ const MyPageBookReviewBoard: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
       {/* 사이드바 */}
       <div className="fixed top-6 left-0 w-60 h-full bg-blue-600 text-white p-6 space-y-8">
         <MyPageSideBar />
       </div>
       {/* 메인 컨텐츠 */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 ml-60 bg-white rounded-lg shadow-md">
         <main className="flex-1 p-6">
           <div className="max-w-5xl mx-auto">
             <div className="mb-6">
