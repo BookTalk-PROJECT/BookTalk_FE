@@ -10,7 +10,7 @@ interface Post {
   status: string;
 }
 
-const MyPageBookReviewBoard: React.FC = () => {
+const MyPageCommunityBoard: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>("제목");
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState<boolean>(false);
   const filterOptions = ["제목", "게시글 번호", "분류", "작성 일시"];
@@ -180,4 +180,4 @@ const MyPageBookReviewBoard: React.FC = () => {
   );
 };
 
-export default MyPageBookReviewBoard;
+export default MyPageCommunityBoard;

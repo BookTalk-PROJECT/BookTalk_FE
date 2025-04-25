@@ -1,6 +1,7 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import React, { useState } from "react";
 import Pagenation from "../../common/component/Pagination";
+import MyPageSideBar from "../../common/component/MyPageSideBar";
 interface Category {
   id: number;
   name: string;
@@ -210,6 +211,9 @@ const AdminCategory: React.FC = () => {
   };
   return (
     <div className="min-h-screen bg-gray-50 p-8">
+      <div className="fixed top-6 left-0 w-60 h-full bg-blue-600 text-white p-6 space-y-8">
+        <MyPageSideBar />
+      </div>
       <div className="max-w-7xl mx-auto bg-white rounded-lg shadow">
         <div className="p-6 border-b border-gray-200">
           <div className="flex justify-between items-center mb-4">

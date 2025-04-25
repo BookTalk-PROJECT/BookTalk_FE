@@ -17,6 +17,9 @@ import LoginPage from "./common/auth/page/LoginPage";
 import MyPage from "./mypage/MyPage";
 import AdminPageComment from "./admin/page/AdminPageComment";
 import MyPageBookReviewBoard from "./mypage/MyPageBookReviewBoard";
+import MyPageBookReviewComment from "./mypage/MyPageBookReviewComment";
+import MyPageCommunityBoard from "./mypage/MyPageCommunityBoard";
+import MyPageCommunityComment from "./mypage/MyPageCommunityComment";
 
 
 const AppContent = () => {
@@ -48,7 +51,10 @@ const AppContent = () => {
               <Route path="/login" element={<LoginPage />} /> {/* 최형석 로그인 페이지 */}
               {/* MyPage */}
               <Route path="/mypage" element={<MyPage />} /> {/* 최형석 마이 페이지 */}
-              <Route path="/mypage/bookreviewboard" element={<MyPageBookReviewBoard />} /> {/* 최형석 마이 페이지 북리뷰 게시판  */}
+              <Route path="/mypage/bookreview/board" element={<MyPageBookReviewBoard />} /> {/* 최형석 마이 페이지 북리뷰 게시판  */}
+              <Route path="mypage/bookreview/comment" element={<MyPageBookReviewComment />} /> {/* 최형석 마이 페이지 북리뷰 게시판  */}
+              <Route path="/mypage/community/board" element={<MyPageCommunityBoard />} /> {/* 최형석 마이 페이지 커뮤니티 게시판  */}
+              <Route path="/mypage/community/comment" element={<MyPageCommunityComment />} /> {/* 최형석 마이 페이지 커뮤니티 댓글  */}
               {/* AdminPage */}
               <Route path="/admin/category" element={<AdminCategory />} /> {/* 최형석 관리자 카테고리 페이지 */}
               <Route path="/admin/comment" element={<AdminPageComment />} /> {/* 최형석 관리자 댓글 관리 페이지 */}
