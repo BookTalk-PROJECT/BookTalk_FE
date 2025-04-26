@@ -10,7 +10,7 @@ interface Post {
   status: string;
 }
 
-const MyPageBookReviewBoard: React.FC = () => {
+const MyPageGatheringBoard: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>("제목");
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState<boolean>(false);
   const filterOptions = ["제목", "게시글 번호", "분류", "작성 일시"];
@@ -73,7 +73,7 @@ const MyPageBookReviewBoard: React.FC = () => {
         <main className="flex-1 p-6">
           <div className="max-w-5xl mx-auto">
             <div className="mb-6">
-              <h2 className="text-xl font-bold mb-2">북리뷰 {">"} 게시글 관리</h2>
+              <h2 className="text-xl font-bold mb-2">모임 {">"} 게시글 관리</h2>
             </div>
 
             {/* 검색 및 필터 */}
@@ -180,4 +180,4 @@ const MyPageBookReviewBoard: React.FC = () => {
   );
 };
 
-export default MyPageBookReviewBoard;
+export default MyPageGatheringBoard;

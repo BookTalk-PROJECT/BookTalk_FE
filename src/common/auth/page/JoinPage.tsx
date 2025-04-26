@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import {useNavigate} from "react-router-dom";
 
 const JoinPage: React.FC = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -15,6 +17,7 @@ const JoinPage: React.FC = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [passwordMatchError, setPasswordMatchError] = useState("");
 
+  /* 패스워드 상태가 실시간으로 바뀔 때마다 매칭 여부 확인 후 메세지 띄움 */
   useEffect(() => {
     if (passwordConfirm) {
       if (password !== passwordConfirm) {
@@ -100,6 +103,7 @@ const JoinPage: React.FC = () => {
 
     if (Object.keys(newErrors).length === 0) {
       alert("회원가입 성공!");
+      navigate("/login");
     }
   };
 

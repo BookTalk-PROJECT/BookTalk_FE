@@ -24,12 +24,12 @@ const Header = () => {
           </nav>
         </div>
         <div className="flex items-center space-x-4">
-          <button className="bg-gray-50 hover:bg-gray-200 px-4 py-1.5 rounded-full text-sm text-gray-700 shadow-sm transition-all">
+          <Link to="/login" className="bg-gray-50 hover:bg-gray-200 px-4 py-1.5 rounded-full text-sm text-gray-700 shadow-sm transition-all">
             로그인
-          </button>
-          <button className="bg-black text-white hover:bg-gray-800 px-4 py-1.5 rounded-full text-sm shadow-sm transition-all">
+          </Link>
+          <Link to="/join" className="bg-black text-white hover:bg-gray-800 px-4 py-1.5 rounded-full text-sm shadow-sm transition-all">
             회원가입
-          </button>
+          </Link>
         </div>
       </div>
     </header>

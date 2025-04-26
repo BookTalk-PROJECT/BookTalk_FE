@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import MyPageSideBar from "../../common/component/MyPageSideBar";
 import Pagenation from "../../common/component/Pagination";
-const AdminPageComment: React.FC = () => {
+const AdminPageBoard: React.FC = () => {
   // 댓글 데이터 상태
   const [comments, setComments] = useState<any[]>([]);
   const [filteredComments, setFilteredComments] = useState<any[]>([]);
@@ -171,7 +171,7 @@ const AdminPageComment: React.FC = () => {
       <div className="flex-1 ml-60 bg-white rounded-lg shadow-md">
         {/* 브레드크럼 네비게이션 */}
         <div className="p-6 border-b border-gray-200">
-          <div className="text-lg font-medium text-gray-700">관리자 &gt; 댓글 관리</div>
+          <div className="text-lg font-medium text-gray-700">관리자 &gt; 게시물 관리</div>
         </div>
         {/* 필터 및 검색 영역 */}
         <div className="p-6 flex flex-wrap justify-between items-center">
@@ -230,7 +230,7 @@ const AdminPageComment: React.FC = () => {
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort("id")}>
                   <div className="flex items-center">
-                    <span>번호</span>
+                    <span>게시물 번호</span>
                     <span className="ml-1">
                       {sortField === "id" ? (
                         sortDirection === "asc" ? (
@@ -373,4 +373,4 @@ const AdminPageComment: React.FC = () => {
     </div>
   );
 };
-export default AdminPageComment;
+export default AdminPageBoard;

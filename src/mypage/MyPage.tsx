@@ -111,7 +111,9 @@ const MyPage: React.FC = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* 사이드바 */}
-      <MyPageSideBar></MyPageSideBar>
+      <div className="fixed top-6 left-0 w-60 h-full bg-blue-600 text-white p-6 space-y-8">
+        <MyPageSideBar />
+      </div>
       <main className="flex-1 p-10 overflow-y-auto pb-32">
         {/* 프로필 섹션 */}
         <section className="max-w-3xl mx-auto mb-10">
