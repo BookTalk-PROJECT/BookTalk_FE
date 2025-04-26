@@ -113,8 +113,9 @@ const GatheringListPage: React.FC = () => {
                   <button
                     key={label}
                     onClick={() => setStatusFilter(label)}
-                    className={`pb-2 text-sm font-medium transition-all duration-200 ${statusFilter === label ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"
-                      }`}>
+                    className={`pb-2 text-sm font-medium transition-all duration-200 ${
+                      statusFilter === label ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"
+                    }`}>
                     {label}
                   </button>
                 ))}
@@ -198,12 +199,13 @@ const GatheringListPage: React.FC = () => {
                       </div>
                       <span
                         className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap
-                                                    ${post.status === "모집중"
-                            ? "bg-green-100 text-green-600"
-                            : post.status === "진행중"
-                              ? "bg-yellow-100 text-yellow-600"
-                              : "bg-gray-200 text-gray-600"
-                          }`}>
+                                                    ${
+                                                      post.status === "모집중"
+                                                        ? "bg-green-100 text-green-600"
+                                                        : post.status === "진행중"
+                                                          ? "bg-yellow-100 text-yellow-600"
+                                                          : "bg-gray-200 text-gray-600"
+                                                    }`}>
                         {post.status}
                       </span>
                     </div>

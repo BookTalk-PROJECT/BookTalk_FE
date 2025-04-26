@@ -208,14 +208,14 @@ const MyPageBookReviewComment: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort("id")}>
-                <div className="flex items-center">
-                  <span>번호</span>
-                  <span className="ml-1">
+              <tr>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort("id")}>
+                  <div className="flex items-center">
+                    <span>번호</span>
+                    <span className="ml-1">
                       {sortField === "id" ? (
                         sortDirection === "asc" ? (
                           <i className="fas fa-sort-up"></i>
@@ -226,15 +226,15 @@ const MyPageBookReviewComment: React.FC = () => {
                         <i className="fas fa-sort text-gray-300"></i>
                       )}
                     </span>
-                </div>
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort("title")}>
-                <div className="flex items-center">
-                  <span>글 제목</span>
-                  <span className="ml-1">
+                  </div>
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort("title")}>
+                  <div className="flex items-center">
+                    <span>글 제목</span>
+                    <span className="ml-1">
                       {sortField === "title" ? (
                         sortDirection === "asc" ? (
                           <i className="fas fa-sort-up"></i>
@@ -245,15 +245,15 @@ const MyPageBookReviewComment: React.FC = () => {
                         <i className="fas fa-sort text-gray-300"></i>
                       )}
                     </span>
-                </div>
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort("author")}>
-                <div className="flex items-center">
-                  <span>작성자</span>
-                  <span className="ml-1">
+                  </div>
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort("author")}>
+                  <div className="flex items-center">
+                    <span>작성자</span>
+                    <span className="ml-1">
                       {sortField === "author" ? (
                         sortDirection === "asc" ? (
                           <i className="fas fa-sort-up"></i>
@@ -264,15 +264,15 @@ const MyPageBookReviewComment: React.FC = () => {
                         <i className="fas fa-sort text-gray-300"></i>
                       )}
                     </span>
-                </div>
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort("content")}>
-                <div className="flex items-center">
-                  <span>내용</span>
-                  <span className="ml-1">
+                  </div>
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort("content")}>
+                  <div className="flex items-center">
+                    <span>내용</span>
+                    <span className="ml-1">
                       {sortField === "content" ? (
                         sortDirection === "asc" ? (
                           <i className="fas fa-sort-up"></i>
@@ -283,15 +283,15 @@ const MyPageBookReviewComment: React.FC = () => {
                         <i className="fas fa-sort text-gray-300"></i>
                       )}
                     </span>
-                </div>
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort("date")}>
-                <div className="flex items-center">
-                  <span>작성 일시</span>
-                  <span className="ml-1">
+                  </div>
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort("date")}>
+                  <div className="flex items-center">
+                    <span>작성 일시</span>
+                    <span className="ml-1">
                       {sortField === "date" ? (
                         sortDirection === "asc" ? (
                           <i className="fas fa-sort-up"></i>
@@ -302,46 +302,46 @@ const MyPageBookReviewComment: React.FC = () => {
                         <i className="fas fa-sort text-gray-300"></i>
                       )}
                     </span>
-                </div>
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                관리
-              </th>
-            </tr>
+                  </div>
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  관리
+                </th>
+              </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-            {currentComments.map((comment) => (
-              <tr key={comment.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{comment.id}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{comment.title}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{comment.author}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{comment.content}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{comment.date}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handleRestore(comment.id)}
-                      className="!rounded-button whitespace-nowrap bg-blue-200 hover:bg-blue-400 text-gray-700 px-3 py-1 text-xs rounded cursor-pointer">
-                      수정
-                    </button>
-                    <button
-                      onClick={() => handleRestore(comment.id)}
-                      className="!rounded-button whitespace-nowrap bg-red-200 hover:bg-red-400 text-gray-700 px-3 py-1 text-xs rounded cursor-pointer">
-                      삭제
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {currentComments.length === 0 && (
-              <tr>
-                <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
-                  데이터가 없습니다.
-                </td>
-              </tr>
-            )}
+              {currentComments.map((comment) => (
+                <tr key={comment.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{comment.id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{comment.title}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{comment.author}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{comment.content}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{comment.date}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleRestore(comment.id)}
+                        className="!rounded-button whitespace-nowrap bg-blue-200 hover:bg-blue-400 text-gray-700 px-3 py-1 text-xs rounded cursor-pointer">
+                        수정
+                      </button>
+                      <button
+                        onClick={() => handleRestore(comment.id)}
+                        className="!rounded-button whitespace-nowrap bg-red-200 hover:bg-red-400 text-gray-700 px-3 py-1 text-xs rounded cursor-pointer">
+                        삭제
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {currentComments.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
+                    데이터가 없습니다.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

@@ -44,16 +44,18 @@ const AppContent = () => {
             <Route element={<PrivateRoute />}>
               <Route path="" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<DashBoardPage />} />
-
               {/* Board */}
               <Route path="/boardList" element={<BoardList />} />
-
               {/* Gathering */}
-              <Route path="/gatheringlist"> {/* 모임 관련 */}
+              <Route path="/gatheringlist">
+                {" "}
+                {/* 모임 관련 */}
                 <Route index element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
                 <Route path="create" element={<GatheringCreatePage />} /> {/* 이성종 모임 상세 */}
                 <Route path=":id" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
-                <Route path=":id/gatheringboard"> {/* 모임 게시판 관련 */}
+                <Route path=":id/gatheringboard">
+                  {" "}
+                  {/* 모임 게시판 관련 */}
                   <Route path="create" element={<GatheringCreateBoardPage />} /> {/* 이성종 모임 게시판 상세 */}
                   <Route path=":postId" element={<GatheringBoardDetailPage />} /> {/* 이성종 모임 게시판 글쓰기 */}
                 </Route>
@@ -63,14 +65,20 @@ const AppContent = () => {
               <Route path="/login" element={<LoginPage />} /> {/* 최형석 로그인 페이지 */}
               {/* MyPage */}
               <Route path="/mypage" element={<MyPage />} /> {/* 최형석 마이 페이지 */}
-              <Route path="/mypage/bookreview/board" element={<MyPageBookReviewBoard />} /> {/* 최형석 마이 페이지 북리뷰 게시판  */}
-              <Route path="mypage/bookreview/comment" element={<MyPageBookReviewComment />} /> {/* 최형석 마이 페이지 북리뷰 댓글  */}
-              <Route path="/mypage/community/board" element={<MyPageCommunityBoard />} /> {/* 최형석 마이 페이지 커뮤니티 게시판  */}
-              <Route path="/mypage/community/comment" element={<MyPageCommunityComment />} /> {/* 최형석 마이 페이지 커뮤니티 댓글  */}
+              <Route path="/mypage/bookreview/board" element={<MyPageBookReviewBoard />} />{" "}
+              {/* 최형석 마이 페이지 북리뷰 게시판  */}
+              <Route path="mypage/bookreview/comment" element={<MyPageBookReviewComment />} />{" "}
+              {/* 최형석 마이 페이지 북리뷰 댓글  */}
+              <Route path="/mypage/community/board" element={<MyPageCommunityBoard />} />{" "}
+              {/* 최형석 마이 페이지 커뮤니티 게시판  */}
+              <Route path="/mypage/community/comment" element={<MyPageCommunityComment />} />{" "}
+              {/* 최형석 마이 페이지 커뮤니티 댓글  */}
               <Route path="/mypage/gathering/board" element={<MyPageGatheringBoard />} /> {/* 최형석 모임 게시판  */}
               <Route path="/mypage/gathering/comment" element={<MyPageGatheringComment />} /> {/* 최형석 모임 댓글  */}
-              <Route path="/mypage/gathering/manage/request" element={<MyPageGatheringRequestManage />} /> {/* 최형석 모임 신청 관리  */}
-              <Route path="/mypage/gathering/manage/approval" element={<MyPageGatheringApprovalManage />} /> {/* 최형석 모임 승인 관리  */}
+              <Route path="/mypage/gathering/manage/request" element={<MyPageGatheringRequestManage />} />{" "}
+              {/* 최형석 모임 신청 관리  */}
+              <Route path="/mypage/gathering/manage/approval" element={<MyPageGatheringApprovalManage />} />{" "}
+              {/* 최형석 모임 승인 관리  */}
               {/* AdminPage */}
               <Route path="/admin/board" element={<AdminPageBoard />} /> {/* 최형석 관리자 게시물 관리 페이지 */}
               <Route path="/admin/comment" element={<AdminPageComment />} /> {/* 최형석 관리자 댓글 관리 페이지 */}

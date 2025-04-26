@@ -119,7 +119,7 @@ const BoardList: React.FC = () => {
                           activeCategory === category
                             ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50 shadow-sm"
                             : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
-                          }`}
+                        }`}
                         onClick={async () => {
                           setIsLoading(true);
                           await handleCategoryChange(category);
@@ -169,10 +169,9 @@ const BoardList: React.FC = () => {
                             key={index}
                             className={`px-4 py-2.5 text-sm cursor-pointer transition-colors duration-150 flex items-center justify-between ${
                               activeSubCategory === subCategory
-
                                 ? "bg-blue-50 text-blue-600"
                                 : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                              }`}
+                            }`}
                             onClick={() => {
                               setActiveSubCategory(subCategory);
                               setIsDropdownOpen(false);

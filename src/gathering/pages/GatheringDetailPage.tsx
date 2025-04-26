@@ -80,7 +80,6 @@ const GatheringDetailPage: React.FC = () => {
                       <i className="fas fa-user-plus mr-2"></i>가입하기
                     </span>
                   </ButtonWrapper>
-
                 </div>
               </div>
               <div className="flex items-center text-sm text-gray-500 space-x-4">
@@ -161,8 +160,7 @@ const GatheringDetailPage: React.FC = () => {
             <div className="p-6 border-t">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold">게시판</h2>
-                <ButtonWrapper
-                  onClick={() => navigate(`/gatheringlist/${id}/gatheringboard/create`)}>
+                <ButtonWrapper onClick={() => navigate(`/gatheringlist/${id}/gatheringboard/create`)}>
                   <span className="px-4 py-2 bg-gray-800 text-white rounded-button whitespace-nowrap hover:bg-gray-900">
                     <i className="fas fa-pen mr-2"></i>글쓰기
                   </span>
@@ -197,10 +195,7 @@ const GatheringDetailPage: React.FC = () => {
                 </table>
               </div>
 
-
               <Pagenation totalPages={totalPages} loadPageByPageNum={loadPageByPageNum} />
-
-
             </div>
           </div>
         </div>

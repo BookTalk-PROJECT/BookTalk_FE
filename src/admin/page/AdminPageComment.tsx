@@ -368,7 +368,7 @@ const AdminPageComment: React.FC = () => {
           </table>
         </div>
         {/* 페이지네이션 */}
-        <Pagenation totalPages={10} loadPageByPageNum={() => {}} ></Pagenation>
+        <Pagenation totalPages={10} loadPageByPageNum={() => {}}></Pagenation>
       </div>
     </div>
   );
