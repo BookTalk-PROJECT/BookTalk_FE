@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Pagenation from "../../common/component/Pagination";
+import ButtonWrapper from "../../common/component/Button";
 
 interface Book {
   id: number;
@@ -15,7 +17,7 @@ interface Post {
   author: string;
   views: number;
 }
-const App: React.FC = () => {
+const GatheringDetailPage: React.FC = () => {
   const [selectedBook, setSelectedBook] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { id } = useParams();
@@ -35,6 +37,13 @@ const App: React.FC = () => {
     { id: 26, title: "독서모임 후기 1", date: "2023-02-23", author: "황이름", views: 5 },
     { id: 25, title: "독서 1", date: "2023-02-23", author: "박이름", views: 134 },
   ];
+
+  const totalPages = Math.ceil(posts.length / 10); // 보여줄 페이지 수
+
+  const loadPageByPageNum = (pageNum: number) => {
+    setCurrentPage(pageNum);
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "진행중":
@@ -60,12 +69,18 @@ const App: React.FC = () => {
               <div className="flex items-center justify-between mb-4">
                 <h1 className="text-2xl font-bold">즐거운 독서</h1>
                 <div className="flex space-x-3">
-                  <button className="px-4 py-2 text-sm bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200">
-                    <i className="fas fa-share-alt mr-2"></i>공유하기
-                  </button>
-                  <button className="px-4 py-2 text-sm bg-gray-800 text-white rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-900">
-                    <i className="fas fa-user-plus mr-2"></i>가입하기
-                  </button>
+                  <ButtonWrapper onClick={() => alert("공유하기 클릭됨")}>
+                    <span className="px-4 py-2 text-sm bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200">
+                      <i className="fas fa-share-alt mr-2"></i>공유하기
+                    </span>
+                  </ButtonWrapper>
+
+                  <ButtonWrapper onClick={() => alert("가입하기 클릭됨")}>
+                    <span className="px-4 py-2 text-sm bg-gray-800 text-white rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-900">
+                      <i className="fas fa-user-plus mr-2"></i>가입하기
+                    </span>
+                  </ButtonWrapper>
+
                 </div>
               </div>
               <div className="flex items-center text-sm text-gray-500 space-x-4">
@@ -146,11 +161,12 @@ const App: React.FC = () => {
             <div className="p-6 border-t">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold">게시판</h2>
-                <button
-                  onClick={() => navigate(`/gatheringlist/${id}/gatheringboard/create`)}
-                  className="px-4 py-2 bg-gray-800 text-white rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-900">
-                  <i className="fas fa-pen mr-2"></i>글쓰기
-                </button>
+                <ButtonWrapper
+                  onClick={() => navigate(`/gatheringlist/${id}/gatheringboard/create`)}>
+                  <span className="px-4 py-2 bg-gray-800 text-white rounded-button whitespace-nowrap hover:bg-gray-900">
+                    <i className="fas fa-pen mr-2"></i>글쓰기
+                  </span>
+                </ButtonWrapper>
               </div>
               <div className="overflow-hidden rounded-lg border">
                 <table className="w-full">
@@ -180,17 +196,11 @@ const App: React.FC = () => {
                   </tbody>
                 </table>
               </div>
-              <div className="flex justify-center mt-6 space-x-1">
-                {[1, 2, 3, 4, 5].map((page) => (
-                  <button
-                    key={page}
-                    className={`w-8 h-8 flex items-center justify-center rounded-full ${
-                      page === currentPage ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    } cursor-pointer transition-colors duration-200`}>
-                    {page}
-                  </button>
-                ))}
-              </div>
+
+
+              <Pagenation totalPages={totalPages} loadPageByPageNum={loadPageByPageNum} />
+
+
             </div>
           </div>
         </div>
@@ -200,4 +210,4 @@ const App: React.FC = () => {
     </div>
   );
 };
-export default App;
+export default GatheringDetailPage;

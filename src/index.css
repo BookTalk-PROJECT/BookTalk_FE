@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 @font-face {
   font-family: "pretendard";
   font-weight: 45 920;
@@ -33,4 +34,23 @@
 
 .books-container::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+/* GatheringCreatePage 전용 공통 CSS - 이성종*/
+.gathering-input {
+  @apply w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300
+         rounded-lg px-4 py-2 transition duration-200 outline-none
+         placeholder:text-sm placeholder:text-gray-400 bg-white;
+}
+
+.gathering-textarea {
+  @apply w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300
+         rounded-lg px-4 py-3 transition duration-200 outline-none
+         placeholder:text-sm placeholder:text-gray-400 bg-white min-h-[400px];
+}
+
+.gathering-date {
+  @apply w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300
+         rounded-lg px-4 py-2 transition duration-200 outline-none
+         placeholder:text-sm placeholder:text-gray-400 bg-white;
 }

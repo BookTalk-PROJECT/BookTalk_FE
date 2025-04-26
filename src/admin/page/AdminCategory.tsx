@@ -353,9 +353,7 @@ const AdminCategory: React.FC = () => {
             </div>
           ))}
         </div>
-        <Pagenation
-        totalPages={12}
-        loadPageByPageNum={(num) => {}} />
+        <Pagenation totalPages={12} loadPageByPageNum={(num) => {}} />
       </div>
     </div>
   );
