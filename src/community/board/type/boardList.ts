@@ -1,3 +1,5 @@
+import { Post } from "../../../common/component/BoardTable";
+
 export interface BoardCategories {
   hello: string;
 }
@@ -13,11 +15,6 @@ export interface SubCategory {
   name: string;
 }
 
-export interface Post {
-  id: number;
-  title: string;
-  author: string;
-  date: string;
-  views: number;
+export interface CommuPost extends Post {
   categoryId: number;
 }

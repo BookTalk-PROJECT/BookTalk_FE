@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Pagenation from "../../common/component/Pagination";
 import ButtonWrapper from "../../common/component/Button";
+import BoardTable from "../../common/component/BoardTable";
 
 interface Book {
   id: number;
@@ -167,7 +168,8 @@ const GatheringDetailPage: React.FC = () => {
                 </ButtonWrapper>
               </div>
               <div className="overflow-hidden rounded-lg border">
-                <table className="w-full">
+                <BoardTable posts={posts} />
+                {/* <table className="w-full">
                   <thead>
                     <tr className="bg-gray-50 text-sm">
                       <th className="px-6 py-3 text-left">제목</th>
@@ -192,7 +194,7 @@ const GatheringDetailPage: React.FC = () => {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table> */}
               </div>
 
               <Pagenation totalPages={totalPages} loadPageByPageNum={loadPageByPageNum} />
