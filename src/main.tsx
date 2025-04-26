@@ -19,7 +19,6 @@ import AdminPageComment from "./admin/page/AdminPageComment";
 import MyPageBookReviewBoard from "./mypage/MyPageBookReviewBoard";
 import GatheringCreatePage from "./gathering/pages/GatheringCreatePage";
 
-
 const AppContent = () => {
   const location = useLocation();
 
@@ -51,7 +50,6 @@ const AppContent = () => {
                   <Route path=":postId" element={<GatheringBoardDetailPage />} /> {/* 이성종 모임 게시판 글쓰기 */}
                 </Route>
               </Route>
-
               {/* Auth */}
               <Route path="/join" element={<JoinPage />} />
               <Route path="/login" element={<LoginPage />} />
