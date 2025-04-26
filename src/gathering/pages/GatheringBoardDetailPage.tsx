@@ -14,7 +14,7 @@ interface Post {
   author: string;
   views: number;
 }
-const App: React.FC = () => {
+const GatheringBoardDetailPage: React.FC = () => {
   const [selectedBook, setSelectedBook] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { id, postId } = useParams<{ id: string; postId: string }>();
@@ -282,4 +282,4 @@ const App: React.FC = () => {
     </div>
   );
 };
-export default App;
+export default GatheringBoardDetailPage;

@@ -17,6 +17,7 @@ import LoginPage from "./common/auth/page/LoginPage";
 import MyPage from "./mypage/MyPage";
 import AdminPageComment from "./admin/page/AdminPageComment";
 import MyPageBookReviewBoard from "./mypage/MyPageBookReviewBoard";
+import GatheringCreatePage from "./gathering/pages/GatheringCreatePage";
 
 const AppContent = () => {
   const location = useLocation();
@@ -35,21 +36,28 @@ const AppContent = () => {
             <Route element={<PrivateRoute />}>
               <Route path="" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<DashBoardPage />} />
+
               {/* Board */}
               <Route path="/boardList" element={<BoardList />} />
+
               {/* Gathering */}
-              <Route path="/gatheringlist" element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
-              <Route path="/gatheringlist/:id" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
-              <Route path="/gatheringlist/:id/gatheringboard/:postId" element={<GatheringBoardDetailPage />} />{" "}
-              {/* 이성종 모임 게시판 상세 */}
-              <Route path="/gatheringlist/:id/gatheringboard/create" element={<GatheringCreateBoardPage />} />{" "}
-              {/* 이성종 모임 게시판 글쓰기 */}
+              <Route path="/gatheringlist"> {/* 모임 관련 */}
+                <Route index element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
+                <Route path="create" element={<GatheringCreatePage />} /> {/* 이성종 모임 상세 */}
+                <Route path=":id" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
+                <Route path=":id/gatheringboard"> {/* 모임 게시판 관련 */}
+                  <Route path="create" element={<GatheringCreateBoardPage />} /> {/* 이성종 모임 게시판 상세 */}
+                  <Route path=":postId" element={<GatheringBoardDetailPage />} /> {/* 이성종 모임 게시판 글쓰기 */}
+                </Route>
+              </Route>
               {/* Auth */}
               <Route path="/join" element={<JoinPage />} />
               <Route path="/login" element={<LoginPage />} />
+
               {/* MyPage */}
               <Route path="/mypage" element={<MyPage />} />
               <Route path="/mypagebookreviewboard" element={<MyPageBookReviewBoard />} />
+
               {/* AdminPage */}
               <Route path="/admincategory" element={<AdminCategory />} />
               <Route path="/adminpagecomment" element={<AdminPageComment />} />
