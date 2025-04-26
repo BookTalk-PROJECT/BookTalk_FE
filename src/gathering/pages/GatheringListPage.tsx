@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import ButtonWrapper from "../../common/component/Button";
 
-const App: React.FC = () => {
+const GatheringListPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("전체");
   const [isFooterHovered, setIsFooterHovered] = useState(false);
@@ -112,9 +113,8 @@ const App: React.FC = () => {
                   <button
                     key={label}
                     onClick={() => setStatusFilter(label)}
-                    className={`pb-2 text-sm font-medium transition-all duration-200 ${
-                      statusFilter === label ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"
-                    }`}>
+                    className={`pb-2 text-sm font-medium transition-all duration-200 ${statusFilter === label ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"
+                      }`}>
                     {label}
                   </button>
                 ))}
@@ -123,9 +123,11 @@ const App: React.FC = () => {
 
             {/* 오른쪽: 모임 개설 버튼 + 검색창 */}
             <div className="flex items-center gap-4">
-              <button className="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800 transition whitespace-nowrap">
-                모임 개설
-              </button>
+              <ButtonWrapper onClick={() => navigate("/gatheringlist/create")}>
+                <span className="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800 transition whitespace-nowrap">
+                  모임 개설
+                </span>
+              </ButtonWrapper>
 
               <div className="flex items-center gap-0">
                 {/* 드롭다운 - 검색 기준 선택 */}
@@ -196,13 +198,12 @@ const App: React.FC = () => {
                       </div>
                       <span
                         className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap
-                                                    ${
-                                                      post.status === "모집중"
-                                                        ? "bg-green-100 text-green-600"
-                                                        : post.status === "진행중"
-                                                          ? "bg-yellow-100 text-yellow-600"
-                                                          : "bg-gray-200 text-gray-600"
-                                                    }`}>
+                                                    ${post.status === "모집중"
+                            ? "bg-green-100 text-green-600"
+                            : post.status === "진행중"
+                              ? "bg-yellow-100 text-yellow-600"
+                              : "bg-gray-200 text-gray-600"
+                          }`}>
                         {post.status}
                       </span>
                     </div>
@@ -227,4 +228,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default GatheringListPage;

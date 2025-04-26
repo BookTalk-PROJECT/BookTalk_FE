@@ -144,11 +144,10 @@ const BoardList: React.FC = () => {
                   {categories.map((category) => (
                     <div key={category.id} className="relative group">
                       <button
-                        className={`px-4 py-2 font-medium text-sm whitespace-nowrap cursor-pointer transition-all duration-300 relative ${
-                          activeTab === category.name
+                        className={`px-4 py-2 font-medium text-sm whitespace-nowrap cursor-pointer transition-all duration-300 relative ${activeTab === category.name
                             ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50 shadow-sm"
                             : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
-                        }`}
+                          }`}
                         onClick={async () => {
                           setIsLoading(true);
                           await handleCategoryChange(category.name);
@@ -196,11 +195,10 @@ const BoardList: React.FC = () => {
                         {subCategories[activeTab].map((subCat, index) => (
                           <div
                             key={index}
-                            className={`px-4 py-2.5 text-sm cursor-pointer transition-colors duration-150 flex items-center justify-between ${
-                              activeCategory === subCat
+                            className={`px-4 py-2.5 text-sm cursor-pointer transition-colors duration-150 flex items-center justify-between ${activeCategory === subCat
                                 ? "bg-blue-50 text-blue-600"
                                 : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                            }`}
+                              }`}
                             onClick={() => {
                               setActiveCategory(subCat);
                               setIsDropdownOpen(false);
@@ -215,9 +213,9 @@ const BoardList: React.FC = () => {
                 </div>
               </div>
               <ButtonWrapper
-              onClick={() => {alert("Button Clicked!!")}}>
+                onClick={() => { alert("Button Clicked!!") }}>
                 <>
-                <i className="fas fa-pencil-alt mr-1"></i> 글쓰기
+                  <i className="fas fa-pencil-alt mr-1"></i> 글쓰기
                 </>
               </ButtonWrapper>
             </div>
@@ -361,9 +359,9 @@ const BoardList: React.FC = () => {
               </table>
             </div>
             {/* Pagination */}
-            <Pagenation 
+            <Pagenation
               totalPages={21}
-              loadPageByPageNum={(num) => {}}
+              loadPageByPageNum={(num) => { }}
             />
           </div>
         </div>
