@@ -17,15 +17,15 @@ const GatheringCreateBoardPage: React.FC = () => {
           </div>
 
           <div className="p-6">
-            {/* 제목 */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">제목</label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="제목을 입력하세요"
-              />
-            </div>
+              {/* 제목 */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">제목</label>
+                <input
+                  type="text"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="제목을 입력하세요"
+                />
+              </div>
 
             {/* 이미지 */}
             <div className="mb-6">
@@ -39,25 +39,25 @@ const GatheringCreateBoardPage: React.FC = () => {
               </div>
             </div>
 
-            {/* 내용 */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">내용</label>
-              <textarea
-                className="w-full px-4 py-2 border rounded-lg h-64 resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="내용을 입력하세요"></textarea>
-            </div>
+              {/* 내용 */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">내용</label>
+                <textarea
+                  className="w-full px-4 py-2 border rounded-lg h-64 resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="내용을 입력하세요"></textarea>
+              </div>
 
-            {/* 버튼 */}
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => window.history.back()}
-                className="px-4 py-2 text-sm bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200">
-                취소
-              </button>
+              {/* 버튼 */}
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => window.history.back()}
+                  className="px-4 py-2 text-sm bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200">
+                  취소
+                </button>
               <button className="px-4 py-2 text-sm bg-gray-800 text-white rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-900">
                 등록
-              </button>
-            </div>
+                </button>
+              </div>
           </div>
         </div>
       </div>

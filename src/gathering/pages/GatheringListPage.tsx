@@ -1,57 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ButtonWrapper from "../../common/component/Button";
+import GatheringCard from "../component/GatheringCard";
+import { GatheringPost } from "../type/GatheringListPage.types";
+import { fetchMockGatheringPosts } from "../api/GatheringListPage.mock";
 
 const GatheringListPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("전체");
   const [isFooterHovered, setIsFooterHovered] = useState(false);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<GatheringPost[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const lastPostElementRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
-  const statuses = ["모집중", "진행중", "완료"];
-
-  const POSTS_PER_PAGE = 9; //무한 스크롤 시 로딩될 모임게시물 수
-
-  const generateMockPost = (index: number) => {
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
-
-    return {
-      id: index,
-      title: `독서모임 ${index}`,
-      views: Math.floor(Math.random() * 1000),
-      currentMembers: Math.floor(Math.random() * 8) + 2,
-      maxMembers: 10,
-      status, // 상태 필드 추가
-      hashtags: ["#독서토론", "#자기계발", "#인문학", "#문학", "#심리학", "#철학"]
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3),
-      imageUrl: `https://readdy.ai/api/search-image?query=Cozy%20book%20club%20meeting%20space%20with%20comfortable%20seating%2C%20warm%20lighting%2C%20bookshelves%2C%20and%20a%20welcoming%20atmosphere%2C%20modern%20minimalist%20interior%20design%20with%20natural%20elements&width=400&height=250&seq=${index}&orientation=landscape`,
-    };
-  };
-
-  const fetchFilteredPosts = (pageNum: number) => {
-    const generatedPosts = Array.from({ length: 100 }, (_, i) => generateMockPost(i + 1));
-
-    return generatedPosts
-      .filter((post) => {
-        const matchStatus = statusFilter === "전체" || post.status === statusFilter;
-        const matchSearch = post.title.includes(searchQuery);
-        return matchStatus && matchSearch;
-      })
-      .slice((pageNum - 1) * POSTS_PER_PAGE, pageNum * POSTS_PER_PAGE);
-  };
+  const POSTS_PER_PAGE = 9;
 
   const loadMorePosts = () => {
     if (loading || !hasMore) return;
     setLoading(true);
 
     setTimeout(() => {
-      const newPosts = fetchFilteredPosts(page);
+      const newPosts = fetchMockGatheringPosts(statusFilter, searchQuery, page, POSTS_PER_PAGE);
       setPosts((prev) => [...prev, ...newPosts]);
       setHasMore(newPosts.length === POSTS_PER_PAGE);
       setLoading(false);
@@ -113,9 +85,8 @@ const GatheringListPage: React.FC = () => {
                   <button
                     key={label}
                     onClick={() => setStatusFilter(label)}
-                    className={`pb-2 text-sm font-medium transition-all duration-200 ${
-                      statusFilter === label ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"
-                    }`}>
+                    className={`pb-2 text-sm font-medium transition-all duration-200 ${statusFilter === label ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"}`}
+                  >
                     {label}
                   </button>
                 ))}
@@ -124,7 +95,7 @@ const GatheringListPage: React.FC = () => {
 
             {/* 오른쪽: 모임 개설 버튼 + 검색창 */}
             <div className="flex items-center gap-4">
-              <ButtonWrapper onClick={() => navigate("/gatheringlist/create")}>
+              <ButtonWrapper onClick={() => navigate("/gatheringlist/create")}> 
                 <span className="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800 transition whitespace-nowrap">
                   모임 개설
                 </span>
@@ -164,54 +135,12 @@ const GatheringListPage: React.FC = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post, index) => (
-              <div
+            {/* 모임 카드 생성부 */}            {posts.map((post, index) => (
+              <GatheringCard
                 key={post.id}
-                onClick={() => navigate(`/gatheringlist/${post.id}`)}
-                ref={index === posts.length - 1 ? lastPostElementRef : null}
-                className="cursor-pointer bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-gray-100">
-                <div className="relative">
-                  <img src={post.imageUrl} alt="영상 썸네일" className="w-full h-48 object-cover object-top" />
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg mb-2 text-gray-800">{post.title}</h3>
-                  <div className="flex flex-col space-y-3">
-                    {/* 인원 및 조회수 */}
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center">
-                        <i className="fas fa-users text-red-500 mr-2"></i>
-                        <span className="text-gray-700 font-medium">
-                          {post.currentMembers}/{post.maxMembers}명
-                        </span>
-                      </div>
-                      <span className="text-gray-500">조회수 {post.views}</span>
-                    </div>
-                    {/* 해시태그 및 상태 뱃지 */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex flex-wrap gap-2">
-                        {post.hashtags.map((tag: string, tagIndex: number) => (
-                          <span
-                            key={tagIndex}
-                            className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs hover:bg-blue-200 transition">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap
-                                                    ${
-                                                      post.status === "모집중"
-                                                        ? "bg-green-100 text-green-600"
-                                                        : post.status === "진행중"
-                                                          ? "bg-yellow-100 text-yellow-600"
-                                                          : "bg-gray-200 text-gray-600"
-                                                    }`}>
-                        {post.status}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                post={post}
+                lastRef={index === posts.length - 1 ? lastPostElementRef : undefined}
+              />
             ))}
           </div>
 
