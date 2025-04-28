@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ButtonWrapper from "../../common/component/Button";
-import GatheringCard from "../component/GatheringCard";
 import { GatheringPost } from "../type/GatheringListPage.types";
 import { fetchMockGatheringPosts } from "../api/GatheringListPage.mock";
+import GatheringCard from "../component/GatheringCard";
 
 const GatheringListPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -95,7 +95,7 @@ const GatheringListPage: React.FC = () => {
 
             {/* 오른쪽: 모임 개설 버튼 + 검색창 */}
             <div className="flex items-center gap-4">
-              <ButtonWrapper onClick={() => navigate("/gatheringlist/create")}> 
+              <ButtonWrapper onClick={() => navigate("/gatheringlist/create")}>
                 <span className="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800 transition whitespace-nowrap">
                   모임 개설
                 </span>
@@ -119,7 +119,7 @@ const GatheringListPage: React.FC = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                        handleSearch(); // ⌨️ 엔터 시 검색
+                        handleSearch(); // 엔터 시 검색
                       }
                     }}
                     className="border border-l-0 border-gray-300 py-2 px-4 pr-10 text-sm text-gray-700 rounded-r-full focus:outline-none focus:ring-2 focus:ring-red-300"
@@ -135,7 +135,8 @@ const GatheringListPage: React.FC = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* 모임 카드 생성부 */}            {posts.map((post, index) => (
+            {/* 모임 카드 생성부 */}
+            {posts.map((post, index) => (
               <GatheringCard
                 key={post.id}
                 post={post}

@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.4",
+    "@toast-ui/editor": "^3.2.2",
+    "@toast-ui/react-editor": "^3.2.3",
     "axios": "^1.8.4",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import BookCardList from "../component/GatheringDetailCards";
 interface Book {
   id: number;
   title: string;
@@ -113,7 +114,7 @@ const GatheringBoardDetailPage: React.FC = () => {
                 </button>
               </div>
             </div>
-            <div
+            {/* <div
               className="books-container overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
               style={{ scrollbarWidth: "thin", msOverflowStyle: "none" }}>
               <div className="inline-flex gap-6 min-w-max pb-4">
@@ -146,7 +147,8 @@ const GatheringBoardDetailPage: React.FC = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
+            <BookCardList books={books} />
           </div>
           <div className="p-6 border-t">
             <div className="mb-6">

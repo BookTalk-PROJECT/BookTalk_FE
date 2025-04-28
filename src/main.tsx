@@ -56,8 +56,8 @@ const AppContent = () => {
                 <Route path=":id/gatheringboard">
                   {" "}
                   {/* 모임 게시판 관련 */}
-                  <Route path="create" element={<GatheringCreateBoardPage />} /> {/* 이성종 모임 게시판 상세 */}
-                  <Route path=":postId" element={<GatheringBoardDetailPage />} /> {/* 이성종 모임 게시판 글쓰기 */}
+                  <Route path="create" element={<GatheringCreateBoardPage />} />  {/* 이성종 모임 게시판 글쓰기 */}
+                  <Route path=":postId" element={<GatheringBoardDetailPage />} /> {/* 이성종 모임 게시판 상세 */}
                 </Route>
               </Route>
               {/* Auth */}
