@@ -145,8 +145,8 @@ const GatheringCreateBoardPage: React.FC = () => {
               </CustomButton>
 
               {/* 나중에 추가할 버튼들도 여기에 추가 가능 */}
-              {/* <button className="...">이미지</button> */}
-              {/* <button className="...">동영상</button> */}
+              {/* <CustomButton ...">이미지</button> */}
+              {/* <CustomButton ...">동영상</button> */}
             </div>
 
             {/* 에디터 */}
@@ -160,33 +160,24 @@ const GatheringCreateBoardPage: React.FC = () => {
             />
           </div>
 
-
-          {/* 태그 입력 */}
-          <div>
-            <label className="block text-lg font-semibold mb-2 text-gray-700">태그</label>
-            <input
-              type="text"
-              className="w-full px-6 py-4 border border-gray-300 rounded-lg text-base focus:ring-blue-500 focus:border-blue-500"
-              placeholder="태그를 입력하세요 (쉼표로 구분)"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-            />
-          </div>
-
           {/* 버튼 그룹 */}
           <div className="flex justify-end space-x-4">
-            <button
-              onClick={() => window.history.back()}
-              className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg text-base hover:bg-gray-400"
-            >
-              취소
-            </button>
-            <button
+            <CustomButton
               onClick={handleSubmit}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg text-base hover:bg-blue-700"
-            >
-              등록하기
-            </button>
+              color="blue"
+              customClassName='px-6 py-3'>
+              <>
+                등록하기
+              </>
+            </CustomButton>
+            <CustomButton
+              onClick={() => window.history.back()}
+              color="white"
+              customClassName='px-6 py-3'>
+              <>
+                취소
+              </>
+            </CustomButton>
           </div>
         </div>
       </div>
@@ -196,6 +187,8 @@ const GatheringCreateBoardPage: React.FC = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
             <h2 className="text-lg font-bold mb-4">유튜브 등록하기</h2>
+
+            {/* 검색어 입력 */}
             <input
               type="text"
               className="w-full border px-4 py-2 mb-4"
@@ -208,14 +201,13 @@ const GatheringCreateBoardPage: React.FC = () => {
                 }
               }}
             />
-            <button
-              onClick={() => handleYoutubeSearch(0)}
-              className="w-full bg-blue-500 text-white py-2 rounded mb-4"
-            >
-              검색
-            </button>
 
-            {/* 검색 결과 */}
+            {/* 검색 버튼 */}
+            <CustomButton onClick={() => handleYoutubeSearch(0)} color="blue" customClassName="w-full mb-4">
+              검색
+            </CustomButton>
+
+            {/* 검색 결과 리스트 */}
             <ul className="max-h-96 overflow-y-auto">
               {youtubeResults.map((video) => (
                 <li key={video.id} className="flex items-start space-x-4 p-2 border-b">
@@ -229,46 +221,53 @@ const GatheringCreateBoardPage: React.FC = () => {
                     <p className="text-sm text-gray-500">{video.channelTitle}</p>
                     <p className="text-xs text-gray-400">{new Date(video.publishedAt).toLocaleString()}</p>
                   </div>
-                  <button
+
+                  {/* 삽입 버튼 */}
+                  <CustomButton
                     onClick={() => handleYoutubeInsert(video.id)}
-                    className="bg-green-500 text-white py-1 px-2 rounded self-center"
+                    color="red"
+                    customClassName="py-1 px-2 self-center text-xs"
                   >
                     삽입
-                  </button>
+                  </CustomButton>
                 </li>
               ))}
             </ul>
 
-            {/* 페이징 */}
+            {/* 페이지네이션 버튼 */}
             <div className="flex justify-center space-x-2 mt-4">
               {prevPageToken && (
-                <button
+                <CustomButton
                   onClick={() => handleYoutubeSearch(prevPageToken)}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                  color="white"
+                  customClassName="px-4 py-2 hover:bg-gray-400"
                 >
                   이전
-                </button>
+                </CustomButton>
               )}
               {nextPageToken && (
-                <button
+                <CustomButton
                   onClick={() => handleYoutubeSearch(nextPageToken)}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                  color="white"
+                  customClassName="px-4 py-2 hover:bg-gray-400"
                 >
                   다음
-                </button>
+                </CustomButton>
               )}
             </div>
 
-
-            <button
+            {/* 닫기 버튼 */}
+            <CustomButton
               onClick={() => setShowYoutubeModal(false)}
-              className="mt-6 w-full bg-gray-300 py-2 rounded"
+              color="white"
+              customClassName="mt-6 w-full"
             >
               닫기
-            </button>
+            </CustomButton>
           </div>
         </div>
       )}
+
     </div>
   );
 };

@@ -99,27 +99,33 @@ const GatheringDetailPage: React.FC = () => {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold">독서 목록</h2>
                 <div className="flex space-x-2">
-                  <button
+
+                  <CustomButton
                     onClick={() => {
                       const container = document.querySelector(".books-container") as HTMLElement;
-
                       if (container) {
                         container.scrollLeft -= container.offsetWidth;
                       }
                     }}
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200">
+                    color="none"
+                    customClassName="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-200"
+                  >
                     <i className="fas fa-chevron-left"></i>
-                  </button>
-                  <button
+                  </CustomButton>
+
+                  {/* 다음 버튼 */}
+                  <CustomButton
                     onClick={() => {
                       const container = document.querySelector(".books-container") as HTMLElement;
                       if (container) {
                         container.scrollLeft += container.offsetWidth;
                       }
                     }}
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200">
+                    color="none"
+                    customClassName="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-200"
+                  >
                     <i className="fas fa-chevron-right"></i>
-                  </button>
+                  </CustomButton>
                 </div>
               </div>
               <BookCardList books={books} />
