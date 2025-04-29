@@ -129,7 +129,7 @@ const GatheringBoardDetailPage: React.FC = () => {
                       </div>
                       <div className="flex items-center space-x-2">
                         <CustomButton
-                          onClick={() => alert("답글 버튼을 클릭함")}
+                          onClick={() => alert("댓글 좋아요 버튼 클릭함")}
                           color="none">
                           <>
                             <i className="fas fa-heart mr-1 text-red-500"></i>
@@ -137,7 +137,7 @@ const GatheringBoardDetailPage: React.FC = () => {
                           </>
                         </CustomButton>
                         <CustomButton
-                          onClick={() => alert("답글 버튼을 클릭함")}
+                          onClick={() => alert("답글 버튼 클릭함")}
                           color="none">
                           <>
                             <i className="fas fa-reply mr-1"></i>답글
@@ -152,7 +152,7 @@ const GatheringBoardDetailPage: React.FC = () => {
 
               <div className="flex justify-between items-center mt-6">
                 <CustomButton
-                  onClick={() => alert("이전 게시글글 버튼 클릭함")}
+                  onClick={() => alert("이전 게시글 버튼 클릭함")}
                   color="white"
                   customClassName="px-4 py-2">
                   <>
@@ -160,7 +160,7 @@ const GatheringBoardDetailPage: React.FC = () => {
                   </>
                 </CustomButton>
                 <CustomButton
-                  onClick={() => alert("다음음 게시글 버튼 클릭함")}
+                  onClick={() => alert("다음 게시글 버튼 클릭함")}
                   color="black"
                   customClassName="px-4 py-2">
                   <>
@@ -168,7 +168,7 @@ const GatheringBoardDetailPage: React.FC = () => {
                   </>
                 </CustomButton>
                 <CustomButton
-                  onClick={() => alert("다음음 게시글 버튼 클릭함")}
+                  onClick={() => alert("다음 게시글 버튼 클릭함")}
                   color="white"
                   customClassName="px-4 py-2">
                   <>

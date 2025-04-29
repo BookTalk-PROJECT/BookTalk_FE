@@ -2,17 +2,19 @@
 import axios from 'axios';
 import { PostData, YoutubeVideo } from '../type/GatheringCreateBoardPage.type';
 
+//공통 url
 const apiKey = import.meta.env.API_KEY;
 const youtubeKey = import.meta.env.VITE_YOUTUBE_API_KEY;
 
 const RESULTS_PER_PAGE = 5;
 
+//게시글 등록 api
 export const createPost = async (postData: PostData) => {
     const response = await axios.post(apiKey + "/api/gatherings", postData);
     return response.data;
 };
 
-
+//유튜브 api 요청
 export const searchYoutubeVideos = async (query: string, pageToken: string | number = '') => {
     if (!query) return { items: [], nextPageToken: '', prevPageToken: '', totalResults: 0 };
 
