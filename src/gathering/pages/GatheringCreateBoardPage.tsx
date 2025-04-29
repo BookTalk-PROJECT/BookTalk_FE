@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react';
 import { Editor } from '@toast-ui/react-editor';
 import '@toast-ui/editor/dist/toastui-editor.css';
-import axios from 'axios';
 import CustomButton from '../../common/component/CustomButton';
 import GatheringInput from '../component/GatheringInput';
+import { PostData, YoutubeVideo } from '../type/GatheringCreateBoardPage.type';
+import { createPost, searchYoutubeVideos } from '../api/GatheringCreateBoardPage.mock';
 
 const GatheringCreateBoardPage: React.FC = () => {
   const editorRef = useRef<Editor>(null);
@@ -11,106 +12,65 @@ const GatheringCreateBoardPage: React.FC = () => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [tags, setTags] = useState('');
-
   const [showYoutubeModal, setShowYoutubeModal] = useState(false);
   const [youtubeQuery, setYoutubeQuery] = useState('');
-  const [youtubeResults, setYoutubeResults] = useState<
-    {
-      id: string;
-      title: string;
-      thumbnail: string;
-      channelTitle: string;
-      publishedAt: string;
-    }[]
-  >([]);
+  const [youtubeResults, setYoutubeResults] = useState<YoutubeVideo[]>([]);
   const [totalResults, setTotalResults] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
-
   const [nextPageToken, setNextPageToken] = useState('');
   const [prevPageToken, setPrevPageToken] = useState('');
 
-
-  const RESULTS_PER_PAGE = 5;
-
-  // 글 등록
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const editorInstance = editorRef.current?.getInstance();
     const content = editorInstance?.getMarkdown() || '';
 
-    const postData = {
+    const postData: PostData = {
       title,
       category,
       content,
-      tags: tags.split(',').map((tag) => tag.trim()),
     };
 
-    console.log('작성된 데이터:', postData);
-    // TODO: 여기에 서버 전송 코드 작성
+    try {
+      const result = await createPost(postData);
+      console.log('등록 완료:', result);
+      alert('글이 성공적으로 등록되었습니다.');
+      window.history.back(); // 또는 등록 성공 후 원하는 페이지로 이동
+    } catch (error) {
+      console.error('글 등록 실패:', error);
+      alert('글 등록 중 오류가 발생했습니다.');
+    }
   };
 
-  // 유튜브 버튼 클릭 → 모달 열기
   const handleYoutubeButtonClick = () => {
     setShowYoutubeModal(true);
   };
 
-  // 유튜브 검색
   const handleYoutubeSearch = async (pageToken: string | number = '') => {
-    if (!youtubeQuery) return;
-
-    try {
-      const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
-        params: {
-          part: 'snippet',
-          q: youtubeQuery,
-          type: 'video',
-          key: import.meta.env.VITE_YOUTUBE_API_KEY,
-          maxResults: RESULTS_PER_PAGE,
-          pageToken: pageToken ? String(pageToken) : undefined, // <= 여기
-        },
-      });
-
-      const items = response.data.items.map((item: any) => ({
-        id: item.id.videoId,
-        title: item.snippet.title,
-        thumbnail: item.snippet.thumbnails.medium.url,
-        channelTitle: item.snippet.channelTitle,
-        publishedAt: item.snippet.publishedAt,
-      }));
-
-      setYoutubeResults(items);
-      setTotalResults(response.data.pageInfo.totalResults || 0);
-      setNextPageToken(response.data.nextPageToken || '');
-      setPrevPageToken(response.data.prevPageToken || '');
-    } catch (error) {
-      console.error('유튜브 검색 실패:', error);
-      alert('유튜브 검색 중 문제가 발생했습니다.');
-    }
+    const { items, nextPageToken, prevPageToken, totalResults } = await searchYoutubeVideos(youtubeQuery, pageToken);
+    setYoutubeResults(items);
+    setNextPageToken(nextPageToken);
+    setPrevPageToken(prevPageToken);
+    setTotalResults(totalResults);
   };
 
-
-  // 유튜브 삽입
   const handleYoutubeInsert = (id: string) => {
     const editorInstance = editorRef.current?.getInstance();
-
     if (!editorInstance) return;
 
-    editorInstance.changeMode('wysiwyg', true); // 추가
+    editorInstance.changeMode('wysiwyg', true);
     const iframeHtml = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`;
     editorInstance.insertHTML(iframeHtml);
 
     setShowYoutubeModal(false);
   };
 
-  const handleUndo = () => {
-    const editorInstance = editorRef.current?.getInstance();
-    if (!editorInstance) return;
-    editorInstance.exec('undo');
-  };
 
+  //Editor 내부에 추가되어 있음
+  const handleUndo = () => {
+    editorRef.current?.getInstance().exec('undo');
+  };
+  //Editor 내부에 추가되어 있음
   const handleRedo = () => {
-    const editorInstance = editorRef.current?.getInstance();
-    if (!editorInstance) return;
-    editorInstance.exec('redo');
+    editorRef.current?.getInstance().exec('redo');
   };
 
 
