@@ -4,6 +4,7 @@ import ButtonWrapper from "../../common/component/Button";
 import { GatheringPost } from "../type/GatheringListPage.types";
 import { fetchMockGatheringPosts } from "../api/GatheringListPage.mock";
 import GatheringCard from "../component/GatheringCard";
+import CustomButton from "../../common/component/CustomButton";
 
 const GatheringListPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,7 +29,7 @@ const GatheringListPage: React.FC = () => {
       setHasMore(newPosts.length === POSTS_PER_PAGE);
       setLoading(false);
       setPage((prev) => prev + 1);
-    }, 500);
+    }, 400);
   };
 
   useEffect(() => {
@@ -95,41 +96,44 @@ const GatheringListPage: React.FC = () => {
 
             {/* 오른쪽: 모임 개설 버튼 + 검색창 */}
             <div className="flex items-center gap-4">
-              <ButtonWrapper onClick={() => navigate("/gatheringlist/create")}>
-                <span className="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800 transition whitespace-nowrap">
+              <CustomButton onClick={() => navigate("/gatheringlist/create")} color="black">
+                <>
                   모임 개설
-                </span>
-              </ButtonWrapper>
+                </>
+              </CustomButton>
 
               <div className="flex items-center gap-0">
                 {/* 드롭다운 - 검색 기준 선택 */}
                 <select
                   className="border border-gray-300 py-2 px-4 text-sm text-gray-700 rounded-l-full focus:outline-none focus:ring-2 focus:ring-red-300 bg-white"
                   defaultValue="전체">
-                  <option value="전체">모임이름 또는 닉네임</option>
+                  <option value="전체">카테고리</option>
                   <option value="모임이름">모임이름</option>
                   <option value="닉네임">닉네임(모임장)</option>
                 </select>
 
                 {/* 검색 입력창 */}
-                <div className="relative">
+                <div className="relative w-full">
+                  {/* 검색 입력창 */}
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                        handleSearch(); // 엔터 시 검색
+                        handleSearch();
                       }
                     }}
-                    className="border border-l-0 border-gray-300 py-2 px-4 pr-10 text-sm text-gray-700 rounded-r-full focus:outline-none focus:ring-2 focus:ring-red-300"
+                    className="border border-l-0 border-gray-300 py-2 px-4 pr-12 text-sm text-gray-700 rounded-r-full focus:outline-none focus:ring-2 focus:ring-red-300 w-full"
                     placeholder="검색어를 입력해주세요..."
                   />
-                  <button
-                    onClick={handleSearch}
-                    className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-3 py-1 rounded-full hover:bg-gray-800 transition-all shadow-sm">
-                    검색
-                  </button>
+
+                  {/* 검색 버튼 */}
+                  <div className="absolute right-0 top-1/2 transform -translate-y-1/2">
+                    <CustomButton onClick={handleSearch} color="none">
+                      <i className="fas fa-search" />
+                    </CustomButton>
+                  </div>
                 </div>
               </div>
             </div>

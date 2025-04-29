@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Pagenation from "../../common/component/Pagination";
-import ButtonWrapper from "../../common/component/Button";
 import BoardTable from "../../common/component/BoardTable";
 import BookCardList from "../component/GatheringDetailCards";
+import CustomButton from "../../common/component/CustomButton";
 
 interface Book {
   id: number;
@@ -71,17 +71,16 @@ const GatheringDetailPage: React.FC = () => {
               <div className="flex items-center justify-between mb-4">
                 <h1 className="text-2xl font-bold">즐거운 독서</h1>
                 <div className="flex space-x-3">
-                  <ButtonWrapper onClick={() => alert("공유하기 클릭됨")}>
-                    <span className="px-4 py-2 text-sm bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200">
+                  <CustomButton onClick={() => alert("공유하기 클릭됨")} color="white">
+                    <>
                       <i className="fas fa-share-alt mr-2"></i>공유하기
-                    </span>
-                  </ButtonWrapper>
-
-                  <ButtonWrapper onClick={() => alert("가입하기 클릭됨")}>
-                    <span className="px-4 py-2 text-sm bg-gray-800 text-white rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-900">
+                    </>
+                  </CustomButton>
+                  <CustomButton onClick={() => alert("가입하기 클릭됨")} color="black">
+                    <>
                       <i className="fas fa-user-plus mr-2"></i>가입하기
-                    </span>
-                  </ButtonWrapper>
+                    </>
+                  </CustomButton>
                 </div>
               </div>
               <div className="flex items-center text-sm text-gray-500 space-x-4">
@@ -128,11 +127,11 @@ const GatheringDetailPage: React.FC = () => {
             <div className="p-6 border-t">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold">게시판</h2>
-                <ButtonWrapper onClick={() => navigate(`/gatheringlist/${id}/gatheringboard/create`)}>
-                  <span className="px-4 py-2 bg-gray-800 text-white rounded-button whitespace-nowrap hover:bg-gray-900">
-                    <i className="fas fa-pen mr-2"></i>글쓰기
-                  </span>
-                </ButtonWrapper>
+                <CustomButton onClick={() => navigate(`/gatheringlist/${id}/gatheringboard/create`)} color="black">
+                  <>
+                    <i className="fas fa-pen mr-2"></i> 글쓰기
+                  </>
+                </CustomButton>
               </div>
               <div className="overflow-hidden rounded-lg border">
                 <BoardTable posts={posts} />

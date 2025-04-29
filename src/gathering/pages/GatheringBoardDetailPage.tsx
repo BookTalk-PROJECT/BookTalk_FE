@@ -114,40 +114,7 @@ const GatheringBoardDetailPage: React.FC = () => {
                 </button>
               </div>
             </div>
-            {/* <div
-              className="books-container overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
-              style={{ scrollbarWidth: "thin", msOverflowStyle: "none" }}>
-              <div className="inline-flex gap-6 min-w-max pb-4">
-                {[...books, ...books, ...books].map((book, index) => (
-                  <div key={`${book.id}-${index}`} className="w-[300px] relative group cursor-pointer">
-                    <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
-                      <div className="aspect-w-1 aspect-h-1 rounded-lg overflow-hidden mb-4">
-                        <img
-                          src={`https://readdy.ai/api/search-image?query=modern%20minimalist%20book%20cover%20design%20with%20abstract%20geometric%20patterns%20and%20sophisticated%20typography%20on%20clean%20background%20professional%20publishing%20quality&width=400&height=400&seq=${book.id}&orientation=squarish`}
-                          alt={book.title}
-                          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                      <div>
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">{book.title}</h3>
-                          <span className={`px-3 py-1 rounded-full text-white text-xs ${getStatusColor(book.status)}`}>
-                            {book.status}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center text-sm">
-                          <p className="text-gray-600">{book.author}</p>
-                          <div className="flex items-center text-gray-500">
-                            <i className="fas fa-calendar mr-2"></i>
-                            <span>{book.date}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div> */}
+            {/* 모임 리스트 렌더링 */}
             <BookCardList books={books} />
           </div>
           <div className="p-6 border-t">

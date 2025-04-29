@@ -3,6 +3,7 @@ import { Editor } from '@toast-ui/react-editor';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import axios from 'axios';
 import Pagenation from '../../common/component/Pagination';
+import CustomButton from '../../common/component/CustomButton';
 
 const GatheringCreateBoardPage: React.FC = () => {
   const editorRef = useRef<Editor>(null);
@@ -136,13 +137,13 @@ const GatheringCreateBoardPage: React.FC = () => {
             <label className="block text-lg font-semibold mb-2 text-gray-700">본문</label>
 
             {/* 툴바 영역 */}
-            <div className="flex items-center space-x-2 p-2 border rounded-t-lg bg-gray-50 mb-0">
-              <button
-                onClick={handleYoutubeButtonClick}
-                className="bg-white text-gray-700 border px-3 py-1 rounded hover:bg-gray-100 text-sm"
-              >
-                유튜브
-              </button>
+            <div className="flex items-center space-x-2 p-2 rounded-t-lg bg-gray-50 mb-0">
+              <CustomButton onClick={handleYoutubeButtonClick} color="white">
+                <>
+                  <i className="fab fa-youtube"> &nbsp;유튜브</i>
+                </>
+              </CustomButton>
+
               {/* 나중에 추가할 버튼들도 여기에 추가 가능 */}
               {/* <button className="...">이미지</button> */}
               {/* <button className="...">동영상</button> */}
