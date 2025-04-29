@@ -19,6 +19,7 @@ import {
   mockQuestions,
   createGathering
 } from "../api/GatheringCreatePage.mock";
+import CustomButton from "../../common/component/CustomButton";
 
 const GatheringCreatePage: React.FC = () => {
 
@@ -219,7 +220,7 @@ const GatheringCreatePage: React.FC = () => {
                       onChange={(e) => setGroupName(e.target.value)}
                       suffixButton={{
                         label: "중복 체크",
-                        onClick: () => console.log("중복 체크"),
+                        onClick: () => alert("중복체크 누름"),
                       }}
                     />
                   </div>
@@ -234,7 +235,7 @@ const GatheringCreatePage: React.FC = () => {
                       onChange={(e) => setLocation(e.target.value)}
                       suffixIconButton={{
                         icon: <i className="fas fa-search"></i>,
-                        onClick: () => console.log("검색 클릭!"),
+                        onClick: () => alert("도시지역 검색버튼 누름"),
                       }}
                     />
                   </div>
@@ -275,7 +276,6 @@ const GatheringCreatePage: React.FC = () => {
                         }}
                         placeholder="활동 기간을 선택하세요"
                       />
-
                     </div>
                   </div>
 
@@ -373,16 +373,22 @@ const GatheringCreatePage: React.FC = () => {
           </div>
           {/* 버튼 그룹 */}
           <div className="flex justify-end space-x-3 mt-8">
-            <button
-              className="bg-gray-800 text-white px-6 py-2 rounded !rounded-button whitespace-nowrap cursor-pointer"
-              onClick={handleSubmit}>
-              신청
-            </button>
-            <button
+            <CustomButton
+              onClick={handleSubmit}
+              color="black"
+              customClassName="px-6 py-2 text-lg font-semibold">
+              <>
+                신청
+              </>
+            </CustomButton>
+            <CustomButton
               onClick={handleCancel}
-              className="bg-gray-200 text-gray-800 px-6 py-2 rounded !rounded-button whitespace-nowrap cursor-pointer">
-              취소
-            </button>
+              color="white"
+              customClassName="px-6 py-2 text-lg font-semibold">
+              <>
+                취소
+              </>
+            </CustomButton>
           </div>
         </div>
       </div>

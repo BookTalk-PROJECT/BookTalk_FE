@@ -2,8 +2,8 @@ import { useRef, useState } from 'react';
 import { Editor } from '@toast-ui/react-editor';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import axios from 'axios';
-import Pagenation from '../../common/component/Pagination';
 import CustomButton from '../../common/component/CustomButton';
+import GatheringInput from '../component/GatheringInput';
 
 const GatheringCreateBoardPage: React.FC = () => {
   const editorRef = useRef<Editor>(null);
@@ -101,6 +101,19 @@ const GatheringCreateBoardPage: React.FC = () => {
     setShowYoutubeModal(false);
   };
 
+  const handleUndo = () => {
+    const editorInstance = editorRef.current?.getInstance();
+    if (!editorInstance) return;
+    editorInstance.exec('undo');
+  };
+
+  const handleRedo = () => {
+    const editorInstance = editorRef.current?.getInstance();
+    if (!editorInstance) return;
+    editorInstance.exec('redo');
+  };
+
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -111,9 +124,8 @@ const GatheringCreateBoardPage: React.FC = () => {
           {/* 제목 입력 */}
           <div>
             <label className="block text-lg font-semibold mb-2 text-gray-700">제목</label>
-            <input
-              type="text"
-              className="w-full px-6 py-4 border border-gray-300 rounded-lg text-base focus:ring-blue-500 focus:border-blue-500"
+
+            <GatheringInput
               placeholder="제목을 입력하세요"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -123,9 +135,8 @@ const GatheringCreateBoardPage: React.FC = () => {
           {/* 카테고리 입력 */}
           <div>
             <label className="block text-lg font-semibold mb-2 text-gray-700">카테고리</label>
-            <input
-              type="text"
-              className="w-full px-6 py-4 border border-gray-300 rounded-lg text-base focus:ring-blue-500 focus:border-blue-500"
+
+            <GatheringInput
               placeholder="카테고리를 입력하세요"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -154,10 +165,46 @@ const GatheringCreateBoardPage: React.FC = () => {
               ref={editorRef}
               initialValue=""
               previewStyle="vertical"
-              height="400px"
+              height="600px"
               initialEditType="wysiwyg"
               useCommandShortcut={true}
+              toolbarItems={[
+                ['heading', 'bold', 'italic', 'strike'],
+                ['hr', 'quote'],
+                ['ul', 'ol', 'task', 'indent', 'outdent'],
+                ['table', 'link', 'image', 'code', 'codeblock'],
+
+                // Undo / Redo 버튼 커스텀 추가
+                [
+                  {
+                    name: 'undo',
+                    tooltip: '되돌리기',
+                    el: (() => {
+                      const button = document.createElement('button');
+                      button.innerHTML = `<i class="fas fa-undo"></i>`;
+                      button.addEventListener('click', () => {
+                        editorRef.current?.getInstance().exec('undo');
+                      });
+                      return button;
+                    })(),
+                  },
+                  {
+                    name: 'redo',
+                    tooltip: '다시하기',
+                    el: (() => {
+                      const button = document.createElement('button');
+                      button.innerHTML = `<i class="fas fa-redo"></i>`;
+                      button.addEventListener('click', () => {
+                        editorRef.current?.getInstance().exec('redo');
+                      });
+                      return button;
+                    })(),
+                  },
+                ],
+              ]}
             />
+
+
           </div>
 
           {/* 버튼 그룹 */}

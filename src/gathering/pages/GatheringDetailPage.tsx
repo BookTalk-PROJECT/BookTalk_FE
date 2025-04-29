@@ -2,16 +2,9 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Pagenation from "../../common/component/Pagination";
 import BoardTable from "../../common/component/BoardTable";
-import BookCardList from "../component/GatheringDetailCards";
+import GatheringHeader from "../component/GatheringHeader";
 import CustomButton from "../../common/component/CustomButton";
 
-interface Book {
-  id: number;
-  title: string;
-  author: string;
-  status: string;
-  date: string;
-}
 interface Post {
   id: number;
   title: string;
@@ -22,13 +15,9 @@ interface Post {
 const GatheringDetailPage: React.FC = () => {
   const [selectedBook, setSelectedBook] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { id } = useParams();
+  const { gatheringId } = useParams();
   const navigate = useNavigate();
-  const books = [
-    { id: 1, title: "책이름1", author: "저자명", status: "완료", date: "2023-02-24" },
-    { id: 2, title: "책이름2", author: "저자명", status: "읽는중", date: "2023-03-15" },
-    { id: 3, title: "책이름3", author: "저자명", status: "예정", date: "2023-04-01" },
-  ];
+
   const posts = [
     { id: 32, title: "독서모임 후기 1", date: "2023-02-24", author: "이름님", views: 33 },
     { id: 31, title: "독서모임 리뷰 1", date: "2023-03-04", author: "이름님", views: 1511 },
@@ -46,101 +35,26 @@ const GatheringDetailPage: React.FC = () => {
     setCurrentPage(pageNum);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "진행중":
-        return "bg-yellow-500";
-      case "모집중":
-        return "bg-green-500";
-      case "완료":
-        return "bg-blue-500";
-      case "예정":
-        return "bg-red-500";
-      case "읽는중":
-        return "bg-green-500";
-      default:
-        return "bg-gray-500";
-    }
-  };
   return (
     <div className="min-h-screen bg-white">
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="p-6 border-b">
-              <div className="flex items-center justify-between mb-4">
-                <h1 className="text-2xl font-bold">즐거운 독서</h1>
-                <div className="flex space-x-3">
-                  <CustomButton onClick={() => alert("공유하기 클릭됨")} color="white">
-                    <>
-                      <i className="fas fa-share-alt mr-2"></i>공유하기
-                    </>
-                  </CustomButton>
-                  <CustomButton onClick={() => alert("가입하기 클릭됨")} color="black">
-                    <>
-                      <i className="fas fa-user-plus mr-2"></i>가입하기
-                    </>
-                  </CustomButton>
-                </div>
-              </div>
-              <div className="flex items-center text-sm text-gray-500 space-x-4">
-                <span>
-                  <i className="fas fa-users mr-2"></i>멤버 32명
-                </span>
-                <span>
-                  <i className="fas fa-book mr-2"></i>진행중인 책 2권
-                </span>
-                <span>
-                  <i className="fas fa-calendar mr-2"></i>매주 화요일
-                </span>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold">독서 목록</h2>
-                <div className="flex space-x-2">
 
-                  <CustomButton
-                    onClick={() => {
-                      const container = document.querySelector(".books-container") as HTMLElement;
-                      if (container) {
-                        container.scrollLeft -= container.offsetWidth;
-                      }
-                    }}
-                    color="none"
-                    customClassName="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-200"
-                  >
-                    <i className="fas fa-chevron-left"></i>
-                  </CustomButton>
+            <GatheringHeader gatheringId={gatheringId!} />
 
-                  {/* 다음 버튼 */}
-                  <CustomButton
-                    onClick={() => {
-                      const container = document.querySelector(".books-container") as HTMLElement;
-                      if (container) {
-                        container.scrollLeft += container.offsetWidth;
-                      }
-                    }}
-                    color="none"
-                    customClassName="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-200"
-                  >
-                    <i className="fas fa-chevron-right"></i>
-                  </CustomButton>
-                </div>
-              </div>
-              <BookCardList books={books} />
-            </div>
             <div className="p-6 border-t">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold">게시판</h2>
-                <CustomButton onClick={() => navigate(`/gatheringlist/${id}/gatheringboard/create`)} color="black">
+
+                <CustomButton onClick={() => navigate(`/gatheringlist/${gatheringId}/gatheringboard/create`)} color="black">
                   <>
                     <i className="fas fa-pen mr-2"></i> 글쓰기
                   </>
                 </CustomButton>
               </div>
               <div className="overflow-hidden rounded-lg border">
-                <BoardTable posts={posts} />
+                <BoardTable posts={posts} requestUrl="gatheringlist/1/gatheringboard" />
               </div>
 
               <Pagenation totalPages={totalPages} loadPageByPageNum={loadPageByPageNum} />
@@ -148,8 +62,6 @@ const GatheringDetailPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <br />
-      <br />
     </div>
   );
 };

@@ -1,13 +1,13 @@
 import { JSX } from "react";
 
-interface ButtonWrapperProps {
+interface CustomButtonProps {
   onClick: () => void;
-  children: JSX.Element | string;
+  children: React.ReactNode
   color?: "black" | "blue" | "red" | "white" | "none";
   customClassName?: string; // className 추가
 }
 
-const CustomButton: React.FC<ButtonWrapperProps> = ({
+const CustomButton: React.FC<CustomButtonProps> = ({
   onClick,
   children,
   color = "white",

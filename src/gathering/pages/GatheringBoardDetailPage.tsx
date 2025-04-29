@@ -1,148 +1,54 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import BookCardList from "../component/GatheringDetailCards";
-interface Book {
-  id: number;
-  title: string;
-  author: string;
-  status: string;
-  date: string;
-}
-interface Post {
-  id: number;
-  title: string;
-  date: string;
-  author: string;
-  views: number;
-}
+import GatheringHeader from "../component/GatheringHeader";
+import CustomButton from "../../common/component/CustomButton";
+
+
 const GatheringBoardDetailPage: React.FC = () => {
-  const [selectedBook, setSelectedBook] = useState<number>(1);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const { id, postId } = useParams<{ id: string; postId: string }>();
+  const { gatheringId, boardId } = useParams<{ gatheringId: string; boardId: string }>();
   const navigate = useNavigate();
-  const books = [
-    { id: 1, title: "책이름1", author: "저자명", status: "완료", date: "2023-02-24" },
-    { id: 2, title: "책이름2", author: "저자명", status: "읽는중", date: "2023-03-15" },
-    { id: 3, title: "책이름3", author: "저자명", status: "예정", date: "2023-04-01" },
-  ];
-  const posts = [
-    { id: 32, title: "독서모임 후기 1", date: "2023-02-24", author: "이름님", views: 33 },
-    { id: 31, title: "독서모임 리뷰 1", date: "2023-03-04", author: "이름님", views: 1511 },
-    { id: 30, title: "독서모임 후기 1", date: "2023-02-24", author: "박이름", views: 2 },
-    { id: 29, title: "독서모임 후기 1", date: "2023-02-24", author: "김이름", views: 7 },
-    { id: 28, title: "독서모임 후기 1", date: "2023-02-24", author: "박이름", views: 32 },
-    { id: 27, title: "독서모임 후기 1", date: "2023-02-23", author: "박이름", views: 1 },
-    { id: 26, title: "독서모임 후기 1", date: "2023-02-23", author: "황이름", views: 5 },
-    { id: 25, title: "독서 1", date: "2023-02-23", author: "박이름", views: 134 },
-  ];
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "진행중":
-        return "bg-yellow-500";
-      case "모집중":
-        return "bg-green-500";
-      case "완료":
-        return "bg-blue-500";
-      case "예정":
-        return "bg-red-500";
-      case "읽는중":
-        return "bg-green-500";
-      default:
-        return "bg-gray-500";
-    }
-  };
-
-  const handleGoList = (id: number | string) => {
-    navigate(`/gatheringlist/${id}`);
-  };
-
-  const handleGoBoard = (id: number | string, postId: number | string) => {
-    navigate(`/gatheringlist/${id}/gatheringboard/${postId}`);
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="p-6 border-b">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-2xl font-bold">즐거운 독서</h1>
-              <div className="flex space-x-3">
-                <button className="px-4 py-2 text-sm bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200">
-                  <i className="fas fa-share-alt mr-2"></i>공유하기
-                </button>
-                <button className="px-4 py-2 text-sm bg-gray-800 text-white rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-900">
-                  <i className="fas fa-user-plus mr-2"></i>가입하기
-                </button>
-              </div>
-            </div>
-            <div className="flex items-center text-sm text-gray-500 space-x-4">
-              <span>
-                <i className="fas fa-users mr-2"></i>멤버 32명
-              </span>
-              <span>
-                <i className="fas fa-book mr-2"></i>진행중인 책 2권
-              </span>
-              <span>
-                <i className="fas fa-calendar mr-2"></i>매주 화요일
-              </span>
-            </div>
-          </div>
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold">독서 목록</h2>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => {
-                    const container = document.querySelector(".books-container") as HTMLElement;
-                    if (container) {
-                      container.scrollLeft -= container.offsetWidth;
-                    }
-                  }}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200">
-                  <i className="fas fa-chevron-left"></i>
-                </button>
-                <button
-                  onClick={() => {
-                    const container = document.querySelector(".books-container") as HTMLElement;
-                    if (container) {
-                      container.scrollLeft += container.offsetWidth;
-                    }
-                  }}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200">
-                  <i className="fas fa-chevron-right"></i>
-                </button>
-              </div>
-            </div>
-            {/* 모임 리스트 렌더링 */}
-            <BookCardList books={books} />
-          </div>
           <div className="p-6 border-t">
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h1 className="text-2xl font-bold">독서모임 후기 1</h1>
-                <div className="flex items-center space-x-4">
-                  <button className="px-4 py-2 text-sm bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200">
-                    <i className="fas fa-edit mr-2"></i>수정
-                  </button>
-                  <button className="px-4 py-2 text-sm bg-red-500 text-white rounded-button whitespace-nowrap cursor-pointer hover:bg-red-600">
-                    <i className="fas fa-trash-alt mr-2"></i>삭제
-                  </button>
+
+            <GatheringHeader gatheringId={gatheringId!} /> {/* 모임 헤더 불러오기 모임을 아이디를 props로 보냄 */}
+
+            <div className="p-6 border-t">
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h1 className="text-2xl font-bold">독서모임 후기 1</h1>
+                  <div className="flex items-center space-x-4">
+                    <CustomButton onClick={() => alert("모임 게시글 상세 수정 버튼 클릭릭")} color="white">
+                      <>
+                        <i className="fas fa-edit mr-2"></i>수정
+                      </>
+                    </CustomButton>
+                    <CustomButton onClick={() => alert("모임 게시글 상세 수정 버튼 클릭릭")} color="red">
+                      <>
+                        <i className="fas fa-trash-alt mr-2"></i>삭제
+                      </>
+                    </CustomButton>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center text-sm text-gray-500 space-x-4 pb-4 border-b">
-                <span>
-                  <i className="fas fa-user mr-2"></i>이름님
-                </span>
-                <span>
-                  <i className="fas fa-calendar mr-2"></i>2023-02-24
-                </span>
-                <span>
-                  <i className="fas fa-eye mr-2"></i>조회 33
-                </span>
-                <span>
-                  <i className="fas fa-heart mr-2"></i>좋아요 15
-                </span>
+                <div className="flex items-center text-sm text-gray-500 pb-4 border-b">
+                  <span className="mr-4 flex items-center">
+                    <i className="fas fa-user mr-2"></i>이름님
+                  </span>
+                  <span className="mr-4 flex items-center">
+                    <i className="fas fa-eye mr-2"></i>조회 33
+                  </span>
+                  <span className="mr-4 flex items-center">
+                    <i className="fas fa-heart mr-2"></i>좋아요 15
+                  </span>
+
+                  <span className="ml-auto flex items-center">
+                    <i className="fas fa-calendar mr-2"></i>2023-02-24
+                  </span>
+                </div>
+
               </div>
             </div>
 
@@ -189,9 +95,14 @@ const GatheringBoardDetailPage: React.FC = () => {
                       className="w-full h-[90px] p-4 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-gray-200"
                       placeholder="댓글을 작성해주세요."></textarea>
                   </div>
-                  <button className="h-[90px] px-6 bg-gray-800 text-white rounded-lg whitespace-nowrap cursor-pointer hover:bg-gray-900 flex items-center justify-center">
-                    등록
-                  </button>
+                  <CustomButton
+                    onClick={() => alert("댓글 등록 버튼 클릭함")}
+                    color="black"
+                    customClassName="h-[90px] px-6">
+                    <>
+                      등록
+                    </>
+                  </CustomButton>
                 </div>
               </div>
               <div className="space-y-6">
@@ -217,13 +128,21 @@ const GatheringBoardDetailPage: React.FC = () => {
                         <span className="text-sm text-gray-500">{comment.date}</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <button className="text-sm text-gray-500 hover:text-gray-700">
-                          <i className="fas fa-heart mr-1"></i>
-                          {comment.likes}
-                        </button>
-                        <button className="text-sm text-gray-500 hover:text-gray-700">
-                          <i className="fas fa-reply mr-1"></i>답글
-                        </button>
+                        <CustomButton
+                          onClick={() => alert("답글 버튼을 클릭함")}
+                          color="none">
+                          <>
+                            <i className="fas fa-heart mr-1 text-red-500"></i>
+                            {comment.likes}
+                          </>
+                        </CustomButton>
+                        <CustomButton
+                          onClick={() => alert("답글 버튼을 클릭함")}
+                          color="none">
+                          <>
+                            <i className="fas fa-reply mr-1"></i>답글
+                          </>
+                        </CustomButton>
                       </div>
                     </div>
                     <p className="text-gray-800">{comment.content}</p>
@@ -232,22 +151,35 @@ const GatheringBoardDetailPage: React.FC = () => {
               </div>
 
               <div className="flex justify-between items-center mt-6">
-                <button className="px-4 py-2 text-sm bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200">
-                  <i className="fas fa-arrow-left mr-2"></i>이전 글
-                </button>
-                <button className="px-4 py-2 text-sm bg-gray-800 text-white rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-900">
-                  <i className="fas fa-list mr-2"></i>목록
-                </button>
-                <button className="px-4 py-2 text-sm bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200">
-                  다음 글<i className="fas fa-arrow-right ml-2"></i>
-                </button>
+                <CustomButton
+                  onClick={() => alert("이전 게시글글 버튼 클릭함")}
+                  color="white"
+                  customClassName="px-4 py-2">
+                  <>
+                    <i className="fas fa-arrow-left mr-2"></i>이전 글
+                  </>
+                </CustomButton>
+                <CustomButton
+                  onClick={() => alert("다음음 게시글 버튼 클릭함")}
+                  color="black"
+                  customClassName="px-4 py-2">
+                  <>
+                    <i className="fas fa-list mr-2"></i>목록
+                  </>
+                </CustomButton>
+                <CustomButton
+                  onClick={() => alert("다음음 게시글 버튼 클릭함")}
+                  color="white"
+                  customClassName="px-4 py-2">
+                  <>
+                    다음 글<i className="fas fa-arrow-right ml-2"></i>
+                  </>
+                </CustomButton>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <br />
-      <br />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React from "react";
 import DatePicker from "react-datepicker";
 import { ko } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
+import CustomButton from "../../common/component/CustomButton";
 
 interface GatheringInputPropsBase {
     label?: string;
@@ -59,21 +60,23 @@ const GatheringInput: React.FC<GatheringInputProps> = (props) => {
                     />
                 )}
                 {suffixButton && (
-                    <button
+                    <CustomButton
                         onClick={suffixButton.onClick}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2
-                         bg-gray-800 text-white text-xs px-3 py-1 rounded whitespace-nowrap">
+                        color="black"
+                        customClassName="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs px-3 py-1 whitespace-nowrap"
+                    >
                         {suffixButton.label}
-                    </button>
+                    </CustomButton>
                 )}
                 {!suffixButton && suffixIconButton && (
-                    <button
+                    <CustomButton
                         onClick={suffixIconButton.onClick}
-                        className={`absolute right-3 top-1/2 transform -translate-y-1/2 
-                          text-gray-400 ${suffixIconButton.className || ""}`}
+                        color="none"
+                        customClassName={`absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400  ${suffixIconButton.className || ""}`}
                     >
                         {suffixIconButton.icon}
-                    </button>
+                    </CustomButton>
+
                 )}
             </div>
         </div>
