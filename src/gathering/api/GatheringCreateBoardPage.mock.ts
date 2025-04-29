@@ -2,12 +2,13 @@
 import axios from 'axios';
 import { PostData, YoutubeVideo } from '../type/GatheringCreateBoardPage.type';
 
-const API_BASE_URL = "http://localhost:8080/api/gatherings";
+const apiKey = import.meta.env.API_KEY;
+const youtubeKey = import.meta.env.VITE_YOUTUBE_API_KEY;
 
 const RESULTS_PER_PAGE = 5;
 
 export const createPost = async (postData: PostData) => {
-    const response = await axios.post('/api/posts', postData);
+    const response = await axios.post(apiKey + "/api/gatherings", postData);
     return response.data;
 };
 
@@ -20,7 +21,7 @@ export const searchYoutubeVideos = async (query: string, pageToken: string | num
             part: 'snippet',
             q: query,
             type: 'video',
-            key: import.meta.env.VITE_YOUTUBE_API_KEY,
+            key: youtubeKey,
             maxResults: RESULTS_PER_PAGE,
             pageToken: pageToken ? String(pageToken) : undefined,
         },
