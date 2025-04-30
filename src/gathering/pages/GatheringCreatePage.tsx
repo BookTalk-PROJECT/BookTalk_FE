@@ -340,6 +340,12 @@ const GatheringCreatePage: React.FC = () => {
                         placeholder="질문 사항을 입력하세요"
                         value={newQuestion}
                         onChange={(e) => setNewQuestion(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleAddQuestion();
+                          }
+                        }}
                         suffixIconButton={{
                           icon: <i className="fas fa-plus"></i>,
                           onClick: handleAddQuestion,

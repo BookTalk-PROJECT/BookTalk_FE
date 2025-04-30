@@ -16,6 +16,8 @@ interface GatheringInputPropsBase {
         className?: string;
     };
     className?: string;
+
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 type GatheringInputProps =
@@ -71,7 +73,6 @@ const GatheringInput: React.FC<GatheringInputProps> = (props) => {
                 {!suffixButton && suffixIconButton && (
                     <CustomButton
                         onClick={suffixIconButton.onClick}
-                        color="none"
                         customClassName={`absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400  ${suffixIconButton.className || ""}`}
                     >
                         {suffixIconButton.icon}
