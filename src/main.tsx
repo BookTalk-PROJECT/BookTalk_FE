@@ -52,8 +52,8 @@ const AppContent = () => {
                 {/* 모임 관련 */}
                 <Route index element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
                 <Route path="create" element={<GatheringCreatePage />} /> {/* 이성종 모임 상세 */}
-                <Route path=":id" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
-                <Route path=":id/gatheringboard">
+                <Route path=":gatheringId" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
+                <Route path=":gatheringId/gatheringboard">
                   {" "}
                   {/* 모임 게시판 관련 */}
                   <Route path="create" element={<GatheringCreateBoardPage />} />  {/* 이성종 모임 게시판 글쓰기 */}

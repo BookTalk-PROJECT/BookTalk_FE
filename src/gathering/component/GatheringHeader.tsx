@@ -5,7 +5,7 @@ interface Book {
     id: number;
     title: string;
     author: string;
-    status: string;
+    status: 0 | 1;
     date: string;
 }
 
@@ -14,9 +14,9 @@ interface GatheringId {
 }
 
 const books = [
-    { id: 1, title: "책이름1", author: "저자명", status: "완료", date: "2023-02-24" },
-    { id: 2, title: "책이름2", author: "저자명", status: "읽는중", date: "2023-03-15" },
-    { id: 3, title: "책이름3", author: "저자명", status: "예정", date: "2023-04-01" },
+    { id: 1, title: "책이름1", author: "저자명", status: 1, date: "2023-02-24" },
+    { id: 2, title: "책이름2", author: "저자명", status: 0, date: "2023-03-15" },
+    { id: 3, title: "책이름3", author: "저자명", status: 1, date: "2023-04-01" },
 ];
 
 // 나중에 gatheringId(모임만의 PK평문)을 이용해서 API요청 보낼것
@@ -109,16 +109,12 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
                                         <div className="flex justify-between items-center mb-2">
                                             <h3 className="font-medium text-base text-gray-900">{book.title}</h3>
                                             <span
-                                                className={`px-2 py-1 text-xs rounded ${book.status === "예정"
-                                                    ? "bg-green-500 text-white"
-                                                    : book.status === "읽는중"
-                                                        ? "bg-yellow-500 text-white"
-                                                        : book.status === "완료"
-                                                            ? "bg-blue-500 text-white"
-                                                            : "bg-gray-400 text-white"
+                                                className={`px-2 py-1 text-xs rounded ${book.status === 1
+                                                    ? "bg-blue-500 text-white"
+                                                    : "bg-yellow-500 text-white"
                                                     }`}
                                             >
-                                                {book.status}
+                                                {book.status === 0 ? "진행중" : "다 읽음"}
                                             </span>
                                         </div>
 

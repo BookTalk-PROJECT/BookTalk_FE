@@ -54,7 +54,7 @@ const GatheringDetailPage: React.FC = () => {
                 </CustomButton>
               </div>
               <div className="overflow-hidden rounded-lg border">
-                <BoardTable posts={posts} requestUrl="gatheringlist/1/gatheringboard" />
+                <BoardTable posts={posts} requestUrl={`gatheringlist/${gatheringId}/gatheringboard`} />
               </div>
 
               <Pagenation totalPages={totalPages} loadPageByPageNum={loadPageByPageNum} />
