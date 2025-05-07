@@ -1,7 +1,8 @@
+import { GatheringStatus } from "../../common/type/Status";
 import { GatheringPost } from "../type/GatheringListPage.types";
 
-export const mockGatheringPosts: GatheringPost[] = Array.from({ length: 100 }, (_, i) => {
-  const statuses = ["모집중", "진행중", "완료"] as const;
+export const mockGatheringPosts: GatheringPost[] = Array.from({ length: 100 }, (_, i) => { // 임시 더미데이터
+  const statuses = [GatheringStatus.intended, GatheringStatus.progress, GatheringStatus.end] as const;
   const status = statuses[Math.floor(Math.random() * statuses.length)];
   return {
     id: i + 1,

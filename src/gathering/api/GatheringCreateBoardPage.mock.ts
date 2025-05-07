@@ -3,7 +3,8 @@ import axios from 'axios';
 import { PostData, YoutubeVideo } from '../type/GatheringCreateBoardPage.type';
 
 //공통 url
-const apiKey = import.meta.env.API_KEY;
+
+const apiKey = import.meta.env.BASE_URL;
 const youtubeKey = import.meta.env.VITE_YOUTUBE_API_KEY;
 
 const RESULTS_PER_PAGE = 5;

@@ -29,7 +29,7 @@ const GatheringCreatePage: React.FC = () => {
   const [books, setBooks] = useState<Books[]>(mockBooks); // 목데이터로 초기화 가능
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchResult[]>(mockSearchResults); // ✨
+  const [searchResults, setSearchResults] = useState<SearchResult[]>(mockSearchResults);
 
 
   // 모임 기본 정보
