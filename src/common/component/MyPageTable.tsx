@@ -1,17 +1,5 @@
 import React, { useState } from "react";
-
-interface MyPageTableProps<T> {
-  posts: T[];
-  filterOptions: string[];
-  selectedFilter: string;
-  onChangeFilter: (val: string) => void;
-  searchTerm: string;
-  onSearchTermChange: (val: string) => void;
-  onSearchClick: () => void;
-  renderHeader: () => React.ReactNode;
-  renderRow: (row: T) => React.ReactNode;
-  colCount: number;
-}
+import { MyPageTableProps } from "../type/MyPageBoardTable";
 
 const MyPageTable = <T,>({
                            posts,
@@ -29,7 +17,7 @@ const MyPageTable = <T,>({
 
   return (
       <div>
-        <div className="flex justify-end items-center gap-2 mb-6">
+        <div className="flex justify-end items-center gap-2 mt-6 mb-6">
           <div className="relative">
             <button
                 onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
@@ -80,7 +68,6 @@ const MyPageTable = <T,>({
           <div className={`grid grid-cols-${colCount} bg-gray-50 py-3 px-4 border-b border-gray-200`}>
             {renderHeader()}
           </div>
-
           {posts.map((post) => renderRow(post))}
         </div>
       </div>

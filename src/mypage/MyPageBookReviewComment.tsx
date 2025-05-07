@@ -1,17 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
 import MyPageSideBar from "../common/component/MyPageSideBar";
-
-import { BookCommentType } from "../common/type/MyPageBoardTable";
+import { MyPageBoardType, MyPageBookCommentType } from "../common/type/MyPageBoardTable";
 import MyPageTable from "../common/component/MyPageTable";
 import MyPageBreadCrumb from "../common/component/MyPageBreadCrumb";
 import Pagenation from "../common/component/Pagination";
 
 const MyPageBookReviewComment: React.FC = () => {
-  const [comments, setComments] = useState<BookCommentType[]>([]);
+  const [comments, setComments] = useState<MyPageBookCommentType[]>([]);
   const [activeTab, setActiveTab] = useState("커뮤니티");
   const [searchType, setSearchType] = useState("내용");
   const [searchText, setSearchText] = useState("");
-  const [sortField, setSortField] = useState<keyof BookCommentType>("date");
+  const [sortField, setSortField] = useState<keyof MyPageBookCommentType>("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -28,7 +27,7 @@ const MyPageBookReviewComment: React.FC = () => {
       return date.toISOString().split("T")[0];
     };
 
-    const data: BookCommentType[] = Array.from({ length: 50 }, (_, i) => ({
+    const data: MyPageBookCommentType[] = Array.from({ length: 50 }, (_, i) => ({
       id: 1000 - i,
       title: `${titles[i % titles.length]} ${i + 1}`,
       author: authors[i % authors.length],
@@ -40,7 +39,16 @@ const MyPageBookReviewComment: React.FC = () => {
     setComments(data);
   }, []);
 
-  const handleSort = (field: keyof BookCommentType) => {
+  const filterOption: { label: string; key: keyof MyPageBookCommentType }[] = [
+    { label: "번호", key: "id" },
+    { label: "글 제목", key: "title" },
+    { label: "작성자", key: "author" },
+    { label: "내용", key: "content" },
+    { label: "작성일", key: "date" },
+    { label: "관리", key: "date" }
+  ];
+
+  const handleSort = (field: keyof MyPageBookCommentType) => {
     if (sortField === field) {
       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
@@ -56,10 +64,7 @@ const MyPageBookReviewComment: React.FC = () => {
     }
     if (searchText) {
       data = data.filter((c) => {
-        const target =
-          searchType === "작성자" ? c.author :
-            searchType === "글 제목" ? c.title :
-              c.content;
+        const target = searchType === "작성자" ? c.author : searchType === "글 제목" ? c.title : c.content;
         return target.includes(searchText);
       });
     }
@@ -71,30 +76,34 @@ const MyPageBookReviewComment: React.FC = () => {
           ? new Date(aVal).getTime() - new Date(bVal).getTime()
           : new Date(bVal).getTime() - new Date(aVal).getTime();
       }
-      return sortOrder === "asc"
-        ? String(aVal).localeCompare(String(bVal))
-        : String(bVal).localeCompare(String(aVal));
+      return sortOrder === "asc" ? String(aVal).localeCompare(String(bVal)) : String(bVal).localeCompare(String(aVal));
     });
     return data;
   }, [comments, activeTab, searchType, searchText, sortField, sortOrder]);
 
-  const paginatedComments = filtered.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedComments = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const renderHeader = () => (
     <>
-      <div onClick={() => handleSort("id")}>번호</div>
-      <div onClick={() => handleSort("title")}>글 제목</div>
-      <div onClick={() => handleSort("author")}>작성자</div>
-      <div onClick={() => handleSort("content")}>내용</div>
-      <div onClick={() => handleSort("date")}>작성일</div>
-      <div onClick={() => handleSort("date")}>관리</div>
+      {filterOption.map(({ label, key }) => (
+        <div key={key} onClick={() => handleSort(key)}>
+           <span className="inline-block items-center gap-2 mr-2">
+                       {sortField === key ? (
+                         sortOrder === "asc" ? (
+                           <i className="fas fa-sort-up"></i>
+                         ) : (
+                           <i className="fas fa-sort-down"></i>
+                         )
+                       ) : (
+                         <i className="fas fa-sort text-gray-300"></i>
+                       )}
+                            </span>
+          {label}</div>
+      ))}
     </>
   );
 
-  const renderRow = (comment: BookCommentType) => (
+  const renderRow = (comment: MyPageBookCommentType) => (
     <div key={comment.id} className="grid grid-cols-6 py-4 px-4 border-b border-gray-200 hover:bg-gray-50">
       <div>{comment.id}</div>
       <div>{comment.title}</div>
@@ -109,17 +118,16 @@ const MyPageBookReviewComment: React.FC = () => {
   );
 
   return (
-
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       {/* 사이드바 */}
-      <div className="fixed top-6 left-0 w-60 h-full bg-blue-600 text-white p-6 space-y-8">
-        <MyPageSideBar />
-      </div>
+      <MyPageSideBar />
       {/* 메인 컨텐츠 */}
       <div className="flex-1 ml-60 bg-white rounded-lg shadow-md">
         <main className="flex-1 p-6">
           <div className="max-w-5xl mx-auto">
-            <MyPageBreadCrumb major = "북리뷰" sub = "댓글 관리"/>
+            {/* 브레드크럼 */}
+            <MyPageBreadCrumb major="북리뷰" sub="댓글 관리" />
+            {/* 테이블 */}
             <MyPageTable
               posts={paginatedComments}
               filterOptions={["내용", "작성자", "글 제목"]}
@@ -133,7 +141,7 @@ const MyPageBookReviewComment: React.FC = () => {
               colCount={colCount}
             />
             {/* 페이지네이션 */}
-            <Pagenation totalPages={10} loadPageByPageNum={() => {}}></Pagenation>
+            <Pagenation totalPages={10} loadPageByPageNum={() => {}}/>
           </div>
         </main>
       </div>
