@@ -88,7 +88,6 @@ const GatheringBoardDetailPage: React.FC = () => {
   };
 
 
-
   // 댓글 등록 로직 (간결한 구조)
   const handleReplySubmit = async () => {
     if (!gatheringId || !postId) {
@@ -103,22 +102,32 @@ const GatheringBoardDetailPage: React.FC = () => {
       return;
     }
 
+    // UI 필드 초기화 (즉시 반영)
+    if (replyTarget === null) {
+      setParentCommentContent("");
+    } else {
+      setReReplyContent("");
+    }
+
     try {
+      // 부모 댓글을 명시적으로 등록할 경우 replyTarget을 null로 강제
+      const pReplyCode = replyTarget === null ? null : replyTarget;
+
       // 댓글/대댓글 등록 API 호출
-      await createReply(gatheringId, postId, content, replyTarget ?? null);
+      await createReply(
+        gatheringId as string,
+        postId as string,
+        content,
+        pReplyCode
+      );
 
-      // UI 필드 초기화
-      if (replyTarget === null) {
-        setParentCommentContent("");
-      } else {
-        setReReplyContent("");
-        setReplyTarget(null);
-      }
-
-      // 서버에서 데이터 다시 로드
+      // 서버에서 데이터 다시 로드 (새로고침)
       await loadRepliesData();
     } catch (error) {
-      console.error(replyTarget === null ? "댓글 등록 중 오류 발생:" : "대댓글 등록 중 오류 발생:", error);
+      console.error("댓글 등록 중 오류 발생:", error);
+    } finally {
+      // 항상 replyTarget 초기화
+      setReplyTarget(null);
     }
   };
 
@@ -293,7 +302,7 @@ const GatheringBoardDetailPage: React.FC = () => {
                           className="w-full h-[60px] p-2 border rounded-lg resize-none focus:outline-none"
                           placeholder="답글을 작성해주세요."
                           value={reReplyContent}
-                          onChange={(e) => setReReplyContent(e.target.value)} // ✅ 상태값 정상 반영
+                          onChange={(e) => setReReplyContent(e.target.value)} // 상태값 정상 반영
                         ></textarea>
                         <CustomButton onClick={handleReplySubmit} color="black" customClassName="h-[60px] px-6">
                           등록
