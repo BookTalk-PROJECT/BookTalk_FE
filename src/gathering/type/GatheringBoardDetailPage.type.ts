@@ -27,4 +27,3 @@ export interface Reply {
     date: string;               // 작성일
     likes: number;              // 좋아요
 }
-

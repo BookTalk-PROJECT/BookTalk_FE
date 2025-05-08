@@ -1,26 +1,44 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import CustomButton from "../../common/component/CustomButton"; // 필요
-
-interface Book {
-    id: number;
-    title: string;
-    author: string;
-    status: 0 | 1;
-    date: string;
-}
+import { examplebooks, exampleBookInfo, fetchGatheringBooks, fetchGatheringInfo } from "../api/GatheringHeader.mock";
+import { bookInfo, Books } from "../type/GatheringHeader.types";
+import LoadingBar from "../../common/component/Loading";
 
 interface GatheringId {
     gatheringId: string;
 }
 
-const books = [
-    { id: 1, title: "책이름1", author: "저자명", status: 1, date: "2023-02-24" },
-    { id: 2, title: "책이름2", author: "저자명", status: 0, date: "2023-03-15" },
-    { id: 3, title: "책이름3", author: "저자명", status: 1, date: "2023-04-01" },
-];
-
 // 나중에 gatheringId(모임만의 PK평문)을 이용해서 API요청 보낼것
 const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
+    const [books, setBooks] = useState<Books[]>([]);
+    const [gatheringBookInfo, setGatheringBookInfo] = useState<bookInfo | null>(null);
+
+    // 데이터 로드 함수
+    const loadGatheringData = async () => {
+        if (!gatheringId) {
+            console.error("gatheringId가 유효하지 않습니다:", gatheringId);
+            return;
+        }
+
+        try {
+            // API 요청
+            const booksData = await fetchGatheringBooks(gatheringId);
+            const infoData = await fetchGatheringInfo(gatheringId);
+            setBooks(booksData);
+            setGatheringBookInfo(infoData);
+        } catch (error) {
+            console.error("API 요청 오류:", error);
+            // API 요청 실패 시 더미 데이터 사용
+            setBooks(examplebooks);
+            setGatheringBookInfo(exampleBookInfo);
+        } finally {
+        }
+    };
+
+    // 컴포넌트가 마운트될 때 데이터 로드
+    useEffect(() => {
+        loadGatheringData();
+    }, [gatheringId]);
 
     return (
         <div>
@@ -43,13 +61,13 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
                 </div>
                 <div className="flex items-center text-sm text-gray-500 space-x-4">
                     <span>
-                        <i className="fas fa-users mr-2"></i>멤버 32명
+                        <i className="fas fa-users mr-2"></i>멤버 : {gatheringBookInfo?.totalMembers}
                     </span>
                     <span>
-                        <i className="fas fa-book mr-2"></i>진행중인 책 2권
+                        <i className="fas fa-book mr-2"></i>다읽은 책 : {gatheringBookInfo?.completeBooks}
                     </span>
                     <span>
-                        <i className="fas fa-calendar mr-2"></i>매주 화요일
+                        <i className="fas fa-calendar mr-2"></i>매주 {gatheringBookInfo?.weeklyDay}
                     </span>
                 </div>
             </div>
@@ -59,30 +77,35 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-lg font-bold">독서 목록</h2>
                     <div className="flex space-x-2">
-                        <CustomButton
-                            onClick={() => {
-                                const container = document.querySelector(".books-container") as HTMLElement;
-                                if (container) {
-                                    container.scrollLeft -= container.offsetWidth;
-                                }
-                            }}
-                            color="none"
-                            customClassName="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-200"
-                        >
-                            <i className="fas fa-chevron-left"></i>
-                        </CustomButton>
-                        <CustomButton
-                            onClick={() => {
-                                const container = document.querySelector(".books-container") as HTMLElement;
-                                if (container) {
-                                    container.scrollLeft += container.offsetWidth;
-                                }
-                            }}
-                            color="none"
-                            customClassName="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-200"
-                        >
-                            <i className="fas fa-chevron-right"></i>
-                        </CustomButton>
+                        {/* start arrowButton */}
+                        <div className="flex space-x-2">
+                            {/* 왼쪽으로 스크롤 버튼 */}
+                            <button
+                                onClick={() => {
+                                    const container = document.querySelector(".books-container") as HTMLElement;
+                                    if (container) {
+                                        container.scrollLeft -= container.offsetWidth;
+                                    }
+                                }}
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 hover:scale-110 transition-transform duration-200 shadow-sm hover:shadow-md"
+                            >
+                                <i className="fas fa-chevron-left transition-transform duration-200"></i>
+                            </button>
+
+                            {/* 오른쪽으로 스크롤 버튼 */}
+                            <button
+                                onClick={() => {
+                                    const container = document.querySelector(".books-container") as HTMLElement;
+                                    if (container) {
+                                        container.scrollLeft += container.offsetWidth;
+                                    }
+                                }}
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 hover:scale-110 transition-transform duration-200 shadow-sm hover:shadow-md"
+                            >
+                                <i className="fas fa-chevron-right transition-transform duration-200"></i>
+                            </button>
+                        </div>
+                        {/* end arrowButton */}
                     </div>
                 </div>
 
@@ -92,7 +115,7 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
                     style={{ scrollbarWidth: "thin", msOverflowStyle: "none" }}
                 >
                     <div className="inline-flex gap-6 min-w-max pb-4">
-                        {[...books, ...books, ...books].map((book, index) => (
+                        {[...books, ...books].map((book, index) => (
                             <div key={`${book.id}-${index}`} className="w-[300px] cursor-pointer group">
                                 <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
                                     {/* 이미지 영역 */}
