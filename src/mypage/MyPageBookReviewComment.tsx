@@ -111,8 +111,9 @@ const MyPageBookReviewComment: React.FC = () => {
       <div>{comment.content}</div>
       <div>{comment.date}</div>
       <div>
-        <button className="text-green-600 hover:underline">수정</button>
-        <button className="text-red-500 hover:underline">삭제</button>
+        <button className="text-green-500 hover:text-green-700 mr-2">수정</button>
+        <span className="text-gray-500">┆</span>
+        <button className="text-red-500 hover:text-red-700 ml-2">삭제</button>
       </div>
     </div>
   );

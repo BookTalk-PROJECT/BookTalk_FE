@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const MyPageSideBar = () => {
   return (
     <div className="fixed top-6 left-0 w-60 h-full bg-blue-600 text-white p-6 space-y-8">
-      <aside className="w-60 bg-blue-600 text-white flex flex-col p-6  sticky top-0 self-start h-screen">
+      <aside className="w-60 text-white flex flex-col p-6  sticky top-0 self-start h-screen">
         <div className="text-2xl font-bold text-center pb-9">My Page</div>
         <div className="pb-4">
           <h3 className="text-lg font-semibold mb-2">북리뷰</h3>

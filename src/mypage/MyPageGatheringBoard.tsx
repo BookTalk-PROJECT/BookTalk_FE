@@ -1,178 +1,149 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import MyPageSideBar from "../common/component/MyPageSideBar";
 import Pagenation from "../common/component/Pagination";
-
-interface Post {
-  id: number;
-  title: string;
-  category: string;
-  date: string;
-  status: string;
-}
+import MyPageTable from "../common/component/MyPageTable";
+import {
+  gatheringBoardPostMockData,
+  MyPageGatheringBoardType,
+} from "../common/type/MyPageBoardTable";
+import MyPageBreadCrumb from "../common/component/MyPageBreadCrumb";
 
 const MyPageGatheringBoard: React.FC = () => {
-  const [selectedFilter, setSelectedFilter] = useState<string>("제목");
-  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState<boolean>(false);
-  const filterOptions = ["제목", "게시글 번호", "분류", "작성 일시"];
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [sortField, setSortField] = useState<string>("date");
+  {/* 선택된 검색 필터*/}
+  const [selectedFilter, setSelectedFilter] = useState("제목");
+  {/* 검색어 */}
+  const [searchTerm, setSearchTerm] = useState("");
+  {/* 정렬 기준 컬럼 */}
+  const [sortField, setSortField] = useState<keyof MyPageGatheringBoardType>("date");
+  {/* 오름차순, 내림차순 */}
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-  const fetchPosts = async () => {
-    try {
-      const mockPosts = [
-        { id: 167, title: "하하웃어", category: "IT", date: "2025-03-27", status: "수정" },
-        { id: 35, title: "반갑습니다", category: "예술", date: "2025-03-26", status: "수정" },
-        { id: 7, title: "그런일은", category: "소설", date: "2025-03-24", status: "수정" },
-      ];
-      const sortedPosts = mockPosts.sort((a, b) => {
-        if (sortField === "id") {
-          return sortOrder === "asc" ? a.id - b.id : b.id - a.id;
-        } else if (sortField === "title") {
-          return sortOrder === "asc" ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title);
-        } else if (sortField === "category") {
-          return sortOrder === "asc" ? a.category.localeCompare(b.category) : b.category.localeCompare(a.category);
-        } else {
-          return sortOrder === "asc"
-            ? new Date(a.date).getTime() - new Date(b.date).getTime()
-            : new Date(b.date).getTime() - new Date(a.date).getTime();
+  const filterOption: { label: string; key: keyof MyPageGatheringBoardType }[] = [
+    { label: "게시물 번호", key: "id" },
+    { label: "모임명", key:"gathering"},
+    { label: "제목", key: "title" },
+    { label: "분류", key: "category" },
+    { label: "날짜", key: "date" },
+  ];
+  {/* 컬럼 갯수 */}
+  const colCount = 6;
+
+  {/* 테이블 행 데이터 정렬 후 출력 값 */}
+  const filteredAndSortedPosts = useMemo(() => {
+    // 1. 검색 필터 적용
+    const filtered = gatheringBoardPostMockData.filter((post) => {
+      const targetValue = (() => {
+        switch (selectedFilter) {
+          case "제목":
+            return post.title;
+          case "게시글 번호":
+            return String(post.id); // 숫자는 문자열로 변환해서 비교
+          case "분류":
+            return post.category;
+          case "작성 일시":
+            return post.date;
+          default:
+            return "";
         }
-      });
-      setPosts(sortedPosts);
-    } catch (error) {
-      console.error("Failed to fetch posts:", error);
-    }
-  };
+      })();
 
-  useEffect(() => {
-    fetchPosts();
-  }, [searchTerm, sortField, sortOrder]);
+      return targetValue.includes(searchTerm);
+    });
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
+    // 2. 정렬 적용
+    return [...filtered].sort((a, b) => {
+      const aValue = a[sortField];
+      const bValue = b[sortField];
 
-  const handleSort = (field: string) => {
+      if (sortField === "date") {
+        return sortOrder === "asc"
+          ? new Date(aValue).getTime() - new Date(bValue).getTime()
+          : new Date(bValue).getTime() - new Date(aValue).getTime();
+      }
+
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
+      }
+
+      return sortOrder === "asc"
+        ? String(aValue).localeCompare(String(bValue))
+        : String(bValue).localeCompare(String(aValue));
+    });
+  }, [sortField, sortOrder, searchTerm, selectedFilter]);
+
+  {/* 정렬 필드 설정 함수 */}
+  const handleSort = (field: keyof MyPageGatheringBoardType) => {
     if (sortField === field) {
+      //이미 해당 필드일 시 정렬만 해줌
       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
+      //현재 정렬 필드와 다른 필드일시 셋 해주고 오름차순
       setSortField(field);
       setSortOrder("asc");
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      {/* 사이드바 */}
-      <div className="fixed top-6 left-0 w-60 h-full bg-blue-600 text-white p-6 space-y-8">
-        <MyPageSideBar />
+  const renderHeader = () => (
+    <>
+      {filterOption.map(({ label, key }) => (
+        <div key={key} onClick={() => handleSort(key)}>
+           <span className="inline-block items-center gap-2 mr-2">
+                       {sortField === key ? (
+                         sortOrder === "asc" ? (
+                           <i className="fas fa-sort-up"></i>
+                         ) : (
+                           <i className="fas fa-sort-down"></i>
+                         )
+                       ) : (
+                         <i className="fas fa-sort text-gray-300"></i>
+                       )}
+                            </span>
+          {label}</div>
+      ))}
+      <div key="manage" onClick={() => handleSort("manage")}>관리</div>
+    </>
+  );
+
+  const renderRow = (post: MyPageGatheringBoardType) => (
+    <div key={post.id} className="grid grid-cols-6 py-4 px-4 border-b border-gray-200 hover:bg-gray-50">
+      <div>{post.id}</div>
+      <div>{post.gathering}</div>
+      <div>{post.title}</div>
+      <div>{post.category}</div>
+      <div>{post.date}</div>
+      <div>
+        <button className="text-green-500 hover:text-green-700 mr-2">수정</button>
+        <span className="text-gray-500">┆</span>
+        <button className="text-red-500 hover:text-red-700 ml-2">삭제</button>
       </div>
+    </div>
+  );
+
+  return (
+    <div className="flex min-h-screen bg-gray-50 py-1">
+      {/* 사이드바 */}
+      <MyPageSideBar />
       {/* 메인 컨텐츠 */}
-      <div className="flex-1 ml-60 bg-white rounded-lg shadow-md">
+      <div className="ml-60 flex-1 flex flex-col bg-white rounded-lg shadow-md">
         <main className="flex-1 p-6">
           <div className="max-w-5xl mx-auto">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold mb-2">모임 {">"} 게시글 관리</h2>
-            </div>
-
-            {/* 검색 및 필터 */}
-            <div className="flex justify-end items-center gap-2 mb-6">
-              <div className="relative">
-                <button
-                  onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
-                  className="bg-white px-4 py-2 rounded-md shadow-sm flex items-center gap-2 !rounded-button whitespace-nowrap border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-gray-100">
-                  <span>{selectedFilter}</span>
-                  <i className={`fas fa-chevron-${isFilterDropdownOpen ? "up" : "down"} text-gray-500`}></i>{" "}
-                  {/* 화살표 아이콘 추가 */}
-                </button>
-                {isFilterDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-1 w-40 bg-white rounded-md shadow-lg z-50">
-                    <ul className="py-1">
-                      {filterOptions.map((option) => (
-                        <li
-                          key={option}
-                          className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                          onClick={() => {
-                            setSelectedFilter(option);
-                            setIsFilterDropdownOpen(false);
-                          }}>
-                          {option}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={handleSearch}
-                  placeholder="검색어를 입력하세요"
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-64 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white" // 여기 추가
-                />
-                <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-              </div>
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                onClick={() => fetchPosts()}>
-                검색
-              </button>
-            </div>
-
-            {/* 게시글 목록 */}
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="grid grid-cols-[100px_1fr_150px_150px_100px] bg-gray-50 py-3 px-4 border-b border-gray-200">
-                <div
-                  className="text-sm font-medium text-gray-500 cursor-pointer flex items-center gap-1"
-                  onClick={() => handleSort("id")}>
-                  게시글 번호
-                  {sortField === "id" && <i className={`fas fa-sort-${sortOrder === "asc" ? "up" : "down"}`}></i>}
-                </div>
-                <div
-                  className="text-sm font-medium text-gray-500 cursor-pointer flex items-center gap-1"
-                  onClick={() => handleSort("title")}>
-                  제목
-                  {sortField === "title" && <i className={`fas fa-sort-${sortOrder === "asc" ? "up" : "down"}`}></i>}
-                </div>
-                <div
-                  className="text-sm font-medium text-gray-500 cursor-pointer flex items-center gap-1"
-                  onClick={() => handleSort("category")}>
-                  분류
-                  {sortField === "category" && <i className={`fas fa-sort-${sortOrder === "asc" ? "up" : "down"}`}></i>}
-                </div>
-                <div
-                  className="text-sm font-medium text-gray-500 cursor-pointer flex items-center gap-1"
-                  onClick={() => handleSort("date")}>
-                  작성 일시
-                  {sortField === "date" && <i className={`fas fa-sort-${sortOrder === "asc" ? "up" : "down"}`}></i>}
-                </div>
-                <div className="text-sm font-medium text-gray-500 text-center">관리</div>
-              </div>
-
-              {posts.map((post) => (
-                <div
-                  key={post.id}
-                  className="grid grid-cols-[100px_1fr_150px_150px_100px] py-4 px-4 border-b border-gray-200 hover:bg-gray-50">
-                  <div className="text-sm text-gray-900">{post.id}</div>
-                  <div className="text-sm text-gray-900">{post.title}</div>
-                  <div className="text-sm text-gray-500">{post.category}</div>
-                  <div className="text-sm text-gray-500">{post.date}</div>
-                  <div className="flex justify-center gap-2">
-                    <button className="text-sm text-green-500 hover:text-green-700 !rounded-button whitespace-nowrap">
-                      수정
-                    </button>
-                    <button className="text-sm text-red-500 hover:text-red-700 !rounded-button whitespace-nowrap">
-                      삭제
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {/* 브레드크럼 */}
+            <MyPageBreadCrumb major="모임" sub="게시글 관리" />
+            {/* 테이블 */}
+            <MyPageTable
+              posts={filteredAndSortedPosts}
+              filterOptions={["제목", "게시글 번호", "분류", "작성 일시"]}
+              selectedFilter={selectedFilter}
+              onChangeFilter={setSelectedFilter}
+              searchTerm={searchTerm}
+              onSearchTermChange={setSearchTerm}
+              onSearchClick={() => console.log("검색 실행:", selectedFilter, searchTerm)}
+              renderHeader={renderHeader}
+              renderRow={renderRow}
+              colCount={colCount}
+            />
             {/* 페이지네이션 */}
-            <Pagenation totalPages={10} loadPageByPageNum={() => {}}></Pagenation>
+            <Pagenation totalPages={10} loadPageByPageNum={() => {}}/>
           </div>
         </main>
       </div>

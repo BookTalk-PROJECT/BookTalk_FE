@@ -104,10 +104,10 @@ const AdminCategory: React.FC = () => {
         },
       ],
     };
-    setCategories([...categories, newCategory]);
+    setCategories([newCategory, ...categories]);
     setNextId(nextId + 2);
-  };
-  const addSubCategory = (categoryId: number) => {
+  };e
+  const addSubCategory = (categoryId: numbr) => {
     setCategories(
       categories.map((category) => {
         if (category.id === categoryId) {
@@ -224,7 +224,7 @@ const AdminCategory: React.FC = () => {
               추가
             </button>
           </div>
-          <div className="grid grid-cols-4 gap-4 bg-gray-100 p-3 rounded">
+          <div className="grid grid-cols-5 gap-4 bg-gray-100 p-3 rounded font-semibold text-sm">
             <div className="flex items-center">
               <span className="font-medium">분류코드</span>
               <button onClick={() => handleSort("code")} className="ml-2">
@@ -254,10 +254,14 @@ const AdminCategory: React.FC = () => {
         <div className="p-6">
           {currentItems.map((category) => (
             <div key={category.id} className="mb-4">
-              <div className="flex items-center space-x-4 bg-gray-50 p-4 rounded">
-                <button onClick={() => toggleExpand(category.id)} className="text-gray-500">
-                  <i className={`fas fa-chevron-${category.isExpanded ? "down" : "right"}`}></i>
-                </button>
+              <div className="grid grid-cols-5 gap-4 items-center bg-white p-4 border-b rounded">
+                {/* [1] 분류코드 + 확장 버튼 */}
+                <div className="flex items-center space-x-2">
+                  <button onClick={() => toggleExpand(category.id)} className="text-gray-500">
+                    <i className={`fas fa-chevron-${category.isExpanded ? "down" : "right"}`} />
+                  </button>
+                  <span>{category.code}</span>
+                </div>
                 {category.isEditing ? (
                   <input
                     type="text"
@@ -270,6 +274,9 @@ const AdminCategory: React.FC = () => {
                 ) : (
                   <span className="flex-1">{category.name}</span>
                 )}
+
+                {/* 3열: 소분류 자리 비우기 */}
+                <div></div>
                 <select
                   value={category.isActive ? "active" : "inactive"}
                   onChange={() => toggleActive(category.id, true)}
@@ -306,7 +313,11 @@ const AdminCategory: React.FC = () => {
               {category.isExpanded && (
                 <div className="ml-8 mt-2 space-y-2">
                   {category.subCategories.map((subCategory) => (
-                    <div key={subCategory.id} className="flex items-center space-x-4 bg-gray-50 p-4 rounded">
+                    <div key={subCategory.id} className="grid grid-cols-5 gap-4 items-center bg-gray-50 p-4 rounded ml-6">
+                      {/* 1열: 코드 자리 비우기 */}
+                      <div></div>
+                      {/* 2열: 대분류 자리 비우기 */}
+                      <div></div>
                       {subCategory.isEditing ? (
                         <input
                           type="text"

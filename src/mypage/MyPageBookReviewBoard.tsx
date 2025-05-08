@@ -16,7 +16,7 @@ const MyPageBookReviewBoard: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const filterOption: { label: string; key: keyof MyPageBoardType }[] = [
-    { label: "아이디", key: "id" },
+    { label: "게시물 번호", key: "id" },
     { label: "제목", key: "title" },
     { label: "분류", key: "category" },
     { label: "날짜", key: "date" },
@@ -106,9 +106,10 @@ const MyPageBookReviewBoard: React.FC = () => {
       <div>{post.title}</div>
       <div>{post.category}</div>
       <div>{post.date}</div>
-      <div className="flex justify-center gap-2">
-        <button className="text-green-500 hover:text-green-700">수정</button>
-        <button className="text-red-500 hover:text-red-700">삭제</button>
+      <div>
+        <button className="text-green-500 hover:text-green-700 mr-2">수정</button>
+        <span className="text-gray-500">┆</span>
+        <button className="text-red-500 hover:text-red-700 ml-2">삭제</button>
       </div>
     </div>
   );
