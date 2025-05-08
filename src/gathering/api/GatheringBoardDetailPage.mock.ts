@@ -15,6 +15,7 @@ export const exampleData: GatheringBoardDetailData = {
         imageUrl: "https://readdy.ai/api/search-image?query=modern%20book%20club%20meeting%20with%20people%20discussing%20literature%20in%20a%20contemporary%20minimalist%20setting%20with%20warm%20lighting%20and%20comfortable%20seating%20arrangement&width=1200&height=675&seq=1&orientation=landscape",
         content: `오늘 진행된 독서모임에서는 '책이름1'을 가지고 깊이 있는 토론을 진행했습니다...
                 다음 모임에서는 '책이름2'를 읽고 토론할 예정입니다.`,
+        isLike: false,
     },
     replys: [
         {
@@ -125,8 +126,8 @@ export const createReply = async (gatheringId: string, postId: string, content: 
     return response.data;
 };
 
-// 좋아요 토글 (게시글)
-export const toggleLikePost = async (gatheringId: string, postId: string, liked: boolean) => {
+// 좋아요 토글 (게시글) 
+export const toggleLikePost = async (gatheringId: string, postId: string, liked: boolean) => { // <-- 아이디도 추가해줘야함 나중에 로그인 구현 시 추가할 예정
     console.log("좋아요 상태 변경 -> 모임 번호: " + gatheringId + ", 게시글 번호: " + postId + ", 좋아요 상태: " + liked);
 
     // 실제 API 요청으로 변경할 경우

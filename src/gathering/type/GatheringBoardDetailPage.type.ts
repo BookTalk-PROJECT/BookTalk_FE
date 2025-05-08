@@ -12,6 +12,7 @@ export interface GatheringBoardPost {
     date: string;                 // 작성일 (ISO string 또는 'YYYY-MM-DD')
     imageUrl: string;             // 대표 이미지 URL
     content: string;              // 게시글 본문 (HTML 또는 markdown 가능)
+    isLike: boolean;              // 해당 게시글을 좋아요했었는가
 }
 
 export interface Reply {

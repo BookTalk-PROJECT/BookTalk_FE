@@ -54,22 +54,52 @@ const GatheringBoardDetailPage: React.FC = () => {
   };
 
   // 좋아요 토글 상태관리 
+  // 좋아요 토글 상태관리 
   const handleLikeToggle = async () => {
-    if (!gatheringId || !postId) return;
+    if (!gatheringId || !postId || !detailData) return;
 
-    const newLikeState = !isLiked;
-    setIsLiked(newLikeState); // UI 즉시 반영 (Optimistic UI)
-    setLikeCount((prev) => (newLikeState ? prev + 1 : prev - 1));
+    // 현재 상태 저장 (롤백용)
+    const previousIsLiked = detailData.post.isLike;
+    const previousLikeCount = detailData.post.likes;
+
+    // Optimistic UI - 좋아요 상태 및 개수 즉시 반영
+    const newLikeState = !previousIsLiked;
+    const newLikeCount = newLikeState ? previousLikeCount + 1 : previousLikeCount - 1;
+
+    setDetailData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        post: {
+          ...prev.post,
+          isLike: newLikeState,
+          likes: newLikeCount
+        }
+      };
+    });
 
     try {
+      // 실제 서버로 좋아요 상태 변경 요청
       await toggleLikePost(gatheringId, postId, newLikeState);
     } catch (error) {
       console.error("좋아요 토글 중 오류:", error);
-      // 오류 발생 시 UI 롤백
-      setIsLiked(!newLikeState);
-      setLikeCount((prev) => (!newLikeState ? prev + 1 : prev - 1));
+
+      // 오류 발생 시 UI 롤백 (초기 상태로)
+      setDetailData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          post: {
+            ...prev.post,
+            isLike: previousIsLiked, // 원래 상태로 롤백
+            likes: previousLikeCount  // 원래 좋아요 수로 롤백
+          }
+        };
+      });
     }
   };
+
+
 
   // 댓글 등록 로직 (간결한 구조)
   const handleReplySubmit = async () => {
@@ -182,11 +212,10 @@ const GatheringBoardDetailPage: React.FC = () => {
               <button
                 onClick={handleLikeToggle}
                 className={`px-6 py-3 bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200 flex items-center`}>
-                <i className={`fas fa-heart mr-2 ${isLiked ? "text-red-500" : "text-gray-500"}`}></i>
+                <i className={`fas fa-heart mr-2 ${detailData?.post.isLike ? "text-red-500" : "text-gray-500"}`}></i>
                 <span>좋아요</span>
-                <span className="ml-2 text-gray-600">{likeCount}</span>
+                <span className="ml-2 text-gray-600">{detailData?.post.likes}</span>
               </button>
-
             </div>
 
             <div className="border-t pt-6">
