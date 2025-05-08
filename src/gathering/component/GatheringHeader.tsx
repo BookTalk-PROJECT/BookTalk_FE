@@ -126,7 +126,6 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
                                             </span>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         ))}

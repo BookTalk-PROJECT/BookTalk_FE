@@ -21,30 +21,23 @@ const GatheringBoardDetailPage: React.FC = () => {
   const [reReplyContent, setReReplyContent] = useState<string>(""); // 댓글/대댓글 공통 입력
   const [replyTarget, setReplyTarget] = useState<number | null>(null); // 대댓글 대상 ID
 
-  // 좋아요 상태 관리
-  const [isLiked, setIsLiked] = useState<boolean>(false); // 좋아요 상태
-  const [likeCount, setLikeCount] = useState<number>(0); // 좋아요 수
-
   // 댓글 데이터 불러오기
   useEffect(() => {
     loadRepliesData();
   }, [gatheringId, postId]);
 
-  // 좋아요 데이터 불러오기
-  useEffect(() => {
-    if (detailData) {
-      setLikeCount(detailData.post.likes); // 초기 좋아요 수 설정
-      setIsLiked(false); // 초기 좋아요 상태 (로그인 유저의 상태에 따라 변경 가능)
-    }
-  }, [detailData]);
 
   const loadRepliesData = async () => {
+
+    if (!gatheringId || !postId) {
+      console.log("gatheringId: " + gatheringId + "또는 postId: " + postId + "가 이상함");
+      return;
+    }
+
     setLoading(true);
     try {
-      if (gatheringId && postId) {
-        const data = await fetchGatheringBoardDetail(gatheringId, postId);
-        setDetailData(data);
-      }
+      const data = await fetchGatheringBoardDetail(gatheringId, postId);
+      setDetailData(data);
     } catch (error) {
       console.error("API 요청 오류:", error);
       setDetailData(exampleData);
@@ -53,19 +46,16 @@ const GatheringBoardDetailPage: React.FC = () => {
     }
   };
 
-  // 좋아요 토글 상태관리 
-  // 좋아요 토글 상태관리 
+  // 좋아요 토글 상태관리 (Optimistic UI)
   const handleLikeToggle = async () => {
-    if (!gatheringId || !postId || !detailData) return;
+    if (!gatheringId || !postId) {
+      console.log("gatheringId: " + gatheringId + "또는 postId: " + postId + "가 이상함");
+      return;
+    }
 
-    // 현재 상태 저장 (롤백용)
-    const previousIsLiked = detailData.post.isLike;
-    const previousLikeCount = detailData.post.likes;
+    const newLikeState = !detailData?.post.isLike;
 
-    // Optimistic UI - 좋아요 상태 및 개수 즉시 반영
-    const newLikeState = !previousIsLiked;
-    const newLikeCount = newLikeState ? previousLikeCount + 1 : previousLikeCount - 1;
-
+    // Optimistic UI 업데이트
     setDetailData((prev) => {
       if (!prev) return prev;
       return {
@@ -73,27 +63,25 @@ const GatheringBoardDetailPage: React.FC = () => {
         post: {
           ...prev.post,
           isLike: newLikeState,
-          likes: newLikeCount
-        }
+          likes: newLikeState ? prev.post.likes + 1 : prev.post.likes - 1,
+        },
       };
     });
 
     try {
-      // 실제 서버로 좋아요 상태 변경 요청
-      await toggleLikePost(gatheringId, postId, newLikeState);
+      await toggleLikePost(gatheringId, postId, newLikeState); //나중에 유저 아이디 넘겨주자
     } catch (error) {
       console.error("좋아요 토글 중 오류:", error);
-
-      // 오류 발생 시 UI 롤백 (초기 상태로)
+      // 오류 발생 시 UI 롤백
       setDetailData((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
           post: {
             ...prev.post,
-            isLike: previousIsLiked, // 원래 상태로 롤백
-            likes: previousLikeCount  // 원래 좋아요 수로 롤백
-          }
+            isLike: !newLikeState,
+            likes: !newLikeState ? prev.post.likes + 1 : prev.post.likes - 1,
+          },
         };
       });
     }
