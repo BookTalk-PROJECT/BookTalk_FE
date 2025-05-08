@@ -27,6 +27,7 @@ const GatheringBoardDetailPage: React.FC = () => {
   }, [gatheringId, postId]);
 
 
+
   const loadRepliesData = async () => {
 
     if (!gatheringId || !postId) {
@@ -109,27 +110,88 @@ const GatheringBoardDetailPage: React.FC = () => {
       setReReplyContent("");
     }
 
+    // Optimistic UI: 즉시 댓글 UI에 추가
+    const newComment = {
+      reply_code: Date.now(), // 임시 코드 (고유값)
+      member_id: "현재 사용자", // 실제 사용자 정보로 변경 필요
+      content,
+      date: new Date().toISOString().slice(0, 10),
+      likes: 0,
+      reReply: [],
+    };
+
+    // 댓글 추가 (Optimistic UI) - 안전한 타입 처리
+    setDetailData((prev) => {
+      if (!prev) return prev as unknown as GatheringBoardDetailData; // prev가 undefined일 경우 안전하게 반환
+
+      // 부모 댓글 추가
+      if (replyTarget === null) {
+        return {
+          ...prev,
+          replys: [
+            ...(prev.replys ?? []), // replys가 undefined일 경우 빈 배열로 처리
+            newComment,
+          ],
+        } as GatheringBoardDetailData; // 명시적 타입 지정
+      }
+
+      // 대댓글 추가
+      return {
+        ...prev,
+        replys: (prev.replys ?? []).map((parentReply) => {
+          if (parentReply.reply_code === replyTarget) {
+            return {
+              ...parentReply,
+              reReply: [
+                ...(parentReply.reReply ?? []), // reReply가 undefined일 경우 빈 배열로 처리
+                newComment,
+              ],
+            };
+          }
+          return parentReply;
+        }),
+      } as GatheringBoardDetailData; // 명시적 타입 지정
+    });
+
     try {
-      // 부모 댓글을 명시적으로 등록할 경우 replyTarget을 null로 강제
-      const pReplyCode = replyTarget === null ? null : replyTarget;
-
-      // 댓글/대댓글 등록 API 호출
-      await createReply(
-        gatheringId as string,
-        postId as string,
-        content,
-        pReplyCode
-      );
-
-      // 서버에서 데이터 다시 로드 (새로고침)
-      await loadRepliesData();
+      // 서버 API 요청 (댓글 등록)
+      await createReply(gatheringId as string, postId as string, content, replyTarget);
+      await loadRepliesData(); // 서버 데이터로 새로고침 (정상 등록 확인)
     } catch (error) {
       console.error("댓글 등록 중 오류 발생:", error);
+
+      // 실패 시 댓글 롤백 (UI에서 제거)
+      setDetailData((prev) => {
+        if (!prev) return prev;
+
+        // 부모 댓글 롤백
+        if (replyTarget === null) {
+          return {
+            ...prev,
+            replys: prev.replys?.filter((reply) => reply.reply_code !== newComment.reply_code),
+          };
+        }
+
+        // 대댓글 롤백
+        return {
+          ...prev,
+          replys: prev.replys?.map((parentReply) =>
+            parentReply.reply_code === replyTarget
+              ? {
+                ...parentReply,
+                reReply: parentReply.reReply?.filter(
+                  (reReply) => reReply.reply_code !== newComment.reply_code
+                ),
+              }
+              : parentReply
+          ),
+        };
+      });
     } finally {
-      // 항상 replyTarget 초기화
-      setReplyTarget(null);
+      setReplyTarget(null); // 항상 초기화
     }
   };
+
 
 
   // 답글 클릭 로직 수정 (부모 댓글 / 대댓글 공통)
