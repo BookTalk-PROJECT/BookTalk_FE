@@ -3,26 +3,42 @@ import { useParams, useNavigate } from "react-router-dom";
 import GatheringHeader from "../component/GatheringHeader";
 import CustomButton from "../../common/component/CustomButton";
 import { GatheringBoardDetailData } from "../type/GatheringBoardDetailPage.type";
-import { fetchGatheringBoardDetail, exampleData, createReply } from "../api/GatheringBoardDetailPage.mock";
+import { fetchGatheringBoardDetail, exampleData, createReply, toggleLikePost } from "../api/GatheringBoardDetailPage.mock";
 import LoadingBar from "../../common/component/Loading";
 
 
 const GatheringBoardDetailPage: React.FC = () => {
+  //GatheringDetail to BoardTable props
   const { gatheringId, postId } = useParams<{ gatheringId: string; postId: string }>();
   const navigate = useNavigate();
 
+  //상세 조회 상태 관리
   const [detailData, setDetailData] = useState<GatheringBoardDetailData>();
   const [loading, setLoading] = useState<boolean>(true);
 
+  // 댓글 상태 관리
   const [parentCommentContent, setParentCommentContent] = useState<string>(""); // 부모 댓글 입력
   const [reReplyContent, setReReplyContent] = useState<string>(""); // 댓글/대댓글 공통 입력
   const [replyTarget, setReplyTarget] = useState<number | null>(null); // 대댓글 대상 ID
 
+  // 좋아요 상태 관리
+  const [isLiked, setIsLiked] = useState<boolean>(false); // 좋아요 상태
+  const [likeCount, setLikeCount] = useState<number>(0); // 좋아요 수
+
+  // 댓글 데이터 불러오기
   useEffect(() => {
-    loadData(); // 댓글 데이터 불러오기
+    loadRepliesData();
   }, [gatheringId, postId]);
 
-  const loadData = async () => {
+  // 좋아요 데이터 불러오기
+  useEffect(() => {
+    if (detailData) {
+      setLikeCount(detailData.post.likes); // 초기 좋아요 수 설정
+      setIsLiked(false); // 초기 좋아요 상태 (로그인 유저의 상태에 따라 변경 가능)
+    }
+  }, [detailData]);
+
+  const loadRepliesData = async () => {
     setLoading(true);
     try {
       if (gatheringId && postId) {
@@ -34,6 +50,24 @@ const GatheringBoardDetailPage: React.FC = () => {
       setDetailData(exampleData);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 좋아요 토글 상태관리 
+  const handleLikeToggle = async () => {
+    if (!gatheringId || !postId) return;
+
+    const newLikeState = !isLiked;
+    setIsLiked(newLikeState); // UI 즉시 반영 (Optimistic UI)
+    setLikeCount((prev) => (newLikeState ? prev + 1 : prev - 1));
+
+    try {
+      await toggleLikePost(gatheringId, postId, newLikeState);
+    } catch (error) {
+      console.error("좋아요 토글 중 오류:", error);
+      // 오류 발생 시 UI 롤백
+      setIsLiked(!newLikeState);
+      setLikeCount((prev) => (!newLikeState ? prev + 1 : prev - 1));
     }
   };
 
@@ -64,7 +98,7 @@ const GatheringBoardDetailPage: React.FC = () => {
       }
 
       // 서버에서 데이터 다시 로드
-      await loadData();
+      await loadRepliesData();
     } catch (error) {
       console.error(replyTarget === null ? "댓글 등록 중 오류 발생:" : "대댓글 등록 중 오류 발생:", error);
     }
@@ -145,11 +179,14 @@ const GatheringBoardDetailPage: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-center space-x-2 mb-8">
-              <button className="px-6 py-3 bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200 flex items-center">
-                <i className="fas fa-heart mr-2 text-red-500"></i>
+              <button
+                onClick={handleLikeToggle}
+                className={`px-6 py-3 bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200 flex items-center`}>
+                <i className={`fas fa-heart mr-2 ${isLiked ? "text-red-500" : "text-gray-500"}`}></i>
                 <span>좋아요</span>
-                <span className="ml-2 text-gray-600">{detailData?.post.likes}</span>
+                <span className="ml-2 text-gray-600">{likeCount}</span>
               </button>
+
             </div>
 
             <div className="border-t pt-6">
@@ -197,7 +234,6 @@ const GatheringBoardDetailPage: React.FC = () => {
                           <i className="fas fa-heart mr-1 text-red-500"></i>
                           {parentReply.likes}
                         </CustomButton>
-
                         {/* 답글 버튼 */}
                         <CustomButton onClick={() => handleReplyClick(parentReply.reply_code)} color="none">
                           <i className="fas fa-reply mr-1"></i>답글
