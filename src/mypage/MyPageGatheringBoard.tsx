@@ -3,10 +3,11 @@ import MyPageSideBar from "../common/component/MyPageSideBar";
 import Pagenation from "../common/component/Pagination";
 import MyPageTable from "../common/component/MyPageTable";
 import {
-  gatheringBoardPostMockData,
+  MyPageBoardType,
   MyPageGatheringBoardType,
 } from "../common/type/MyPageBoardTable";
 import MyPageBreadCrumb from "../common/component/MyPageBreadCrumb";
+import { gatheringBoardPostMockData } from "../common/testdata/MyPageTestData";
 
 const MyPageGatheringBoard: React.FC = () => {
   {/* 선택된 검색 필터*/}
@@ -22,11 +23,10 @@ const MyPageGatheringBoard: React.FC = () => {
     { label: "게시물 번호", key: "id" },
     { label: "모임명", key:"gathering"},
     { label: "제목", key: "title" },
-    { label: "분류", key: "category" },
     { label: "날짜", key: "date" },
   ];
   {/* 컬럼 갯수 */}
-  const colCount = 6;
+  const colCount = 5;
 
   {/* 테이블 행 데이터 정렬 후 출력 값 */}
   const filteredAndSortedPosts = useMemo(() => {
@@ -38,8 +38,6 @@ const MyPageGatheringBoard: React.FC = () => {
             return post.title;
           case "게시글 번호":
             return String(post.id); // 숫자는 문자열로 변환해서 비교
-          case "분류":
-            return post.category;
           case "작성 일시":
             return post.date;
           default:
@@ -84,49 +82,57 @@ const MyPageGatheringBoard: React.FC = () => {
   };
 
   const renderHeader = () => (
-    <>
+    <tr>
       {filterOption.map(({ label, key }) => (
-        <div key={key} onClick={() => handleSort(key)}>
-           <span className="inline-block items-center gap-2 mr-2">
-                       {sortField === key ? (
-                         sortOrder === "asc" ? (
-                           <i className="fas fa-sort-up"></i>
-                         ) : (
-                           <i className="fas fa-sort-down"></i>
-                         )
-                       ) : (
-                         <i className="fas fa-sort text-gray-300"></i>
-                       )}
-                            </span>
-          {label}</div>
+        <th
+          key={key}
+          onClick={() => handleSort(key)}
+          className="px-4 py-2 text-left text-sm font-medium text-gray-700 whitespace-nowrap cursor-pointer"
+        >
+        <span className="inline-flex items-center gap-1">
+          <span>{label}</span>
+          {sortField === key ? (
+            sortOrder === "asc" ? (
+              <i className="fas fa-sort-up"></i>
+            ) : (
+              <i className="fas fa-sort-down"></i>
+            )
+          ) : (
+            <i className="fas fa-sort text-gray-300"></i>
+          )}
+        </span>
+        </th>
       ))}
-      <div key="manage" onClick={() => handleSort("manage")}>관리</div>
-    </>
+      <th
+        key="manage"
+        onClick={() => handleSort("manage")}
+        className="px-4 py-2 text-left text-sm font-medium text-gray-700 whitespace-nowrap cursor-pointer"
+      ><span>관리</span></th>
+    </tr>
   );
 
   const renderRow = (post: MyPageGatheringBoardType) => (
-    <div key={post.id} className="grid grid-cols-6 py-4 px-4 border-b border-gray-200 hover:bg-gray-50">
-      <div>{post.id}</div>
-      <div>{post.gathering}</div>
-      <div>{post.title}</div>
-      <div>{post.category}</div>
-      <div>{post.date}</div>
-      <div>
+    <tr key={post.id} className="hover:bg-gray-50 border-b">
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{post.id}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.gathering}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.title}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.date}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
         <button className="text-green-500 hover:text-green-700 mr-2">수정</button>
         <span className="text-gray-500">┆</span>
         <button className="text-red-500 hover:text-red-700 ml-2">삭제</button>
-      </div>
-    </div>
+      </td>
+    </tr>
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-50 py-1">
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
       {/* 사이드바 */}
       <MyPageSideBar />
       {/* 메인 컨텐츠 */}
       <div className="ml-60 flex-1 flex flex-col bg-white rounded-lg shadow-md">
-        <main className="flex-1 p-6">
-          <div className="max-w-5xl mx-auto">
+        <main>
+          <div className="w-full max-w-none mx-auto">
             {/* 브레드크럼 */}
             <MyPageBreadCrumb major="모임" sub="게시글 관리" />
             {/* 테이블 */}

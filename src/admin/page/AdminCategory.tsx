@@ -106,7 +106,7 @@ const AdminCategory: React.FC = () => {
     };
     setCategories([newCategory, ...categories]);
     setNextId(nextId + 2);
-  };e
+  };
   const addSubCategory = (categoryId: numbr) => {
     setCategories(
       categories.map((category) => {

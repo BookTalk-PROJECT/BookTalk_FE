@@ -64,12 +64,17 @@ const MyPageTable = <T,>({
           </button>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className={`grid grid-cols-${colCount} bg-gray-50 py-3 px-4 border-b border-gray-200`}>
-            {renderHeader()}
+          {/* 테이블 구조 */}
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <table className="min-w-full w-full table-auto text-sm">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                  {renderHeader()}
+                  </thead>
+                  <tbody>
+                  {posts.map((post) => renderRow(post))}
+                  </tbody>
+              </table>
           </div>
-          {posts.map((post) => renderRow(post))}
-        </div>
       </div>
   );
 };

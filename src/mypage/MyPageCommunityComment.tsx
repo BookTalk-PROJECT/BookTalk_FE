@@ -5,7 +5,7 @@ import MyPageTable from "../common/component/MyPageTable";
 import MyPageBreadCrumb from "../common/component/MyPageBreadCrumb";
 import Pagenation from "../common/component/Pagination";
 
-const MyPageBookCommunityComment: React.FC = () => {
+const MyPageCommunityComment: React.FC = () => {
   const [comments, setComments] = useState<MyPageBookCommentType[]>([]);
   const [activeTab, setActiveTab] = useState("커뮤니티");
   const [searchType, setSearchType] = useState("내용");
@@ -14,7 +14,7 @@ const MyPageBookCommunityComment: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const colCount = 6;
+  const colCount = 7;
 
   useEffect(() => {
     const categories = ["커뮤니티", "북리뷰", "모임"];
@@ -32,7 +32,7 @@ const MyPageBookCommunityComment: React.FC = () => {
       title: `${titles[i % titles.length]} ${i + 1}`,
       author: authors[i % authors.length],
       content: contents[i % contents.length],
-      category: categories[i % categories.length],
+      manage: categories[i % categories.length],
       date: generateDate(i),
     }));
 
@@ -44,8 +44,7 @@ const MyPageBookCommunityComment: React.FC = () => {
     { label: "글 제목", key: "title" },
     { label: "작성자", key: "author" },
     { label: "내용", key: "content" },
-    { label: "작성일", key: "date" },
-    { label: "관리", key: "date" }
+    { label: "작성일", key: "date" }
   ];
 
   const handleSort = (field: keyof MyPageBookCommentType) => {
@@ -59,9 +58,7 @@ const MyPageBookCommunityComment: React.FC = () => {
 
   const filtered = useMemo(() => {
     let data = [...comments];
-    if (activeTab !== "전체") {
-      data = data.filter((c) => c.category === activeTab);
-    }
+
     if (searchText) {
       data = data.filter((c) => {
         const target = searchType === "작성자" ? c.author : searchType === "글 제목" ? c.title : c.content;
@@ -84,38 +81,49 @@ const MyPageBookCommunityComment: React.FC = () => {
   const paginatedComments = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const renderHeader = () => (
-    <>
+    <tr>
       {filterOption.map(({ label, key }) => (
-        <div key={key} onClick={() => handleSort(key)}>
-           <span className="inline-block items-center gap-2 mr-2">
-                       {sortField === key ? (
-                         sortOrder === "asc" ? (
-                           <i className="fas fa-sort-up"></i>
-                         ) : (
-                           <i className="fas fa-sort-down"></i>
-                         )
-                       ) : (
-                         <i className="fas fa-sort text-gray-300"></i>
-                       )}
-                            </span>
-          {label}</div>
+        <th
+          key={key}
+          onClick={() => handleSort(key)}
+          className="px-4 py-2 text-left text-sm font-medium text-gray-700 whitespace-nowrap cursor-pointer"
+        >
+        <span className="inline-flex items-center gap-1">
+          <span>{label}</span>
+          {sortField === key ? (
+            sortOrder === "asc" ? (
+              <i className="fas fa-sort-up"></i>
+            ) : (
+              <i className="fas fa-sort-down"></i>
+            )
+          ) : (
+            <i className="fas fa-sort text-gray-300"></i>
+          )}
+        </span>
+        </th>
       ))}
-    </>
+      <th
+        key="manage"
+        onClick={() => handleSort("manage")}
+        className="px-4 py-2 text-left text-sm font-medium text-gray-700 whitespace-nowrap cursor-pointer"
+      ><span>관리</span></th>
+    </tr>
   );
 
+
   const renderRow = (comment: MyPageBookCommentType) => (
-    <div key={comment.id} className="grid grid-cols-6 py-4 px-4 border-b border-gray-200 hover:bg-gray-50">
-      <div>{comment.id}</div>
-      <div>{comment.title}</div>
-      <div>{comment.author}</div>
-      <div>{comment.content}</div>
-      <div>{comment.date}</div>
-      <div>
+    <tr key={comment.id} className="hover:bg-gray-50 border-b">
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{comment.id}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{comment.title}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{comment.author}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{comment.content}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{comment.date}</td>
+      <td>
         <button className="text-green-500 hover:text-green-700 mr-2">수정</button>
         <span className="text-gray-500">┆</span>
         <button className="text-red-500 hover:text-red-700 ml-2">삭제</button>
-      </div>
-    </div>
+      </td>
+    </tr>
   );
 
   return (
@@ -124,8 +132,8 @@ const MyPageBookCommunityComment: React.FC = () => {
       <MyPageSideBar />
       {/* 메인 컨텐츠 */}
       <div className="flex-1 ml-60 bg-white rounded-lg shadow-md">
-        <main className="flex-1 p-6">
-          <div className="max-w-5xl mx-auto">
+        <main>
+          <div className="w-full max-w-none mx-auto">
             {/* 브레드크럼 */}
             <MyPageBreadCrumb major="커뮤니티" sub="댓글 관리" />
             {/* 테이블 */}
@@ -150,4 +158,4 @@ const MyPageBookCommunityComment: React.FC = () => {
   );
 };
 
-export default MyPageBookCommunityComment;
+export default MyPageCommunityComment;

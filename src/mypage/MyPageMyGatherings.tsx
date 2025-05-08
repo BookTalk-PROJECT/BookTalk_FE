@@ -2,25 +2,26 @@ import React, { useState, useEffect, useMemo } from "react";
 import MyPageSideBar from "../common/component/MyPageSideBar";
 import Pagenation from "../common/component/Pagination";
 import MyPageTable from "../common/component/MyPageTable";
-import { MyPageBoardType } from "../common/type/MyPageBoardTable";
 import MyPageBreadCrumb from "../common/component/MyPageBreadCrumb";
-import { bookPostMockData } from "../common/testdata/MyPageTestData";
+import { bookPostMockData, myGatheringPostMockData } from "../common/testdata/MyPageTestData";
+import { MyPageMyGatheringType } from "../common/type/MyPageBoardTable";
 
-const MyPageCommunityBoard: React.FC = () => {
+const MyPageMyGatherings: React.FC = () => {
   {/* 선택된 검색 필터*/}
-  const [selectedFilter, setSelectedFilter] = useState("제목");
+  const [selectedFilter, setSelectedFilter] = useState("모임명");
   {/* 검색어 */}
   const [searchTerm, setSearchTerm] = useState("");
   {/* 정렬 기준 컬럼 */}
-  const [sortField, setSortField] = useState<keyof MyPageBoardType>("date");
+  const [sortField, setSortField] = useState<keyof MyPageMyGatheringType>("date");
   {/* 오름차순, 내림차순 */}
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-  const filterOption: { label: string; key: keyof MyPageBoardType }[] = [
-    { label: "게시물 번호", key: "id" },
-    { label: "제목", key: "title" },
+  const filterOption: { label: string; key: keyof MyPageMyGatheringType }[] = [
+    { label: "번호", key: "id" },
+    { label: "모임명", key: "gathering" },
     { label: "분류", key: "category" },
-    { label: "날짜", key: "date" },
+    { label: "개설 일시", key: "date" },
+    { label: "상태", key: "status" },
   ];
   {/* 컬럼 갯수 */}
   const colCount = 5;
@@ -28,12 +29,12 @@ const MyPageCommunityBoard: React.FC = () => {
   {/* 테이블 행 데이터 정렬 후 출력 값 */}
   const filteredAndSortedPosts = useMemo(() => {
     // 1. 검색 필터 적용
-    const filtered = bookPostMockData.filter((post) => {
+    const filtered = myGatheringPostMockData.filter((post) => {
       const targetValue = (() => {
         switch (selectedFilter) {
-          case "제목":
-            return post.title;
-          case "게시글 번호":
+          case "모임명":
+            return post.gathering;
+          case "번호":
             return String(post.id); // 숫자는 문자열로 변환해서 비교
           case "분류":
             return post.category;
@@ -69,7 +70,7 @@ const MyPageCommunityBoard: React.FC = () => {
   }, [sortField, sortOrder, searchTerm, selectedFilter]);
 
   {/* 정렬 필드 설정 함수 */}
-  const handleSort = (field: keyof MyPageBoardType) => {
+  const handleSort = (field: keyof MyPageMyGatheringType) => {
     if (sortField === field) {
       //이미 해당 필드일 시 정렬만 해줌
       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
@@ -111,12 +112,13 @@ const MyPageCommunityBoard: React.FC = () => {
   );
 
 
-  const renderRow = (post: MyPageBoardType) => (
+  const renderRow = (post:MyPageMyGatheringType) => (
     <tr key={post.id} className="hover:bg-gray-50 border-b">
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{post.id}</td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.title}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.gathering}</td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.category}</td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.date}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.status}</td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
         <button className="text-green-500 hover:text-green-700 mr-2">수정</button>
         <span className="text-gray-500">┆</span>
@@ -136,11 +138,11 @@ const MyPageCommunityBoard: React.FC = () => {
         <main>
           <div className="w-full max-w-none mx-auto">
             {/* 브레드크럼 */}
-            <MyPageBreadCrumb major="커뮤니티" sub="게시글 관리" />
+            <MyPageBreadCrumb major="모임" sub="내 모임" />
             {/* 테이블 */}
             <MyPageTable
               posts={filteredAndSortedPosts}
-              filterOptions={["제목", "게시글 번호", "분류", "작성 일시"]}
+              filterOptions={["번호", "분류", "개설 일시", "상태"]}
               selectedFilter={selectedFilter}
               onChangeFilter={setSelectedFilter}
               searchTerm={searchTerm}
@@ -159,4 +161,4 @@ const MyPageCommunityBoard: React.FC = () => {
   );
 };
 
-export default MyPageCommunityBoard;
+export default MyPageMyGatherings;

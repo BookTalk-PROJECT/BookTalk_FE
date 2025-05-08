@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Route } from "react-router";
 
 const MyPageSideBar = () => {
   return (
@@ -30,7 +31,9 @@ const MyPageSideBar = () => {
         <div className="pb-4">
           <h3 className="text-lg font-semibold mb-2">모임</h3>
           <ul className="space-y-2">
+            <Link to="/mypage/gathering">
             <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">내 모임</li>
+            </Link>
             <Link to="/mypage/gathering/board">
               <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">게시글 관리</li>
             </Link>

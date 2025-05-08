@@ -15,37 +15,32 @@ export interface MyPageTableProps<T> {
 
 export interface MyPageTableCommonColType {
   id: number;
-  title: string;
-  category: string;
   date: string;
+  manage: string;
 }
 
 export interface MyPageBoardType extends MyPageTableCommonColType {
-  status: string;
+  title: string;
+  category: string;
 }
 
 export interface MyPageBookCommentType extends MyPageTableCommonColType{
+  title: string;
   author: string;
-  category: string;
   content: string;
 }
 
 export interface MyPageGatheringBoardType extends MyPageTableCommonColType{
+  title: string;
   gathering:string;
-  manage: string;
 }
 
-export const bookPostMockData: MyPageBoardType[] = [
-  { id: 167, title: "하하웃어", category: "IT", date: "2025-03-27", status: "수정" },
-  { id: 35, title: "반갑습니다", category: "예술", date: "2025-03-26", status: "수정" },
-  { id: 7, title: "그런일은", category: "소설", date: "2025-03-24", status: "수정" },
-];
+export interface MyPageMyGatheringType extends MyPageTableCommonColType{
+  category: string,
+  status:string,
+  gathering:string;
+}
 
-export const gatheringBoardPostMockData: MyPageGatheringBoardType[] = [
-  { id: 167, gathering: "좋은모임" ,title: "하하웃어", category: "IT", date: "2025-03-27", manage: "수정" },
-  { id: 35, gathering: "나쁜모임", title: "반갑습니다", category: "예술", date: "2025-03-26", manage: "수정" },
-  { id: 7, gathering: "이상한모임", title: "그런일은", category: "소설", date: "2025-03-24", manage: "수정" },
-];
 
 
 
