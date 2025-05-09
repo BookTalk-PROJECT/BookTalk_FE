@@ -128,15 +128,19 @@ const MyPageBookReviewBoard: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      {/* 사이드바 */}
-      <MyPageSideBar />
+    <div className="flex h-screen">
+      {/* 사이드바: w-60으로 너비 고정 */}
+      <div className="w-60">
+        <MyPageSideBar />
+      </div>
+
       {/* 메인 컨텐츠 */}
-      <div className="flex-1 ml-60 bg-white rounded-lg shadow-md">
-        <main>
-          <div className="w-full max-w-none mx-auto">
+      <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
+        <div className="w-full bg-white rounded-lg shadow-md p-6">
+          <main className="space-y-6">
             {/* 브레드크럼 */}
-            <MyPageBreadCrumb major="북리뷰" sub="게시글 관리" />
+            <MyPageBreadCrumb major="북리뷰" sub="댓글 관리" />
+
             {/* 테이블 */}
             <MyPageTable
               posts={filteredAndSortedPosts}
@@ -150,13 +154,16 @@ const MyPageBookReviewBoard: React.FC = () => {
               renderRow={renderRow}
               colCount={colCount}
             />
+
             {/* 페이지네이션 */}
-            <Pagenation totalPages={10} loadPageByPageNum={() => {}}/>
-          </div>
-        </main>
+            <Pagenation totalPages={10} loadPageByPageNum={() => {}} />
+          </main>
+        </div>
       </div>
     </div>
   );
 };
+
+
 
 export default MyPageBookReviewBoard;

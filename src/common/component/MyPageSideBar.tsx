@@ -1,70 +1,114 @@
+// The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
-import { Route } from "react-router";
-
-const MyPageSideBar = () => {
+const MyPageSideBar: React.FC = () => {
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [activeMenu, setActiveMenu] = useState('dashboard');
+  const toggleSidebar = () => {
+    setIsExpanded(!isExpanded);
+  };
+  const menuItems = [
+    {
+      id: 'mypage',
+      icon: 'fa-user',
+      label: 'My Page',
+      url: '/mypage',
+      isHeader: true
+    },
+    {
+      id: 'bulletin',
+      icon: 'fa-clipboard',
+      label: '북리뷰',
+      url: '',
+      isHeader: true
+    },
+    { id: 'post-manage', icon: 'fa-file-alt', label: '게시글 관리', url: '/mypage/bookreview/board', indent: true },
+    { id: 'comment-manage', icon: 'fa-comments', label: '댓글 관리', url: '/mypage/bookreview/comment', indent: true },
+    {
+      id: 'community',
+      icon: 'fa-users',
+      label: '커뮤니티',
+      url: '',
+      isHeader: true
+    },
+    { id: 'community-post', icon: 'fa-file-alt', label: '게시글 관리', url: '/mypage/community/board', indent: true },
+    { id: 'community-comment', icon: 'fa-comments', label: '댓글 관리', url: '/mypage/community/comment', indent: true },
+    {
+      id: 'recruitment',
+      icon: 'fa-briefcase',
+      label: '모임',
+      url: '',
+      isHeader: true
+    },
+    { id: 'my-recruitment', icon: 'fa-user-friends', label: '내 모임', url: '/mypage/gathering', indent: true },
+    { id: 'recruitment-post', icon: 'fa-file-alt', label: '게시글 관리', url: '/mypage/gathering/board', indent: true },
+    { id: 'recruitment-comment', icon: 'fa-comments', label: '댓글 관리', url: '/mypage/gathering/comment', indent: true },
+    { id: 'recruitment-approval', icon: 'fa-check-circle', label: '모임 신청 관리',url: '/mypage/gathering/manage/request', indent: true },
+    { id: 'recruitment-approval-manage', icon: 'fa-tasks', label: '신청 승인 관리', url: '/mypage/gathering/manage/approval', indent: true },
+    {
+      id: 'admin',
+      icon: 'fa-user-shield',
+      label: '관리자',
+      url: '',
+      isHeader: true
+    },
+    { id: 'admin-post', icon: 'fa-file-alt', label: '게시글 관리', url: '/admin/board', indent: true },
+    { id: 'admin-comment', icon: 'fa-comments', label: '댓글 관리', url: '/admin/comment', indent: true },
+    { id: 'admin-category', icon: 'fa-folder', label: '카테고리 관리', url: '/admin/category', indent: true }
+  ];
   return (
-    <div className="fixed top-6 left-0 w-60 h-full bg-blue-600 text-white p-6 space-y-8">
-      <aside className="w-60 text-white flex flex-col p-6  sticky top-0 self-start h-screen">
-        <div className="text-2xl font-bold text-center pb-9">My Page</div>
-        <div className="pb-4">
-          <h3 className="text-lg font-semibold mb-2">북리뷰</h3>
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div
+        className={`bg-gradient-to-b from-white to-gray-50 shadow-xl transition-all duration-300 ease-in-out flex flex-col border-r border-gray-100 ${
+          isExpanded ? 'w-96' : 'w-16'
+        }`}
+      >
+        <div className={`${isExpanded ? 'px-6' : 'px-2'} py-4`}>
+          <button
+            onClick={toggleSidebar}
+            className={`w-full flex items-center justify-center ${isExpanded ? 'p-4' : 'p-3'} bg-white rounded-xl hover:bg-gray-50 text-gray-600 cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md !rounded-button whitespace-nowrap mx-auto`}
+          >
+            <i className={`fas ${isExpanded ? 'fa-chevron-left' : 'fa-chevron-right'} text-lg`}></i>
+            {isExpanded && <span className="ml-3 font-medium">사이드바 접기</span>}
+          </button>
+        </div>
+        <div className="flex-grow py-6">
           <ul className="space-y-2">
-            <Link to="/mypage/bookreview/board">
-              <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">게시글 관리</li>
-            </Link>
-            <Link to="/mypage/bookreview/comment">
-              <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">댓글 관리</li>
-            </Link>
+            {menuItems.map((item) => (
+              <li key={item.id} className={isExpanded ? 'px-6' : 'px-2'}>
+                {item.isHeader ? (
+                  <div className={`flex items-center ${isExpanded ? 'px-6 py-3 text-gray-800' : 'hidden'}`}>
+                    <i className={`fas ${item.icon} text-lg ${isExpanded ? 'mr-4' : ''} text-gray-600`}></i>
+                    {isExpanded && <span className="font-bold text-base">{item.label}</span>}
+                  </div>
+                ) : (
+                  <Link to={item.url}>
+                  <button
+                    onClick={() => setActiveMenu(item.id)}
+                    className={`w-full flex items-center ${!isExpanded ? 'justify-center' : 'justify-between'} ${
+                      item.indent && isExpanded ? 'pl-12' : ''
+                    } ${isExpanded ? 'px-6' : 'px-3'} py-2.5 rounded-xl cursor-pointer transition-all duration-200 group hover:shadow-md !rounded-button whitespace-nowrap ${
+                      activeMenu === item.id
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-200'
+                        : 'bg-white text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <i className={`fas ${item.icon} text-xl ${isExpanded ? 'mr-4' : ''} ${
+                        activeMenu === item.id ? '' : 'group-hover:text-indigo-600'
+                      }`}></i>
+                      {isExpanded && <span className="font-medium text-base">{item.label}</span>}
+                    </div>
+                  </button>
+                  </Link>
+                )}
+              </li>
+            ))}
           </ul>
         </div>
-        <div className="pb-4">
-          <h3 className="text-lg font-semibold mb-2">커뮤니티</h3>
-          <ul className="space-y-2">
-            <Link to="/mypage/community/board">
-              <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">게시글 관리</li>
-            </Link>
-            <Link to="/mypage/community/comment">
-              <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">댓글 관리</li>
-            </Link>
-          </ul>
-        </div>
-        <div className="pb-4">
-          <h3 className="text-lg font-semibold mb-2">모임</h3>
-          <ul className="space-y-2">
-            <Link to="/mypage/gathering">
-            <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">내 모임</li>
-            </Link>
-            <Link to="/mypage/gathering/board">
-              <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">게시글 관리</li>
-            </Link>
-            <Link to="/mypage/gathering/comment">
-              <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">댓글 관리</li>
-            </Link>
-            <Link to="/mypage/gathering/manage/request">
-              <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">모임 신청 관리</li>
-            </Link>
-            <Link to="/mypage/gathering/manage/approval">
-              <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">신청 승인 관리</li>
-            </Link>
-          </ul>
-        </div>
-        <div className="pb-4">
-          <h3 className="text-lg font-semibold mb-2">관리자</h3>
-          <ul className="space-y-2">
-            <Link to="/admin/board">
-              <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">게시글 관리</li>
-            </Link>
-            <Link to="/admin/comment">
-              <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">댓글 관리</li>
-            </Link>
-            <Link to="/admin/category">
-              <li className="hover:bg-blue-500 p-2 rounded cursor-pointer">카테고리 관리</li>
-            </Link>
-          </ul>
-        </div>
-      </aside>
+      </div>
     </div>
   );
 };
-
-export default MyPageSideBar;
+export default MyPageSideBar
