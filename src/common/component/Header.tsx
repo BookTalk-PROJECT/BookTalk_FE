@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import CustomButton from "./CustomButton";
 
 const Header = () => {
   return (
@@ -24,16 +25,16 @@ const Header = () => {
           </nav>
         </div>
         <div className="flex items-center space-x-4">
-          <Link
-            to="/login"
-            className="bg-gray-50 hover:bg-gray-200 px-4 py-1.5 rounded-full text-sm text-gray-700 shadow-sm transition-all">
-            로그인
-          </Link>
-          <Link
-            to="/join"
-            className="bg-black text-white hover:bg-gray-800 px-4 py-1.5 rounded-full text-sm shadow-sm transition-all">
-            회원가입
-          </Link>
+          <CustomButton onClick={() => alert("로그인 클릭됨")} color="white">
+            <>
+              <i className="fas fa-key">  &nbsp;로그인</i>
+            </>
+          </CustomButton>
+          <CustomButton onClick={() => alert("회원가입 클릭됨")} color="black">
+            <>
+              <i className="fas fa-right-to-bracket">  &nbsp;회원가입</i>
+            </>
+          </CustomButton>
         </div>
       </div>
     </header>

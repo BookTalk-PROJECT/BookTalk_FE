@@ -1,237 +1,219 @@
-import { useEffect, useState } from "react";
-import { getHelloMsg } from "../api/dashboard";
+// The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
+import React, { useState, useEffect } from "react";
+import {
+  ChartConfig,
+  HighlightCard,
+  RecentGatherings,
+  RecentPost,
+  RecentReply
+} from "../type/DashBoardPage.type";
+import {
+  fetchHighlightCards,
+  fetchRecentGatherings,
+  fetchRecentPosts,
+  fetchRecentReplies,
+  fetchChartData
+} from "../api/DashBoardPage.mock";
+import Graph from "../../common/component/Graph";
 
-const DashBoardPage = () => {
-  const [hello, setHello] = useState("");
+const DashBoardPage: React.FC = () => {
 
-  // useEffect(() => {
-  //     getHelloMsg().then((res) => setHello(res.msg));
-  // }, [])
+  //상단 카드 데이터 상태
+  const [cards, setCards] = useState<HighlightCard[]>([]);
+  //중단 최신 모임의 상태
+  const [gatherings, setGatherings] = useState<RecentGatherings[]>([]);
+  //중단 최신 게시글의 상태
+  const [posts, setPosts] = useState<RecentPost[]>([]);
+  //중단 최신 댓글의 상태태
+  const [comments, setComments] = useState<RecentReply[]>([]);
+  //하단 차트의 상태
+  const [charts, setCharts] = useState<ChartConfig[]>([]);
 
+
+  const loadDashboardData = async () => {
+    try {
+      const [
+        highlightData,
+        gatheringData,
+        postData,
+        commentData,
+      ] = await Promise.all([
+        fetchHighlightCards(),
+        fetchRecentGatherings(),
+        fetchRecentPosts(),
+        fetchRecentReplies(),
+      ]);
+
+      setCards(highlightData);
+      setGatherings(gatheringData);
+      setPosts(postData);
+      setComments(commentData);
+    } catch (error) {
+      console.error("대시보드 데이터 로드 실패:", error);
+    }
+  };
+
+  const loadChartData = async () => {
+    const chartIds = ["userChart", "postChart", "commentChart", "likeChart"];
+    const chartDataPromises = chartIds.map((id) => fetchChartData(id));
+
+    try {
+      const chartData = await Promise.all(chartDataPromises);
+      setCharts(chartData);
+    } catch (error) {
+      console.error("차트 데이터 로드 실패:", error);
+    }
+  }
+
+  useEffect(() => {
+    const loadAllData = async () => {
+      try {
+        // Dashboard API 로드 (예: 하이라이트 카드)
+        await loadDashboardData();
+
+        await loadChartData();
+
+      } catch (error) {
+        console.error("전체 차트 데이터 로드 실패:", error);
+        setCharts([]); // 로드 실패 시 빈 배열로 설정
+      }
+    };
+
+    loadAllData();
+  }, []);
   return (
-    <div>
-      <div className="min-h-screen">
-        <nav className="bg-white shadow">
-          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16">
-              <div className="flex">
-                <div className="flex-shrink-0 flex items-center">
-                  <img
-                    className="h-8 w-auto"
-                    src="https://ai-public.creatie.ai/gen_page/logo_placeholder.png"
-                    alt="Logo"
-                  />
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12 relative">
+          <div className="absolute left-1/2 -translate-x-1/2 -top-4 w-16 h-16 flex items-center justify-center">
+            <i className="fas fa-book-open via-gray-600 text-4xl"></i>
+          </div>
+          <h1 className="text-4xl font-bold text-gray-600 mb-3 pt-14">
+            함께 읽는 즐거움
+          </h1>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            다양한 독서 모임에서 새로운 친구들과 함께 독서의 즐거움을 나누세요
+          </p>
+          <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-gray-600 to-transparent"></div>
+        </div>
+        {/* 상단 하이라이트 카드 섹션 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {cards.map((card, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow-md p-6 transition-transform hover:scale-105 cursor-pointer !rounded-button"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-xl font-semibold text-gray-800">{card.title}</div>
+                <div className={`w-12 h-12 ${card.iconColor} rounded-full flex items-center justify-center`}>
+                  <i className={`${card.icon} text-xl`}></i>
                 </div>
               </div>
+              <div className={`text-3xl font-bold ${card.textColor}`}>{card.count}개</div>
+              <div className="text-sm mt-2 text-gray-600">{card.description}</div>
+            </div>
+          ))}
+        </div>
+        {/* 중앙 최신 활동 섹션 */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* 최신 모임 목록 */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">
+                인기 독서 모임
+              </h2>
+              <button className="text-blue-500 hover:text-blue-700 text-sm font-medium cursor-pointer whitespace-nowrap !rounded-button">
+                모임 찾아보기 <i className="fas fa-chevron-right ml-1"></i>
+              </button>
+            </div>
+            <div className="space-y-4 max-h-80 overflow-y-auto">
+              {gatherings.map((gathering, index) => (
+                <div
+                  key={index}
+                  className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                >
+                  <h3 className="font-medium text-gray-900 mb-1">
+                    {gathering.title}
+                  </h3>
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>생성일: {gathering.createdAt}</span>
+                    <span>멤버: {gathering.members}명</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </nav>
-
-        <main className="max-w-8xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <div className="bg-white rounded-lg shadow">
-              <div className="border-b border-gray-200">
-                <nav className="-mb-px flex" aria-label="Tabs">
-                  <button className="w-1/2 py-4 px-1 text-center border-b-2 border-custom text-custom font-medium text-sm">
-                    게시글 관리
-                  </button>
-                  <button className="w-1/2 py-4 px-1 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">
-                    댓글 관리
-                  </button>
-                </nav>
-              </div>
-
-              <div className="p-4 sm:p-6">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-                    <div className="sm:col-span-1">
-                      <label className="block text-sm font-medium text-gray-700">기간</label>
-                      <input
-                        type="date"
-                        className="mt-1 block w-full border-gray-300 !rounded-button shadow-sm focus:border-custom focus:ring-custom"
-                      />
-                    </div>
-                    <div className="sm:col-span-1">
-                      <label className="block text-sm font-medium text-gray-700">카테고리</label>
-                      <select className="mt-1 block w-full border-gray-300 !rounded-button shadow-sm focus:border-custom focus:ring-custom">
-                        <option>전체</option>
-                        <option>공지사항</option>
-                        <option>자유게시판</option>
-                        <option>질문과답변</option>
-                      </select>
-                    </div>
-                    <div className="sm:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700">검색어</label>
-                      <div className="mt-1 relative rounded-md shadow-sm">
-                        <input
-                          type="text"
-                          className="block w-full border-gray-300 !rounded-button pr-10 focus:border-custom focus:ring-custom"
-                          placeholder="검색어를 입력하세요"
-                        />
-                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                          <button className="text-gray-400 hover:text-gray-500">
-                            <i className="fas fa-search"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <div className="flex space-x-2">
-                      <button className="inline-flex items-center px-4 py-2 border border-gray-300 !rounded-button bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                        <i className="fas fa-trash-alt mr-2"></i>
-                        선택 삭제
-                      </button>
-                      <button className="inline-flex items-center px-4 py-2 border border-gray-300 !rounded-button bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                        <i className="fas fa-eye-slash mr-2"></i>
-                        선택 숨김
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            <input type="checkbox" className="rounded border-gray-300 text-custom focus:ring-custom" />
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            번호
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            제목
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            작성자
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            작성일
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            조회수
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            상태
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            관리
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        <tr>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <input type="checkbox" className="rounded border-gray-300 text-custom focus:ring-custom" />
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            2024년 서비스 업데이트 안내
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">관리자</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2024-01-15</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">245</td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                              공개
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <button className="text-custom hover:text-custom-dark">수정</button>
-                            <span className="mx-1">|</span>
-                            <button className="text-red-600 hover:text-red-900">삭제</button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <input type="checkbox" className="rounded border-gray-300 text-custom focus:ring-custom" />
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">이벤트 참여 방법 안내</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">운영자</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2024-01-14</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">189</td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                              공개
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <button className="text-custom hover:text-custom-dark">수정</button>
-                            <span className="mx-1">|</span>
-                            <button className="text-red-600 hover:text-red-900">삭제</button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6">
-                    <div className="flex flex-1 justify-between sm:hidden">
-                      <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium !rounded-button bg-white text-gray-700 hover:bg-gray-50">
-                        이전
-                      </button>
-                      <button className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium !rounded-button bg-white text-gray-700 hover:bg-gray-50">
-                        다음
-                      </button>
-                    </div>
-                    <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                      <div>
-                        <p className="text-sm text-gray-700">
-                          총 <span className="font-medium">20</span> 개 중 <span className="font-medium">1</span> -{" "}
-                          <span className="font-medium">10</span>
-                        </p>
-                      </div>
-                      <div>
-                        <nav
-                          className="relative z-0 inline-flex !rounded-button shadow-sm -space-x-px"
-                          aria-label="Pagination">
-                          <button className="relative inline-flex items-center px-2 py-2 !rounded-l-button border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                            <span className="sr-only">이전</span>
-                            <i className="fas fa-chevron-left"></i>
-                          </button>
-                          <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            1
-                          </button>
-                          <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            2
-                          </button>
-                          <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            3
-                          </button>
-                          <button className="relative inline-flex items-center px-2 py-2 !rounded-r-button border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                            <span className="sr-only">다음</span>
-                            <i className="fas fa-chevron-right"></i>
-                          </button>
-                        </nav>
-                      </div>
+          {/* 최신 게시글 목록 */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">
+                추천 도서 리뷰
+              </h2>
+              <button className="text-blue-500 hover:text-blue-700 text-sm font-medium cursor-pointer whitespace-nowrap !rounded-button">
+                더 많은 리뷰 <i className="fas fa-chevron-right ml-1"></i>
+              </button>
+            </div>
+            <div className="space-y-4 max-h-80 overflow-y-auto">
+              {posts.map((post, index) => (
+                <div
+                  key={index}
+                  className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                >
+                  <h3 className="font-medium text-gray-900 mb-1">{post.title}</h3>
+                  <p className="text-gray-600 text-sm mb-2 truncate">
+                    {post.content}
+                  </p>
+                  <div className="flex justify-between text-sm text-gray-500">
+                    <span>{post.author}</span>
+                    <div className="flex space-x-3">
+                      <span>
+                        <i className="fas fa-comment text-gray-400 mr-1"></i>{" "}
+                        {post.comments}
+                      </span>
+                      <span>
+                        <i className="fas fa-heart text-gray-400 mr-1"></i>{" "}
+                        {post.likes}
+                      </span>
                     </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
-        </main>
+          {/* 최신 댓글 목록 */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">최신 댓글</h2>
+              <button className="text-blue-500 hover:text-blue-700 text-sm font-medium cursor-pointer whitespace-nowrap !rounded-button">
+                전체 댓글 보기 <i className="fas fa-chevron-right ml-1"></i>
+              </button>
+            </div>
+            <div className="space-y-4 max-h-80 overflow-y-auto">
+              {comments.map((comment, index) => (
+                <div
+                  key={index}
+                  className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                >
+                  <p className="text-gray-600 text-sm mb-2">{comment.content}</p>
+                  <div className="flex justify-between text-sm text-gray-500">
+                    <span>{comment.author}</span>
+                    <span>{comment.createdAt}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        {/* 하단 통계 그래프 섹션 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {charts.map((config) => (
+            <div key={config.id} className="bg-white rounded-lg shadow-md p-6">
+              <Graph config={config} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 };
-
 export default DashBoardPage;
