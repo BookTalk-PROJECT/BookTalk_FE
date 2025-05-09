@@ -135,7 +135,7 @@ const MyPageBookGatheringComment: React.FC = () => {
         <main>
           <div className="w-full max-w-none mx-auto">
             {/* 브레드크럼 */}
-            <MyPageBreadCrumb major="북리뷰" sub="댓글 관리" />
+            <MyPageBreadCrumb major="모임" sub="댓글 관리" />
             {/* 테이블 */}
             <MyPageTable
               posts={paginatedComments}

@@ -41,6 +41,15 @@ export interface MyPageMyGatheringType extends MyPageTableCommonColType{
   gathering:string;
 }
 
+export interface MyPageGatheringRequestManageType extends MyPageMyGatheringType{
+  questions:GatheringRequestQuestion[]
+}
+
+export interface GatheringRequestQuestion {
+  question: string,
+  answer: string,
+}
+
 
 
 

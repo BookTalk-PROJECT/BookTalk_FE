@@ -17,7 +17,7 @@ const MyPageTable = <T,>({
 
   return (
       <div>
-        <div className="flex justify-end items-center gap-2 mt-6 mb-6">
+        <div className="flex justify-end items-center gap-2 mt-6 mb-6 pr-5">
           <div className="relative">
             <button
                 onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
