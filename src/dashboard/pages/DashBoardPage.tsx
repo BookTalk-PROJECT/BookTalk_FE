@@ -29,6 +29,7 @@ const DashBoardPage: React.FC = () => {
   //하단 차트의 상태
   const [charts, setCharts] = useState<ChartConfig[]>([]);
 
+
   const loadDashboardData = async () => {
     try {
       const [
@@ -83,13 +84,17 @@ const DashBoardPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="text-center mb-12 relative">
+          <div className="absolute left-1/2 -translate-x-1/2 -top-4 w-16 h-16 flex items-center justify-center">
+            <i className="fas fa-book-open via-gray-600 text-4xl"></i>
+          </div>
+          <h1 className="text-4xl font-bold text-gray-600 mb-3 pt-14">
             함께 읽는 즐거움
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             다양한 독서 모임에서 새로운 친구들과 함께 독서의 즐거움을 나누세요
           </p>
+          <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-gray-600 to-transparent"></div>
         </div>
         {/* 상단 하이라이트 카드 섹션 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

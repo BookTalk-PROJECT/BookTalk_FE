@@ -6,6 +6,19 @@ interface ChartComponentProps {
     config: ChartConfig;
 }
 
+
+// 최근 7일 날짜 생성 함수
+const getLastSevenDays = (): string[] => {
+    const dates: string[] = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(today.getDate() - i);
+        dates.push(`${date.getMonth() + 1}/${date.getDate()}`);
+    }
+    return dates;
+};
+
 const Graph: React.FC<ChartComponentProps> = ({ config }) => {
     const chartRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +41,7 @@ const Graph: React.FC<ChartComponentProps> = ({ config }) => {
             },
             xAxis: {
                 type: "category",
-                data: ["5/3", "5/4", "5/5", "5/6", "5/7", "5/8", "5/9"],
+                data: getLastSevenDays(),
             },
             yAxis: {
                 type: "value",
