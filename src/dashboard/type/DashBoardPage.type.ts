@@ -1,32 +1,40 @@
-export interface CardData {
+// 모임 카드 타입 정의
+export interface HighlightCard {
     title: string;
-    count: string;
+    count: number;
     description: string;
     icon: string;
-    iconBgColor: string;
-    iconTextColor: string;
-    countColor: string;
+    iconColor: string;
+    textColor: string;
 }
 
-export interface BookClub {
-    id: string;
+// 최신 모임 타입 정의
+export interface RecentGatherings {
     title: string;
     createdAt: string;
-    memberCount: number;
+    members: number;
 }
 
-export interface BookReview {
-    id: string;
+// 최신 게시글 타입 정의
+export interface RecentPost {
     title: string;
     content: string;
     author: string;
-    commentCount: number;
-    likeCount: number;
+    comments: number;
+    likes: number;
 }
 
-export interface recencyReply {
-    id: string;
+// 최신 댓글 타입 정의
+export interface RecentReply {
     content: string;
     author: string;
-    timestamp: string;
+    createdAt: string;
+}
+
+// 차트 타입 정의
+export interface ChartConfig {
+    id: string;
+    title: string;
+    color: string;
+    data: number[];
 }
