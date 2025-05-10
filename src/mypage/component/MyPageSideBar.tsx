@@ -1,12 +1,15 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import React, { useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router";
 const MyPageSideBar: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [activeMenu, setActiveMenu] = useState('dashboard');
+  const [activeMenu, setActiveMenu] = useState('mypage');
+  const navigate = useNavigate();
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
   };
+  const location = useLocation();
   const menuItems = [
     {
       id: 'mypage',
@@ -14,9 +17,10 @@ const MyPageSideBar: React.FC = () => {
       label: 'My Page',
       url: '/mypage',
       isHeader: true
+
     },
     {
-      id: 'bulletin',
+      id: 'bookreview',
       icon: 'fa-clipboard',
       label: '북리뷰',
       url: '',
@@ -34,7 +38,7 @@ const MyPageSideBar: React.FC = () => {
     { id: 'community-post', icon: 'fa-file-alt', label: '게시글 관리', url: '/mypage/community/board', indent: true },
     { id: 'community-comment', icon: 'fa-comments', label: '댓글 관리', url: '/mypage/community/comment', indent: true },
     {
-      id: 'recruitment',
+      id: 'gathering',
       icon: 'fa-briefcase',
       label: '모임',
       url: '',
@@ -57,10 +61,10 @@ const MyPageSideBar: React.FC = () => {
     { id: 'admin-category', icon: 'fa-folder', label: '카테고리 관리', url: '/admin/category', indent: true }
   ];
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex h-full overflow-y-scroll ">
       {/* Sidebar */}
       <div
-        className={`bg-gradient-to-b from-white to-gray-50 shadow-xl transition-all duration-300 ease-in-out flex flex-col border-r border-gray-100 ${
+        className={` flex flex-col border-r border-gray-100 ${
           isExpanded ? 'w-96' : 'w-16'
         }`}
       >
@@ -77,31 +81,30 @@ const MyPageSideBar: React.FC = () => {
           <ul className="space-y-2">
             {menuItems.map((item) => (
               <li key={item.id} className={isExpanded ? 'px-6' : 'px-2'}>
-                {item.isHeader ? (
+                {item.isHeader && item.id !== 'mypage' ? (
                   <div className={`flex items-center ${isExpanded ? 'px-6 py-3 text-gray-800' : 'hidden'}`}>
                     <i className={`fas ${item.icon} text-lg ${isExpanded ? 'mr-4' : ''} text-gray-600`}></i>
                     {isExpanded && <span className="font-bold text-base">{item.label}</span>}
                   </div>
                 ) : (
-                  <Link to={item.url}>
                   <button
-                    onClick={() => setActiveMenu(item.id)}
+                    onClick={() => {navigate(item.url); setActiveMenu(item.id);} }
                     className={`w-full flex items-center ${!isExpanded ? 'justify-center' : 'justify-between'} ${
                       item.indent && isExpanded ? 'pl-12' : ''
                     } ${isExpanded ? 'px-6' : 'px-3'} py-2.5 rounded-xl cursor-pointer transition-all duration-200 group hover:shadow-md !rounded-button whitespace-nowrap ${
-                      activeMenu === item.id
+                      location.pathname === item.url
                         ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-200'
                         : 'bg-white text-gray-600 hover:bg-gray-50'
                     }`}
                   >
                     <div className="flex items-center">
                       <i className={`fas ${item.icon} text-xl ${isExpanded ? 'mr-4' : ''} ${
-                        activeMenu === item.id ? '' : 'group-hover:text-indigo-600'
+                        location.pathname === item.url ? '' : 'group-hover:text-indigo-600'
                       }`}></i>
-                      {isExpanded && <span className="font-medium text-base">{item.label}</span>}
+                      {isExpanded &&  <span className={`${item.id === 'mypage' && item.isHeader ? 'font-bold text-base' : 'font-medium text-base'} `}>{item.label}</span>}
+
                     </div>
                   </button>
-                  </Link>
                 )}
               </li>
             ))}

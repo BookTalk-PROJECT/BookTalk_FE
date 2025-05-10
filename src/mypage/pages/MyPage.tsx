@@ -1,6 +1,6 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import React, { useEffect, useRef, useState } from "react";
-import MyPageSideBar from "../common/component/MyPageSideBar";
+import MyPageSideBar from "../component/MyPageSideBar";
 
 const MyPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -109,10 +109,10 @@ const MyPage: React.FC = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-50">
       {/* 사이드바 */}
       <MyPageSideBar />
-      <main className="flex-1 p-10 overflow-y-auto pb-32">
+      <div className="flex-1 px-6 py-8">
         {/* 프로필 섹션 */}
         <section className="max-w-3xl mx-auto mb-10">
           <div className="flex flex-col items-center gap-6">
@@ -256,7 +256,7 @@ const MyPage: React.FC = () => {
             ))}
           </div>
         </section>
-      </main>
+      </div>
 
       {/* 저장 완료 알림 */}
       {showSavedAlert && (

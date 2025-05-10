@@ -14,19 +14,19 @@ import GatheringCreateBoardPage from "./gathering/pages/GatheringCreateBoardPage
 import AdminCategory from "./admin/page/AdminCategory";
 import JoinPage from "./common/auth/page/JoinPage";
 import LoginPage from "./common/auth/page/LoginPage";
-import MyPage from "./mypage/MyPage";
+import MyPage from "./mypage/pages/MyPage";
 import AdminPageComment from "./admin/page/AdminPageComment";
-import MyPageBookReviewBoard from "./mypage/MyPageBookReviewBoard";
-import MyPageBookReviewComment from "./mypage/MyPageBookReviewComment";
-import MyPageCommunityBoard from "./mypage/MyPageCommunityBoard";
-import MyPageCommunityComment from "./mypage/MyPageCommunityComment";
-import MyPageGatheringComment from "./mypage/MyPageGatheringComment";
-import MyPageGatheringBoard from "./mypage/MyPageGatheringBoard";
-import MyPageGatheringRequestManage from "./mypage/MyPageGatheringRequestManage";
-import MyPageGatheringApprovalManage from "./mypage/MyPageGatheringApprovalManage";
+import MyPageBookReviewBoard from "./mypage/pages/MyPageBookReviewBoard";
+import MyPageBookReviewComment from "./mypage/pages/MyPageBookReviewComment";
+import MyPageCommunityBoard from "./mypage/pages/MyPageCommunityBoard";
+import MyPageCommunityComment from "./mypage/pages/MyPageCommunityComment";
+import MyPageGatheringComment from "./mypage/pages/MyPageGatheringComment";
+import MyPageGatheringBoard from "./mypage/pages/MyPageGatheringBoard";
+import MyPageGatheringRequestManage from "./mypage/pages/MyPageGatheringRequestManage";
+import MyPageGatheringApprovalManage from "./mypage/pages/MyPageGatheringApprovalManage";
 import AdminPageBoard from "./admin/page/AdminPageBoard";
 import GatheringCreatePage from "./gathering/pages/GatheringCreatePage";
-import MyPageMyGatherings from "./mypage/MyPageMyGatherings";
+import MyPageMyGatherings from "./mypage/pages/MyPageMyGatherings";
 
 const AppContent = () => {
   const location = useLocation();

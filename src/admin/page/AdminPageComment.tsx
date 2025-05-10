@@ -1,6 +1,6 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import React, { useState, useEffect } from "react";
-import MyPageSideBar from "../../common/component/MyPageSideBar";
+import MyPageSideBar from "../../mypage/component/MyPageSideBar";
 import Pagenation from "../../common/component/Pagination";
 const AdminPageComment: React.FC = () => {
   // 댓글 데이터 상태
@@ -163,12 +163,9 @@ const AdminPageComment: React.FC = () => {
     alert(`댓글 ID ${id}가 복구되었습니다.`);
   };
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="fixed top-6 left-0 w-60 h-full bg-blue-600 text-white p-6 space-y-8">
+    <div className="flex min-h-screen bg-gray-50">
         <MyPageSideBar />
-      </div>
-
-      <div className="flex-1 ml-60 bg-white rounded-lg shadow-md">
+      <div className="flex-1 px-6 py-8">
         {/* 브레드크럼 네비게이션 */}
         <div className="p-6 border-b border-gray-200">
           <div className="text-lg font-medium text-gray-700">관리자 &gt; 댓글 관리</div>

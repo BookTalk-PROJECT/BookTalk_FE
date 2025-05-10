@@ -2,15 +2,11 @@ import React from "react";
 
 export interface MyPageTableProps<T> {
   posts: T[];
-  filterOptions: string[];
-  selectedFilter: string;
-  onChangeFilter: (val: string) => void;
-  searchTerm: string;
-  onSearchTermChange: (val: string) => void;
-  onSearchClick: () => void;
-  renderHeader: () => React.ReactNode;
-  renderRow: (row: T) => React.ReactNode;
-  colCount: number;
+  row: { label: string; key: string}[];
+  filterOptions: { label: string; key: string}[];
+  initialFilter: { label: string; key: string}[];
+  manageOption: React.ReactNode;
+  postKeys: string[];
 }
 
 export interface MyPageTableCommonColType {
@@ -48,6 +44,11 @@ export interface MyPageGatheringRequestManageType extends MyPageMyGatheringType{
 export interface GatheringRequestQuestion {
   question: string,
   answer: string,
+}
+
+export interface AdminBoardType extends MyPageBoardType {
+  deleteReason: string;
+  author: string;
 }
 
 

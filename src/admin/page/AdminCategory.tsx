@@ -1,7 +1,8 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import React, { useState } from "react";
 import Pagenation from "../../common/component/Pagination";
-import MyPageSideBar from "../../common/component/MyPageSideBar";
+import MyPageSideBar from "../../mypage/component/MyPageSideBar";
+import MyPageManageButton from "../../mypage/component/MyPageManageButton";
 interface Category {
   id: number;
   name: string;
@@ -210,19 +211,21 @@ const AdminCategory: React.FC = () => {
     );
   };
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="fixed top-6 left-0 w-60 h-full bg-blue-600 text-white p-6 space-y-8">
+    <div className="flex min-h-screen bg-gray-50">
         <MyPageSideBar />
-      </div>
       <div className="max-w-7xl mx-auto bg-white rounded-lg shadow">
         <div className="p-6 border-b border-gray-200">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-xl font-semibold text-gray-800">관리자 &gt; 카테고리 관리</h1>
-            <button
-              onClick={addCategory}
-              className="!rounded-button whitespace-nowrap bg-blue-500 text-white px-4 py-2 text-sm hover:bg-blue-600 cursor-pointer">
-              추가
-            </button>
+            <MyPageManageButton
+              actions={[
+                {
+                  label: "추가",
+                  color: "blue" ,
+                  onClick: () => addCategory,
+                }
+              ]}
+            />
           </div>
           <div className="grid grid-cols-5 gap-4 bg-gray-100 p-3 rounded font-semibold text-sm">
             <div className="flex items-center">
@@ -284,31 +287,25 @@ const AdminCategory: React.FC = () => {
                   <option value="active">활성</option>
                   <option value="inactive">비활성</option>
                 </select>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => addSubCategory(category.id)}
-                    className="!rounded-button whitespace-nowrap bg-green-500 text-white px-3 py-1 text-sm hover:bg-green-600 cursor-pointer">
-                    추가
-                  </button>
-                  {category.isEditing ? (
-                    <button
-                      onClick={() => toggleEdit(category.id, true)}
-                      className="!rounded-button whitespace-nowrap bg-blue-500 text-white px-3 py-1 text-sm hover:bg-blue-600 cursor-pointer">
-                      저장
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => toggleEdit(category.id, true)}
-                      className="!rounded-button whitespace-nowrap bg-yellow-500 text-white px-3 py-1 text-sm hover:bg-yellow-600 cursor-pointer">
-                      수정
-                    </button>
-                  )}
-                  <button
-                    onClick={() => deleteCategory(category.id)}
-                    className="!rounded-button whitespace-nowrap bg-red-500 text-white px-3 py-1 text-sm hover:bg-red-600 cursor-pointer">
-                    삭제
-                  </button>
-                </div>
+                <MyPageManageButton
+                  actions={[
+                    {
+                      label: "추가",
+                      color: "green",
+                      onClick: () => addSubCategory(category.id),
+                    },
+                    {
+                      label: category.isEditing ? "저장" : "수정",
+                      color: category.isEditing ? "blue" : "yellow",
+                      onClick: () => toggleEdit(category.id, true),
+                    },
+                    {
+                      label: "삭제",
+                      color: "red",
+                      onClick: () => deleteCategory(category.id),
+                    },
+                  ]}
+                />
               </div>
               {category.isExpanded && (
                 <div className="ml-8 mt-2 space-y-2">
@@ -337,26 +334,20 @@ const AdminCategory: React.FC = () => {
                         <option value="active">활성</option>
                         <option value="inactive">비활성</option>
                       </select>
-                      <div className="flex space-x-2">
-                        {subCategory.isEditing ? (
-                          <button
-                            onClick={() => toggleEdit(category.id, false, subCategory.id)}
-                            className="!rounded-button whitespace-nowrap bg-blue-500 text-white px-3 py-1 text-sm hover:bg-blue-600 cursor-pointer">
-                            저장
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => toggleEdit(category.id, false, subCategory.id)}
-                            className="!rounded-button whitespace-nowrap bg-yellow-500 text-white px-3 py-1 text-sm hover:bg-yellow-600 cursor-pointer">
-                            수정
-                          </button>
-                        )}
-                        <button
-                          onClick={() => deleteSubCategory(category.id, subCategory.id)}
-                          className="!rounded-button whitespace-nowrap bg-red-500 text-white px-3 py-1 text-sm hover:bg-red-600 cursor-pointer">
-                          삭제
-                        </button>
-                      </div>
+                      <MyPageManageButton
+                        actions={[
+                          {
+                            label: subCategory.isEditing ? "저장" : "수정",
+                            color: subCategory.isEditing ? "blue" : "yellow",
+                            onClick: () => toggleEdit(category.id, false, subCategory.id),
+                          },
+                          {
+                            label: "삭제",
+                            color: "red",
+                            onClick: () => deleteSubCategory(category.id, subCategory.id),
+                          },
+                        ]}
+                      />
                     </div>
                   ))}
                 </div>
