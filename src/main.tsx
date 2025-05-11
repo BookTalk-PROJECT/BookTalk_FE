@@ -26,6 +26,7 @@ import MyPageGatheringRequestManage from "./mypage/MyPageGatheringRequestManage"
 import MyPageGatheringApprovalManage from "./mypage/MyPageGatheringApprovalManage";
 import AdminPageBoard from "./admin/page/AdminPageBoard";
 import GatheringCreatePage from "./gathering/pages/GatheringCreatePage";
+import CreateBoardPage from "./community/board/pages/CreateBoardPage";
 
 const AppContent = () => {
   const location = useLocation();
@@ -46,6 +47,7 @@ const AppContent = () => {
               <Route path="/dashboard" element={<DashBoardPage />} />
               {/* Board */}
               <Route path="/boardList" element={<BoardList />} />
+              <Route path="/boardCreate" element={<CreateBoardPage />} />
               {/* Gathering */}
               <Route path="/gatheringlist">
                 {" "}

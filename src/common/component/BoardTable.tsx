@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Post } from "../type/BoardTable";
+import { CommuPost } from "../../community/board/type/boardList";
 
-interface BoadTableProps {
-  posts: Post[];
+interface BoardTableProps {
+  posts: Post[] | CommuPost[];
 }
 
-const BoardTable: React.FC<BoadTableProps> = ({ posts }) => {
+const BoardTable: React.FC<BoardTableProps> = ({ posts }) => {
   const [sortField, setSortField] = useState("date");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 

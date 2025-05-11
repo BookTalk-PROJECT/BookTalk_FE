@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Category, Post } from "../type/boardList";
+import { Category, CommuPost} from "../type/boardList";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -51,7 +51,7 @@ export const getCategories = async (): Promise<Category[]> => {
   return new Promise((resolve) => resolve(categories));
 };
 
-export const getPosts = async (): Promise<Post[]> => {
+export const getPosts = async (): Promise<CommuPost[]> => {
   //   const response = await axios.get<Categories[]>(`${BASE_URL}/board/categories`);
   const posts = [
     { id: 2, title: "이달의 추천도서", author: "관리자", date: "2025-04-15", views: 187, categoryId: 4 },
