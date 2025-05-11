@@ -14,18 +14,19 @@ import GatheringCreateBoardPage from "./gathering/pages/GatheringCreateBoardPage
 import AdminCategory from "./admin/page/AdminCategory";
 import JoinPage from "./common/auth/page/JoinPage";
 import LoginPage from "./common/auth/page/LoginPage";
-import MyPage from "./mypage/MyPage";
+import MyPage from "./mypage/pages/MyPage";
 import AdminPageComment from "./admin/page/AdminPageComment";
-import MyPageBookReviewBoard from "./mypage/MyPageBookReviewBoard";
-import MyPageBookReviewComment from "./mypage/MyPageBookReviewComment";
-import MyPageCommunityBoard from "./mypage/MyPageCommunityBoard";
-import MyPageCommunityComment from "./mypage/MyPageCommunityComment";
-import MyPageGatheringComment from "./mypage/MyPageGatheringComment";
-import MyPageGatheringBoard from "./mypage/MyPageGatheringBoard";
-import MyPageGatheringRequestManage from "./mypage/MyPageGatheringRequestManage";
-import MyPageGatheringApprovalManage from "./mypage/MyPageGatheringApprovalManage";
+import MyPageBookReviewBoard from "./mypage/pages/MyPageBookReviewBoard";
+import MyPageBookReviewComment from "./mypage/pages/MyPageBookReviewComment";
+import MyPageCommunityBoard from "./mypage/pages/MyPageCommunityBoard";
+import MyPageCommunityComment from "./mypage/pages/MyPageCommunityComment";
+import MyPageGatheringComment from "./mypage/pages/MyPageGatheringComment";
+import MyPageGatheringBoard from "./mypage/pages/MyPageGatheringBoard";
+import MyPageGatheringRequestManage from "./mypage/pages/MyPageGatheringRequestManage";
+import MyPageGatheringApprovalManage from "./mypage/pages/MyPageGatheringApprovalManage";
 import AdminPageBoard from "./admin/page/AdminPageBoard";
 import GatheringCreatePage from "./gathering/pages/GatheringCreatePage";
+import MyPageMyGatherings from "./mypage/pages/MyPageMyGatherings";
 
 const AppContent = () => {
   const location = useLocation();
@@ -38,7 +39,7 @@ const AppContent = () => {
         {/* <div className="flex justify-center bg-gray-100 min-h-screen">
        <div className="grid grid-areas-layout grid-cols-layout grid-rows-layout gap-x-4 relative max-w-[390px] w-full bg-white shadow-md selection:bg-green-900 font-[pretendard]"> */}
         {/* {location.pathname !== "/login" && <Header />} */}
-        <main className={`grid-in-main ${location.pathname !== "/login" ? "my-3 px-[24px]" : ""}`}>
+        <main className={`grid-in-main ${(location.pathname !== "/login" || !location.pathname.includes("/mypage")) ? "my-3 px-[24px]" : ""}`}>
           <Routes>
             {/* <Route path="/login" element={<LoginPage />} /> */}
             <Route element={<PrivateRoute />}>
@@ -72,13 +73,12 @@ const AppContent = () => {
               <Route path="/mypage/community/board" element={<MyPageCommunityBoard />} />{" "}
               {/* 최형석 마이 페이지 커뮤니티 게시판  */}
               <Route path="/mypage/community/comment" element={<MyPageCommunityComment />} />{" "}
-              {/* 최형석 마이 페이지 커뮤니티 댓글  */}
+              {/* MyPage_Gathering */}
+              <Route path="/mypage/gathering" element={<MyPageMyGatherings />} /> {/* 최형석 내 모임 */}
               <Route path="/mypage/gathering/board" element={<MyPageGatheringBoard />} /> {/* 최형석 모임 게시판  */}
               <Route path="/mypage/gathering/comment" element={<MyPageGatheringComment />} /> {/* 최형석 모임 댓글  */}
-              <Route path="/mypage/gathering/manage/request" element={<MyPageGatheringRequestManage />} />{" "}
-              {/* 최형석 모임 신청 관리  */}
-              <Route path="/mypage/gathering/manage/approval" element={<MyPageGatheringApprovalManage />} />{" "}
-              {/* 최형석 모임 승인 관리  */}
+              <Route path="/mypage/gathering/manage/request" element={<MyPageGatheringRequestManage />} />{/* 최형석 모임 신청 관리  */}
+              <Route path="/mypage/gathering/manage/approval" element={<MyPageGatheringApprovalManage />} /> {/* 최형석 모임 승인 관리  */}
               {/* AdminPage */}
               <Route path="/admin/board" element={<AdminPageBoard />} /> {/* 최형석 관리자 게시물 관리 페이지 */}
               <Route path="/admin/comment" element={<AdminPageComment />} /> {/* 최형석 관리자 댓글 관리 페이지 */}
