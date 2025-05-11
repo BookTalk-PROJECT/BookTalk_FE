@@ -1,26 +1,36 @@
-// The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
+//기본
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DatePicker from "react-datepicker";
-import { ko } from "date-fns/locale";
-import "react-datepicker/dist/react-datepicker.css";
+
+//컴포넌트 관련
+import GatheringInput from "../component/GatheringInput";
+import GatheringTextarea from "../component/GatheringTextarea";
+
+//타입 api 요청관련
+import {
+  Books,
+  GatheringCreateRequest,
+  Question,
+  SearchResult
+} from "../type/GatheringCreatePage.types";
+import {
+  mockBooks,
+  mockSearchResults,
+  mockQuestions,
+  createGathering
+} from "../api/GatheringCreatePage.mock";
+import CustomButton from "../../common/component/CustomButton";
 
 const GatheringCreatePage: React.FC = () => {
-  // 책 정보 타입 정의
-  interface Book {
-    id: number;
-    name: string;
-    startDate: string;
-    status: "planned" | "in_progress" | "completed"; // 상태: 예정, 진행중, 완료
-  }
 
   const navigate = useNavigate();
 
   // 책 관련 상태
-  const [books, setBooks] = useState<Book[]>([]); // 선택된 책 목록
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false); // 책 검색 모달 열림 여부
-  const [searchQuery, setSearchQuery] = useState(""); // 책 검색어
-  const [searchResults, setSearchResults] = useState<Array<{ id: string; title: string }>>([]); // 검색 결과
+  const [books, setBooks] = useState<Books[]>(mockBooks); // 목데이터로 초기화 가능
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>(mockSearchResults);
+
 
   // 모임 기본 정보
   const [groupName, setGroupName] = useState(""); // 모임명
@@ -36,10 +46,8 @@ const GatheringCreatePage: React.FC = () => {
   const [calendarModalTarget, setCalendarModalTarget] = useState<"recruitment" | "activity" | null>(null); // 현재 열린 달력 종류
 
   // 가입 질문 관련
-  const [questions, setQuestions] = useState([
-    { id: 1, text: "어떤 책을 좋아하세요?" }, // 기본 질문 1개
-  ]);
-  const [newQuestion, setNewQuestion] = useState(""); // 새 질문 입력 값
+  const [questions, setQuestions] = useState<Question[]>(mockQuestions);
+  const [newQuestion, setNewQuestion] = useState("");
 
   // 질문 추가 함수 (최대 5개)
   const handleAddQuestion = () => {
@@ -82,6 +90,34 @@ const GatheringCreatePage: React.FC = () => {
     navigate(-1);
   };
 
+  const handleSubmit = async () => {
+    const gatheringData: GatheringCreateRequest = {
+      groupName,
+      location,
+      meetingFormat,
+      meetingDetails,
+      recruitmentPeriod,
+      activityPeriod,
+      books,
+      questions,
+      hashtags,
+    };
+
+    console.log("모임 신청 데이터:", gatheringData); // 현재 데이터 확인용
+
+    try {
+      await createGathering(gatheringData); // 서버로 데이터 보냄
+      alert("모임 신청이 완료되었습니다!");
+      navigate("/gatheringlist"); // 성공하면 모임 목록 페이지로 이동함
+    }
+    catch (error) {
+      console.error("모임 신청 실패:", error);
+      alert("모임 신청에 실패했습니다. 다시 시도해주세요."); // 실패해도 그대로 유지시킴
+      //실패해도 임력폼 유지시킴 따로 처리는 필요없는듯?
+    }
+  };
+
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center">
       <div className="w-full max-w-[1440px] min-h-[1024px] bg-white mx-auto">
@@ -104,13 +140,12 @@ const GatheringCreatePage: React.FC = () => {
                   <div className="text-sm text-gray-600 mb-2">시작일: {book.startDate}</div>
                   <div className="flex justify-end">
                     <span
-                      className={`text-xs px-2 py-1 rounded ${
-                        book.status === "completed"
-                          ? "bg-green-100 text-green-800"
-                          : book.status === "in_progress"
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-gray-100 text-gray-800"
-                      }`}>
+                      className={`text-xs px-2 py-1 rounded ${book.status === "completed"
+                        ? "bg-green-100 text-green-800"
+                        : book.status === "in_progress"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-gray-100 text-gray-800"
+                        }`}>
                       {book.status === "completed" ? "완료" : book.status === "in_progress" ? "진행중" : "예정"}
                     </span>
                   </div>
@@ -177,70 +212,61 @@ const GatheringCreatePage: React.FC = () => {
               <div className="flex-1">
                 <h3 className="text-lg font-bold mb-4">기준 정보</h3>
                 <div className="mb-4">
-                  <label className="block text-sm text-purple-700 mb-1">모임명</label>
                   <div className="relative">
-                    <input
-                      type="text"
-                      className="gathering-input"
-                      placeholder="모임명을 입력해세요"
+                    <GatheringInput
+                      label="모임명"
+                      placeholder="모임명을 입력하세요"
                       value={groupName}
                       onChange={(e) => setGroupName(e.target.value)}
+                      suffixButton={{
+                        label: "중복 체크",
+                        onClick: () => alert("중복체크 누름"),
+                      }}
                     />
-                    <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded !rounded-button whitespace-nowrap cursor-pointer">
-                      중복 체크
-                    </button>
                   </div>
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm text-purple-700 mb-1">지역</label>
                   <div className="relative">
-                    <input
-                      type="text"
-                      className="gathering-input"
+                    <GatheringInput
+                      label="지역"
                       placeholder="도시 지역을 입력하세요"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
+                      suffixIconButton={{
+                        icon: <i className="fas fa-search"></i>,
+                        onClick: () => alert("도시지역 검색버튼 누름"),
+                      }}
                     />
-                    <span className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                      <i className="fas fa-search"></i>
-                    </span>
                   </div>
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm text-purple-700 mb-1">모임 방법</label>
-                  <input
-                    type="text"
-                    className="gathering-input"
-                    placeholder="모임 방법을 입력하세요"
-                    value={meetingFormat}
-                    onChange={(e) => setMeetingFormat(e.target.value)}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm text-purple-700 mb-1">모임 소개</label>
-                  <textarea
-                    className="gathering-textarea"
-                    placeholder="모임 소개를 입력해주세요"
+                  <GatheringTextarea
+                    label="모임 소개"
+                    placeholder="모임 소개를 입력하세요"
+                    minHeight="400px"
                     value={meetingDetails}
-                    onChange={(e) => setMeetingDetails(e.target.value)}></textarea>
+                    onChange={(e) => setMeetingDetails(e.target.value)}
+                  />
                 </div>
 
                 <div className="flex gap-4 mb-4">
                   {/* 모집 기간 */}
                   <div className="flex-1">
-                    <label className="block text-sm text-purple-700 mb-1">모집 인원</label>
                     <div className="relative">
-                      <input type="text" className="gathering-date" placeholder="인원수를 입력하세요" />
+                      <GatheringInput
+                        label="모집 인원"
+                        placeholder="인원수를 입력하세요"
+                      />
                     </div>
                   </div>
 
                   {/* 활동 기간 */}
                   <div className="flex-1">
-                    <label className="block text-sm text-purple-700 mb-1">활동 기간</label>
                     <div className="relative">
-                      <DatePicker
-                        locale={ko}
+                      <GatheringInput
+                        type="date"
+                        label="활동 기간"
                         selected={activityDate}
                         onChange={(date) => {
                           setActivityDate(date);
@@ -248,29 +274,25 @@ const GatheringCreatePage: React.FC = () => {
                             setActivityPeriod(date.toISOString().split("T")[0]);
                           }
                         }}
-                        dateFormat="yyyy-MM-dd (eee)"
-                        placeholderText="활동기간을 선택하세요"
-                        className="gathering-date"
+                        placeholder="활동 기간을 선택하세요"
                       />
                     </div>
                   </div>
 
                   {/* 모집 기간 */}
                   <div className="flex-1">
-                    <label className="block text-sm text-purple-700 mb-1">모집 기간</label>
                     <div className="relative">
-                      <DatePicker
-                        locale={ko}
+                      <GatheringInput
+                        type="date"
+                        label="모집 기간"
                         selected={recruitmentDate}
                         onChange={(date) => {
                           setRecruitmentDate(date);
                           if (date) {
-                            setRecruitmentPeriod(date.toISOString().split("T")[0]);
+                            setActivityPeriod(date.toISOString().split("T")[0]);
                           }
                         }}
-                        dateFormat="yyyy-MM-dd (eee)"
-                        placeholderText="모집기간을 선택하세요"
-                        className="gathering-date"
+                        placeholder="모집기간을 선택하세요"
                       />
                     </div>
                   </div>
@@ -312,21 +334,26 @@ const GatheringCreatePage: React.FC = () => {
                 <div>
                   <h3 className="text-lg font-bold mb-4">가입 질문</h3>
                   <div className="mb-4">
-                    <label className="block text-sm text-purple-700 mb-1">질문</label>
                     <div className="relative">
-                      <input
-                        type="text"
-                        className="gathering-input"
+                      <GatheringInput
+                        label="질문"
                         placeholder="질문 사항을 입력하세요"
                         value={newQuestion}
                         onChange={(e) => setNewQuestion(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleAddQuestion();
+                          }
+                        }}
+                        suffixIconButton={{
+                          icon: <i className="fas fa-plus"></i>,
+                          onClick: handleAddQuestion,
+                          className: `${questions.length >= 5 ? "bg-gray-400" : "bg-gray-700"} 
+                text-white w-8 h-8 flex items-center justify-center 
+                rounded-full whitespace-nowrap cursor-pointer`
+                        }}
                       />
-                      <button
-                        onClick={handleAddQuestion}
-                        disabled={questions.length >= 5}
-                        className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${questions.length >= 5 ? "bg-gray-400" : "bg-gray-700"} text-white w-8 h-8 flex items-center justify-center rounded-full !rounded-button whitespace-nowrap cursor-pointer`}>
-                        <i className="fas fa-plus"></i>
-                      </button>
                     </div>
                   </div>
                   {/* 질문 목록 */}
@@ -352,14 +379,22 @@ const GatheringCreatePage: React.FC = () => {
           </div>
           {/* 버튼 그룹 */}
           <div className="flex justify-end space-x-3 mt-8">
-            <button className="bg-gray-800 text-white px-6 py-2 rounded !rounded-button whitespace-nowrap cursor-pointer">
-              신청
-            </button>
-            <button
+            <CustomButton
+              onClick={handleSubmit}
+              color="black"
+              customClassName="px-6 py-2 text-lg font-semibold">
+              <>
+                신청
+              </>
+            </CustomButton>
+            <CustomButton
               onClick={handleCancel}
-              className="bg-gray-200 text-gray-800 px-6 py-2 rounded !rounded-button whitespace-nowrap cursor-pointer">
-              취소
-            </button>
+              color="white"
+              customClassName="px-6 py-2 text-lg font-semibold">
+              <>
+                취소
+              </>
+            </CustomButton>
           </div>
         </div>
       </div>

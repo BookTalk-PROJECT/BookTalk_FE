@@ -3,9 +3,10 @@ import { Post } from "../type/BoardTable";
 
 interface BoadTableProps {
   posts: Post[];
+  requestUrl: string;
 }
 
-const BoardTable: React.FC<BoadTableProps> = ({ posts }) => {
+const BoardTable: React.FC<BoadTableProps> = ({ posts, requestUrl }) => {
   const [sortField, setSortField] = useState("date");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
@@ -91,7 +92,8 @@ const BoardTable: React.FC<BoadTableProps> = ({ posts }) => {
           <tr key={post.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.id}</td>
             <td className="px-6 py-4 text-sm">
-              <a href="#" className="text-gray-900 hover:text-blue-600">
+              {/* 커뮤니티 또는 모임으로 분기 존재함 requestPosition에 url 받아옴 */}
+              <a href={`/${requestUrl}/${post.id}`} className="text-gray-900 hover:text-blue-600">
                 {post.title}
               </a>
             </td>
