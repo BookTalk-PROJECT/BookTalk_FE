@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import CustomButton from "../../common/component/CustomButton"; // 필요
 import { examplebooks, exampleBookInfo, fetchGatheringBooks, fetchGatheringInfo } from "../api/GatheringHeader.mock";
 import { bookInfo, Books } from "../type/GatheringHeader.types";
-import LoadingBar from "../../common/component/Loading";
 
 interface GatheringId {
     gatheringId: string;

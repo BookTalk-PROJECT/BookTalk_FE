@@ -1,6 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import Footer from "../../../common/component/Footer";
-import Header from "../../../common/component/Header";
 import Pagenation from "../../../common/component/Pagination";
 import ButtonWrapper from "../../../common/component/Button";
 import { Category, CommuPost, SubCategory } from "../type/boardList";
@@ -79,11 +77,10 @@ const BoardList: React.FC = () => {
                   {categories.map((category) => (
                     <div key={category.id} className="relative group">
                       <button
-                        className={`px-4 py-2 font-medium text-sm whitespace-nowrap cursor-pointer transition-all duration-300 relative ${
-                          activeCategory === category
-                            ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50 shadow-sm"
-                            : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
-                        }`}
+                        className={`px-4 py-2 font-medium text-sm whitespace-nowrap cursor-pointer transition-all duration-300 relative ${activeCategory === category
+                          ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50 shadow-sm"
+                          : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                          }`}
                         onClick={async () => {
                           setIsLoading(true);
                           await handleCategoryChange(category);
@@ -131,11 +128,10 @@ const BoardList: React.FC = () => {
                         {activeCategory?.subCategories.map((subCategory, index) => (
                           <div
                             key={index}
-                            className={`px-4 py-2.5 text-sm cursor-pointer transition-colors duration-150 flex items-center justify-between ${
-                              activeSubCategory === subCategory
-                                ? "bg-blue-50 text-blue-600"
-                                : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                            }`}
+                            className={`px-4 py-2.5 text-sm cursor-pointer transition-colors duration-150 flex items-center justify-between ${activeSubCategory === subCategory
+                              ? "bg-blue-50 text-blue-600"
+                              : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                              }`}
                             onClick={() => {
                               setActiveSubCategory(subCategory);
                               setIsDropdownOpen(false);
@@ -238,11 +234,11 @@ const BoardList: React.FC = () => {
                   if (dateRange.end && new Date(post.date) > new Date(dateRange.end)) return false;
 
                   return true;
-                })}
+                })} requestUrl={""} //여기에 커뮤니티 이벤트 요청 url이 들어가야함
               />
             </div>
             {/* Pagination */}
-            <Pagenation totalPages={21} loadPageByPageNum={(num) => {}} />
+            <Pagenation totalPages={21} loadPageByPageNum={(num) => { }} />
           </div>
         </div>
       </main>

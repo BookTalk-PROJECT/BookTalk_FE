@@ -1,4 +1,4 @@
-import { Post } from "../../../common/component/BoardTable";
+import { Post } from "../../../common/type/BoardTable";
 
 export interface BoardCategories {
   hello: string;

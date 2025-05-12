@@ -4,6 +4,7 @@ import Pagenation from "../../common/component/Pagination";
 import BoardTable from "../../common/component/BoardTable";
 import GatheringHeader from "../component/GatheringHeader";
 import CustomButton from "../../common/component/CustomButton";
+import { posts } from "../api/GatheringDetailPage.mock";
 
 interface Post {
   id: number;
@@ -18,22 +19,13 @@ const GatheringDetailPage: React.FC = () => {
   const { gatheringId } = useParams();
   const navigate = useNavigate();
 
-  const posts = [
-    { id: 32, title: "독서모임 후기 1", date: "2023-02-24", author: "이름님", views: 33 },
-    { id: 31, title: "독서모임 리뷰 1", date: "2023-03-04", author: "이름님", views: 1511 },
-    { id: 30, title: "독서모임 후기 1", date: "2023-02-24", author: "박이름", views: 2 },
-    { id: 29, title: "독서모임 후기 1", date: "2023-02-24", author: "김이름", views: 7 },
-    { id: 28, title: "독서모임 후기 1", date: "2023-02-24", author: "박이름", views: 32 },
-    { id: 27, title: "독서모임 후기 1", date: "2023-02-23", author: "박이름", views: 1 },
-    { id: 26, title: "독서모임 후기 1", date: "2023-02-23", author: "황이름", views: 5 },
-    { id: 25, title: "독서 1", date: "2023-02-23", author: "박이름", views: 134 },
-  ];
-
   const totalPages = Math.ceil(posts.length / 10); // 보여줄 페이지 수
 
   const loadPageByPageNum = (pageNum: number) => {
     setCurrentPage(pageNum);
   };
+
+  const paginatedPosts = posts.slice((currentPage - 1) * 10, currentPage * 10);
 
   return (
     <div className="min-h-screen bg-white">
@@ -54,7 +46,7 @@ const GatheringDetailPage: React.FC = () => {
                 </CustomButton>
               </div>
               <div className="overflow-hidden rounded-lg border">
-                <BoardTable posts={posts} requestUrl={`gatheringlist/${gatheringId}/gatheringboard`} />
+                <BoardTable posts={paginatedPosts} requestUrl={`gatheringlist/${gatheringId}/gatheringboard`} />
               </div>
 
               <Pagenation totalPages={totalPages} loadPageByPageNum={loadPageByPageNum} />
