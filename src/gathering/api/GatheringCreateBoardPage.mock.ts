@@ -11,6 +11,8 @@ const RESULTS_PER_PAGE = 5;
 
 //게시글 등록 api
 export const createPost = async (postData: PostData) => {
+    console.log("게시글 등록 요청 데이터:", postData);
+
     const response = await axios.post(apiKey + "/api/gatherings", postData);
     return response.data;
 };

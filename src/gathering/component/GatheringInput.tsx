@@ -16,18 +16,19 @@ interface GatheringInputPropsBase {
         className?: string;
     };
     className?: string;
-
+    name?: string;
     onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 type GatheringInputProps =
     | (GatheringInputPropsBase & {
-        type?: 'text';
+        type?: "text" | "textarea";
+        placeholder?: string; // ✅ 추가된 placeholder
         value?: string;
-        onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+        onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     })
     | (GatheringInputPropsBase & {
-        type: 'date';
+        type: "date";
         selected: Date | null;
         onChange: (date: Date | null) => void;
         placeholder?: string;
@@ -41,11 +42,11 @@ const GatheringInput: React.FC<GatheringInputProps> = (props) => {
         <div className="flex flex-col gap-1">
             {label && <label className="block text-sm text-purple-700">{label}</label>}
             <div className="relative">
-                {props.type === 'date' ? (
+                {props.type === "date" ? (
                     <DatePicker
                         locale={ko}
                         selected={props.selected}
-                        onChange={props.onChange}
+                        onChange={props.onChange as (date: Date | null) => void}
                         dateFormat="yyyy-MM-dd (eee)"
                         placeholderText={props.placeholder}
                         className={`w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300
@@ -54,11 +55,14 @@ const GatheringInput: React.FC<GatheringInputProps> = (props) => {
                     />
                 ) : (
                     <input
-                        {...props}
+                        type={props.type || "text"} // ✅ 기본적으로 text 타입
+                        name={props.name}
+                        value={props.value}
+                        placeholder={props.placeholder}
                         onChange={props.onChange}
                         className={`w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300
-                          rounded-lg px-4 py-2 transition duration-200 outline-none
-                          placeholder:text-sm placeholder:text-gray-400 bg-white ${className}`}
+                        rounded-lg px-4 py-2 transition duration-200 outline-none
+                        placeholder:text-sm placeholder:text-gray-400 bg-white ${className}`}
                     />
                 )}
                 {suffixButton && (
@@ -73,16 +77,16 @@ const GatheringInput: React.FC<GatheringInputProps> = (props) => {
                 {!suffixButton && suffixIconButton && (
                     <CustomButton
                         onClick={suffixIconButton.onClick}
-                        customClassName={`absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400  ${suffixIconButton.className || ""}`}
+                        customClassName={`absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 ${suffixIconButton.className || ""}`}
                     >
                         {suffixIconButton.icon}
                     </CustomButton>
-
                 )}
             </div>
         </div>
     );
 };
+
 
 
 export default GatheringInput;

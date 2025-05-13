@@ -19,15 +19,15 @@ const GatheringCreateBoardPage: React.FC = () => {
   const [nextPageToken, setNextPageToken] = useState('');
   const [prevPageToken, setPrevPageToken] = useState('');
 
+  const [postData, setPostData] = useState<PostData>({
+    title: "",
+    category: "",
+    content: "",
+  });
+
   const handleSubmit = async () => {
     const editorInstance = editorRef.current?.getInstance();
     const content = editorInstance?.getMarkdown() || '';
-
-    const postData: PostData = {
-      title,
-      category,
-      content,
-    };
 
     try {
       const result = await createPost(postData);
@@ -73,7 +73,22 @@ const GatheringCreateBoardPage: React.FC = () => {
     editorRef.current?.getInstance().exec('redo');
   };
 
+  const onChangeHandler = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setPostData({
+      ...postData,
+      [name]: value,
+    });
+  };
 
+  // 에디터 내용 변경 시 실행할 핸들러
+  const handleEditorChange = () => {
+    const editorInstance = editorRef.current?.getInstance();
+    const content = editorInstance?.getMarkdown() || ""; // 마크다운 형식으로 내용 가져오기
+    setPostData((prev) => ({ ...prev, content })); // 상태 업데이트
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -86,20 +101,23 @@ const GatheringCreateBoardPage: React.FC = () => {
             <label className="block text-lg font-semibold mb-2 text-gray-700">제목</label>
 
             <GatheringInput
+              type="text"
+              name="title"
               placeholder="제목을 입력하세요"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={postData.title}
+              onChange={onChangeHandler}
             />
           </div>
 
           {/* 카테고리 입력 */}
           <div>
             <label className="block text-lg font-semibold mb-2 text-gray-700">카테고리</label>
-
             <GatheringInput
+              type="text"
+              name="category"
               placeholder="카테고리를 입력하세요"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              value={postData.category}
+              onChange={onChangeHandler}
             />
           </div>
 
@@ -125,37 +143,36 @@ const GatheringCreateBoardPage: React.FC = () => {
               ref={editorRef}
               initialValue=""
               previewStyle="vertical"
-              height="600px"
+              height="400px"
               initialEditType="wysiwyg"
               useCommandShortcut={true}
+              onChange={handleEditorChange} // ✅ 변경된 내용 저장
               toolbarItems={[
-                ['heading', 'bold', 'italic', 'strike'],
-                ['hr', 'quote'],
-                ['ul', 'ol', 'task', 'indent', 'outdent'],
-                ['table', 'link', 'image', 'code', 'codeblock'],
-
-                // Undo / Redo 버튼 커스텀 추가
+                ["heading", "bold", "italic", "strike"],
+                ["hr", "quote"],
+                ["ul", "ol", "task", "indent", "outdent"],
+                ["table", "link", "image", "code", "codeblock"],
                 [
                   {
-                    name: 'undo',
-                    tooltip: '되돌리기',
+                    name: "undo",
+                    tooltip: "되돌리기",
                     el: (() => {
-                      const button = document.createElement('button');
+                      const button = document.createElement("button");
                       button.innerHTML = `<i class="fas fa-undo"></i>`;
-                      button.addEventListener('click', () => {
-                        editorRef.current?.getInstance().exec('undo');
+                      button.addEventListener("click", () => {
+                        editorRef.current?.getInstance().exec("undo");
                       });
                       return button;
                     })(),
                   },
                   {
-                    name: 'redo',
-                    tooltip: '다시하기',
+                    name: "redo",
+                    tooltip: "다시하기",
                     el: (() => {
-                      const button = document.createElement('button');
+                      const button = document.createElement("button");
                       button.innerHTML = `<i class="fas fa-redo"></i>`;
-                      button.addEventListener('click', () => {
-                        editorRef.current?.getInstance().exec('redo');
+                      button.addEventListener("click", () => {
+                        editorRef.current?.getInstance().exec("redo");
                       });
                       return button;
                     })(),
@@ -200,8 +217,9 @@ const GatheringCreateBoardPage: React.FC = () => {
               type="text"
               className="w-full border px-4 py-2 mb-4"
               placeholder="유튜브 검색어 입력"
+              name="youtubeQuery"
               value={youtubeQuery}
-              onChange={(e) => setYoutubeQuery(e.target.value)}
+              onChange={onChangeHandler}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleYoutubeSearch();
