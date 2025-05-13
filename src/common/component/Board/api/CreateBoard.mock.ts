@@ -1,5 +1,5 @@
 import axios from "axios";
-import { YoutubeVideo } from "../../../type/BoardTable";
+import { YoutubeVideo } from "../type/BoardDetail.types";
 
 
 const apiKey = import.meta.env.BASE_URL;

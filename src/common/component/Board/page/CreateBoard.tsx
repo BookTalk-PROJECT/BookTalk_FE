@@ -4,11 +4,11 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { searchYoutubeVideos } from '../api/CreateBoard.mock';
 import CustomInput from '../../CustomInput';
 import CustomButton from '../../CustomButton';
-import { CommuPost, GatheringPost } from '../../../../community/board/type/boardList';
+import { CommuPostRequest, GatheringPostRequest } from '../../../../community/board/type/boardList';
 import { YoutubeVideo } from '../type/BoardDetail.types';
 
 interface BoardProps {
-  createPost: (arg0: CommuPost | GatheringPost) => void;
+  createPost: (arg0: CommuPostRequest | GatheringPostRequest) => void;
 }
 
 const GatheringCreateBoardPage: React.FC<BoardProps> = ({ createPost }) => {
@@ -20,7 +20,7 @@ const GatheringCreateBoardPage: React.FC<BoardProps> = ({ createPost }) => {
   const [nextPageToken, setNextPageToken] = useState('');
   const [prevPageToken, setPrevPageToken] = useState('');
 
-  const [postData, setPostData] = useState<CommuPost | GatheringPost>({
+  const [postData, setPostData] = useState<CommuPostRequest | GatheringPostRequest>({
     id: 0,
     title: "",
     author: "",

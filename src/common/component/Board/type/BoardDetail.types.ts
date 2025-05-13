@@ -9,7 +9,7 @@ export interface YoutubeVideo { // 유튜브 검색 api 타입
     publishedAt: string;
 }
 
-export interface BoardDetailData { //조회할때 사용
+export interface GetBoardDetailRequest { //조회할때 사용
     post: CommuDetail | GatheringDetail;   // 게시글 상세 정보
     replys?: Reply[];        // 댓글 목록
 }

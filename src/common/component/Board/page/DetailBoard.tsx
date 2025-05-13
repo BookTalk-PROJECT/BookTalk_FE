@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CustomButton from "../../CustomButton";
 import { exampleData } from "../api/DetailBoard.mock";
-import { BoardDetailData } from "../type/BoardDetail.types";
+import { GetBoardDetailRequest } from "../type/BoardDetail.types";
 
 interface DetailBoardProps {
     //모임 조회 props
-    GetBoardDetail: (arg0: string, arg1?: string) => Promise<BoardDetailData>;
+    GetBoardDetail: (arg0: string, arg1?: string) => Promise<GetBoardDetailRequest>;
     //게시글 좋아요 props arg1 : 게시글 아이디, arg2: 좋아요 여부
     ToggleLikePost: (postId: string, gatheringId?: string) => void;
     //게시글 댓글등록 props arg1 : 게시글 아이디, arg2 : 댓글 내용, arg3: 대댓글여부, arg4: 모임여부
@@ -20,7 +20,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
     const navigate = useNavigate(); //이전 게시글 다음 또는 목록으로 넘어갈때 필요 (아직 미구현)
 
     //상세 조회 상태 관리
-    const [detailData, setDetailData] = useState<BoardDetailData>();
+    const [detailData, setDetailData] = useState<GetBoardDetailRequest>();
     // 댓글 상태 관리
     const [parentCommentContent, setParentCommentContent] = useState<string>(""); // 부모 댓글 입력
     const [reReplyContent, setReReplyContent] = useState<string>(""); // 댓글/대댓글 공통 입력
@@ -122,7 +122,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
 
         // 댓글 추가 (Optimistic UI) - 안전한 타입 처리
         setDetailData((prev) => {
-            if (!prev) return prev as unknown as BoardDetailData; // prev가 undefined일 경우 안전하게 반환
+            if (!prev) return prev as unknown as GetBoardDetailRequest; // prev가 undefined일 경우 안전하게 반환
 
             // 부모 댓글 추가
             if (replyTarget === null) {
@@ -132,7 +132,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
                         ...(prev.replys ?? []), // replys가 undefined일 경우 빈 배열로 처리
                         newComment,
                     ],
-                } as BoardDetailData; // 명시적 타입 지정
+                } as GetBoardDetailRequest; // 명시적 타입 지정
             }
 
             // 대댓글 추가
@@ -150,7 +150,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
                     }
                     return parentReply;
                 }),
-            } as BoardDetailData; // 명시적 타입 지정
+            } as GetBoardDetailRequest; // 명시적 타입 지정
         });
 
         try {

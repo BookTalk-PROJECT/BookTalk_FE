@@ -1,10 +1,10 @@
 import axios from "axios";
-import { BoardDetailData } from "../type/BoardDetail.types";
+import { GetBoardDetailRequest } from "../type/BoardDetail.types";
 
 // API 키 및 기본 URL 설정
 const baseURL = import.meta.env.BASE_URL;
 
-export const exampleData: BoardDetailData = {
+export const exampleData: GetBoardDetailRequest = {
     post: {
         board_code: "1",
         member_id: "등록할떄 추가해줘야함",
