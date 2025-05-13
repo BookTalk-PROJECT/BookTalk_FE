@@ -1,17 +1,18 @@
 import axios from "axios";
-import { BoardDetailData } from "../../../type/BoardTable";
+import { BoardDetailData } from "../type/BoardDetail.types";
 
 // API 키 및 기본 URL 설정
 const baseURL = import.meta.env.BASE_URL;
 
 export const exampleData: BoardDetailData = {
     post: {
-        id: 1,
+        board_code: "1",
+        member_id: "등록할떄 추가해줘야함",
         title: "독서모임 후기 1",
-        author: "이름님",
+        gatheringId: "모임 게시글일때만 사용",
         views: 33,
         likes: 15,
-        date: "2023-02-24",
+        create_at: "2025-05-13",
         imageUrl: "https://readdy.ai/api/search-image?query=modern%20book%20club%20meeting%20with%20people%20discussing%20literature%20in%20a%20contemporary%20minimalist%20setting%20with%20warm%20lighting%20and%20comfortable%20seating%20arrangement&width=1200&height=675&seq=1&orientation=landscape",
         content: `오늘 진행된 독서모임에서는 '책이름1'을 가지고 깊이 있는 토론을 진행했습니다...
                 다음 모임에서는 '책이름2'를 읽고 토론할 예정입니다.`,

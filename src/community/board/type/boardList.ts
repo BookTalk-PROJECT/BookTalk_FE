@@ -1,5 +1,10 @@
-import { Post } from "../../../common/type/BoardTable";
-
+export interface GatheringPost { //등록할때 사용
+  id: number;
+  title: string;
+  author: string;
+  date: string;
+  views: number;
+}
 export interface BoardCategories {
   hello: string;
 }
@@ -15,6 +20,6 @@ export interface SubCategory {
   name: string;
 }
 
-export interface CommuPost extends Post {
+export interface CommuPost extends GatheringPost {
   categoryId: number;
 }

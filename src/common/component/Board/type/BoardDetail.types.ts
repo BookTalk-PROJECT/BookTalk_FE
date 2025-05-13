@@ -1,17 +1,28 @@
-export interface GatheringBoardDetailData {
-    post: GatheringBoardPost;   // 게시글 상세 정보
+import { CommuDetail } from "../../../../community/board/type/boardDetail";
+import { GatheringDetail } from "../../../../gathering/type/GatheringBoardDetailPage.types";
+
+export interface YoutubeVideo { // 유튜브 검색 api 타입
+    id: string;
+    title: string;
+    thumbnail: string;
+    channelTitle: string;
+    publishedAt: string;
+}
+
+export interface BoardDetailData { //조회할때 사용
+    post: CommuDetail | GatheringDetail;   // 게시글 상세 정보
     replys?: Reply[];        // 댓글 목록
 }
 
-export interface GatheringBoardPost {
-    id: number;                    // 게시글 ID
-    title: string;                 // 게시글 제목
-    author: string;               // 작성자 이름
+export interface PostDetail {
+    board_code: string;           // 게시글 ID
+    member_id: string;
+    title: string;                // 게시글 제목
+    content: string;              // 게시글 본문 (HTML 또는 markdown 가능)
     views: number;                // 조회수
     likes: number;                // 좋아요 수
-    date: string;                 // 작성일 (ISO string 또는 'YYYY-MM-DD')
+    create_at: string;            // 등록일
     imageUrl: string;             // 대표 이미지 URL
-    content: string;              // 게시글 본문 (HTML 또는 markdown 가능)
     isLike: boolean;              // 해당 게시글을 좋아요했었는가
 }
 

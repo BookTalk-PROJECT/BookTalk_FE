@@ -1,10 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import GatheringHeader from "../component/GatheringHeader";
-import CustomButton from "../../common/component/CustomButton";
-import { GatheringBoardDetailData } from "../type/GatheringBoardDetailPage.type";
-import { fetchGatheringBoardDetail, exampleData, createReply, toggleLikePost } from "../api/GatheringBoardDetailPage.mock";
-import LoadingBar from "../../common/component/Loading";
+import { fetchGatheringBoardDetail, createReply, toggleLikePost } from "../api/GatheringBoardDetailPage.mock";
 import DetailBaord from "../../common/component/Board/page/DetailBoard";
 
 
