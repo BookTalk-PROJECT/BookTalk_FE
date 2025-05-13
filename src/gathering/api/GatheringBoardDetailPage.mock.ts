@@ -1,12 +1,12 @@
 import axios from "axios";
-import { BoardDetailData } from "../../common/component/Board/type/BoardDetail.types";
+import { GetBoardDetailRequest } from "../../common/component/Board/type/BoardDetail.types";
 
 // API 키 및 기본 URL 설정
 const baseURL = import.meta.env.BASE_URL;
 
 //모임 게시글 상세 조회
-export const fetchGatheringBoardDetail = async (postId: string, gatheringId: string): Promise<BoardDetailData> => {
-    const response = await axios.get<BoardDetailData>(`${baseURL}/gatheringlist/${gatheringId}/gatheringboard/${postId}`);
+export const fetchGatheringBoardDetail = async (postId: string, gatheringId: string): Promise<GetBoardDetailRequest> => {
+    const response = await axios.get<GetBoardDetailRequest>(`${baseURL}/gatheringlist/${gatheringId}/gatheringboard/${postId}`);
     return response.data;
 };
 

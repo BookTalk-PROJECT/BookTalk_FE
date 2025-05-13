@@ -2,10 +2,11 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { gatheringCreatePost, } from '../api/GatheringCreateBoardPage.mock';
 import CreateBoard from '../../common/component/Board/page/CreateBoard';
 import { Post } from '../../common/type/BoardTable';
+import { GatheringPostRequest } from '../../community/board/type/boardList';
 
 const GatheringCreateBoardPage: React.FC = () => {
 
-  const handleSubmit = async (gatheringPost: Post) => {
+  const handleSubmit = async (gatheringPost: GatheringPostRequest) => {
 
     try {
       const result = await gatheringCreatePost(gatheringPost);
