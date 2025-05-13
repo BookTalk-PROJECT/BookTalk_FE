@@ -7,6 +7,7 @@ export interface MyPageTableProps<T> {
   initialFilter: { label: string; key: string}[];
   manageOption: React.ReactNode;
   postKeys: string[];
+  activeTab?: string;
 }
 
 export interface MyPageTableCommonColType {

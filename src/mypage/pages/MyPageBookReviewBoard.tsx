@@ -4,7 +4,7 @@ import Pagenation from "../../common/component/Pagination";
 import MyPageTable from "../component/MyPageTable";
 import MyPageBreadCrumb from "../component/MyPageBreadCrumb";
 import { bookPostMockData } from "../testdata/MyPageTestData";
-import MyPageManageButton from "../component/MyPageManageButton";
+import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
 import { MyPageBoardType } from "../type/MyPageBoardTable";
 
 const MyPageBookReviewBoard: React.FC = () => {
@@ -47,7 +47,7 @@ const MyPageBookReviewBoard: React.FC = () => {
               row={row}
               initialFilter={initialFilter}
               filterOptions={filterOption}
-              manageOption={<MyPageManageButton actions={[{ label: "수정", color: "green", onClick: () => alert("수정") },
+              manageOption={<MyPageManageRowButton actions={[{ label: "수정", color: "green", onClick: () => alert("수정") },
                 { label: "삭제", color: "red", onClick: () => alert("삭제") }]} />}
               postKeys={postKeys}
             />

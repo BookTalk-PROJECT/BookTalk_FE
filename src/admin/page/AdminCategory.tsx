@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Pagenation from "../../common/component/Pagination";
 import MyPageSideBar from "../../mypage/component/MyPageSideBar";
-import MyPageManageButton from "../../mypage/component/MyPageManageButton";
+import MyPageManageRowButton from "../../mypage/component/button/MyPageManageRowButton";
 interface Category {
   id: number;
   name: string;
@@ -217,7 +217,7 @@ const AdminCategory: React.FC = () => {
         <div className="p-6 border-b border-gray-200">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-xl font-semibold text-gray-800">관리자 &gt; 카테고리 관리</h1>
-            <MyPageManageButton
+            <MyPageManageRowButton
               actions={[
                 {
                   label: "추가",
@@ -287,7 +287,7 @@ const AdminCategory: React.FC = () => {
                   <option value="active">활성</option>
                   <option value="inactive">비활성</option>
                 </select>
-                <MyPageManageButton
+                <MyPageManageRowButton
                   actions={[
                     {
                       label: "추가",
@@ -334,7 +334,7 @@ const AdminCategory: React.FC = () => {
                         <option value="active">활성</option>
                         <option value="inactive">비활성</option>
                       </select>
-                      <MyPageManageButton
+                      <MyPageManageRowButton
                         actions={[
                           {
                             label: subCategory.isEditing ? "저장" : "수정",

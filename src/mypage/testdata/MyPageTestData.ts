@@ -131,7 +131,7 @@ export const adminBoardMockData: AdminBoardType[] = [
   {
     id: 1,
     title: "신간 리뷰",
-    category: "도서 추천",
+    category: "커뮤니티",
     author: "책사랑",
     deleteReason: "스팸 활동 감지",
     date: "2025-03-25",
@@ -140,7 +140,7 @@ export const adminBoardMockData: AdminBoardType[] = [
   {
     id: 2,
     title: "문화 이야기",
-    category: "문화 이야기",
+    category: "커뮤니티",
     author: "문화인",
     deleteReason: "욕설 포함",
     date: "2025-03-24",
@@ -149,7 +149,7 @@ export const adminBoardMockData: AdminBoardType[] = [
   {
     id: 3,
     title: "코딩 스터디",
-    category: "스터디 모집",
+    category: "커뮤니티",
     author: "코딩러버",
     deleteReason: "광고성 내용",
     date: "2025-03-23",
@@ -158,7 +158,7 @@ export const adminBoardMockData: AdminBoardType[] = [
   {
     id: 4,
     title: "작가와의 대화",
-    category: "북 콘서트",
+    category: "모임",
     author: "책벌레",
     deleteReason: "저작권 침해",
     date: "2025-03-22",
@@ -167,7 +167,7 @@ export const adminBoardMockData: AdminBoardType[] = [
   {
     id: 5,
     title: "도서 추천",
-    category: "독서 캠페인",
+    category: "커뮤니티",
     author: "독서광",
     deleteReason: "중복 게시물",
     date: "2025-03-21",
@@ -176,7 +176,7 @@ export const adminBoardMockData: AdminBoardType[] = [
   {
     id: 6,
     title: "정기 모임",
-    category: "정기 모임",
+    category: "모임",
     author: "모임장",
     deleteReason: "개인정보 노출",
     date: "2025-03-20",
@@ -185,7 +185,7 @@ export const adminBoardMockData: AdminBoardType[] = [
   {
     id: 7,
     title: "취미 공유",
-    category: "예술 감상",
+    category: "모임",
     author: "취미왕",
     deleteReason: "불건전 콘텐츠",
     date: "2025-03-19",
@@ -194,7 +194,7 @@ export const adminBoardMockData: AdminBoardType[] = [
   {
     id: 8,
     title: "독서 모임",
-    category: "독서 토론",
+    category: "북리뷰",
     author: "독서가",
     deleteReason: "커뮤니티 규정 위반",
     date: "2025-03-18",
@@ -203,7 +203,7 @@ export const adminBoardMockData: AdminBoardType[] = [
   {
     id: 9,
     title: "주말 모임",
-    category: "취미 공유",
+    category: "북리뷰",
     author: "모임지기",
     deleteReason: "규정 위반",
     date: "2025-03-17",
@@ -212,7 +212,7 @@ export const adminBoardMockData: AdminBoardType[] = [
   {
     id: 10,
     title: "베스트셀러",
-    category: "신간 리뷰",
+    category: "커뮤니티",
     author: "예술가",
     deleteReason: "부적절한 홍보",
     date: "2025-03-16",
