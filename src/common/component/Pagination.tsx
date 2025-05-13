@@ -39,15 +39,14 @@ const Pagenation: React.FC<PagenationProps> = ({ totalPages, loadPageByPageNum }
         <button
           key={index}
           onClick={() => setCurrentPage(value - 1)}
-          className={`!rounded-button whitespace-nowrap px-3 py-1 ${
-            currentPage === value - 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
-          }`}>
+          className={`!rounded-button whitespace-nowrap px-3 py-1 ${currentPage === value - 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
+            }`}>
           {value}
         </button>
       ))}
       <button
         onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-        disabled={currentPage === totalPages}
+        disabled={currentPage === totalPages - 1}
         className="!rounded-button whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
         <i className="fas fa-chevron-right"></i>
       </button>
