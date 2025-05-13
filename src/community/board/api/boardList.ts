@@ -1,5 +1,6 @@
 import axios from "axios";
-import { Category, Post } from "../type/boardList";
+import { Category } from "../type/boardList";
+import { Post } from "../../../common/type/BoardTable";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 

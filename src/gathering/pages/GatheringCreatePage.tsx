@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 //컴포넌트 관련
-import GatheringInput from "../component/GatheringInput";
 import GatheringTextarea from "../component/GatheringTextarea";
 
 //타입 api 요청관련
@@ -20,6 +19,7 @@ import {
   createGathering
 } from "../api/GatheringCreatePage.mock";
 import CustomButton from "../../common/component/CustomButton";
+import CustomInput from "../../common/component/CustomInput";
 
 const GatheringCreatePage: React.FC = () => {
 
@@ -213,7 +213,7 @@ const GatheringCreatePage: React.FC = () => {
                 <h3 className="text-lg font-bold mb-4">기준 정보</h3>
                 <div className="mb-4">
                   <div className="relative">
-                    <GatheringInput
+                    <CustomInput
                       label="모임명"
                       placeholder="모임명을 입력하세요"
                       value={groupName}
@@ -228,7 +228,7 @@ const GatheringCreatePage: React.FC = () => {
 
                 <div className="mb-4">
                   <div className="relative">
-                    <GatheringInput
+                    <CustomInput
                       label="지역"
                       placeholder="도시 지역을 입력하세요"
                       value={location}
@@ -254,7 +254,7 @@ const GatheringCreatePage: React.FC = () => {
                   {/* 모집 기간 */}
                   <div className="flex-1">
                     <div className="relative">
-                      <GatheringInput
+                      <CustomInput
                         label="모집 인원"
                         placeholder="인원수를 입력하세요"
                       />
@@ -264,7 +264,7 @@ const GatheringCreatePage: React.FC = () => {
                   {/* 활동 기간 */}
                   <div className="flex-1">
                     <div className="relative">
-                      <GatheringInput
+                      <CustomInput
                         type="date"
                         label="활동 기간"
                         selected={activityDate}
@@ -282,7 +282,7 @@ const GatheringCreatePage: React.FC = () => {
                   {/* 모집 기간 */}
                   <div className="flex-1">
                     <div className="relative">
-                      <GatheringInput
+                      <CustomInput
                         type="date"
                         label="모집 기간"
                         selected={recruitmentDate}
@@ -335,7 +335,7 @@ const GatheringCreatePage: React.FC = () => {
                   <h3 className="text-lg font-bold mb-4">가입 질문</h3>
                   <div className="mb-4">
                     <div className="relative">
-                      <GatheringInput
+                      <CustomInput
                         label="질문"
                         placeholder="질문 사항을 입력하세요"
                         value={newQuestion}

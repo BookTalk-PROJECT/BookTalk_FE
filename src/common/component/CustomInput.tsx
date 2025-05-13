@@ -2,9 +2,9 @@ import React from "react";
 import DatePicker from "react-datepicker";
 import { ko } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
-import CustomButton from "../../common/component/CustomButton";
+import CustomButton from "./CustomButton";
 
-interface GatheringInputPropsBase {
+interface CustomInputPropsBase {
     label?: string;
     suffixButton?: {
         label: string;
@@ -20,14 +20,14 @@ interface GatheringInputPropsBase {
     onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
-type GatheringInputProps =
-    | (GatheringInputPropsBase & {
+type CustomInputProps =
+    | (CustomInputPropsBase & {
         type?: "text" | "textarea";
-        placeholder?: string; // ✅ 추가된 placeholder
+        placeholder?: string;
         value?: string;
         onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     })
-    | (GatheringInputPropsBase & {
+    | (CustomInputPropsBase & {
         type: "date";
         selected: Date | null;
         onChange: (date: Date | null) => void;
@@ -35,7 +35,7 @@ type GatheringInputProps =
     });
 
 
-const GatheringInput: React.FC<GatheringInputProps> = (props) => {
+const CustomInputInput: React.FC<CustomInputProps> = (props) => {
     const { label, suffixButton, suffixIconButton, className = "" } = props;
 
     return (
@@ -55,7 +55,7 @@ const GatheringInput: React.FC<GatheringInputProps> = (props) => {
                     />
                 ) : (
                     <input
-                        type={props.type || "text"} // ✅ 기본적으로 text 타입
+                        type={props.type || "text"} // 기본적으로 text 타입
                         name={props.name}
                         value={props.value}
                         placeholder={props.placeholder}
@@ -89,4 +89,4 @@ const GatheringInput: React.FC<GatheringInputProps> = (props) => {
 
 
 
-export default GatheringInput;
+export default CustomInputInput;
