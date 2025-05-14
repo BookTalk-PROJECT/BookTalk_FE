@@ -11,7 +11,7 @@ export const fetchGatheringBoardDetail = async (postId: string, gatheringId: str
 };
 
 // 댓글 등록 (부모 댓글 & 대댓글)
-export const createReply = async (gatheringId: string, postId: string, content: string, parentReplyCode?: number | null) => {
+export const createReply = async (postId: string, gatheringId: string, content: string, parentReplyCode?: number | null) => {
 
     console.log("모임 번호 : " + gatheringId + " 모임 게시글 번호 : " + postId + " 내용 : " + content + " 대댓글이니? : " + parentReplyCode);
 

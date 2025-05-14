@@ -5,18 +5,14 @@ import { exampleData } from "../api/DetailBoard.mock";
 import { GetBoardDetailRequest } from "../type/BoardDetail.types";
 
 interface DetailBoardProps {
-    //모임 조회 props
-    GetBoardDetail: (arg0: string, arg1?: string) => Promise<GetBoardDetailRequest>;
-    //게시글 좋아요 props arg1 : 게시글 아이디, arg2: 좋아요 여부
-    ToggleLikePost: (postId: string, gatheringId?: string) => void;
-    //게시글 댓글등록 props arg1 : 게시글 아이디, arg2 : 댓글 내용, arg3: 대댓글여부, arg4: 모임여부
-    CreateReply: (arg0: string, arg1: string, arg2: number | null, arg3?: string) => void;
+    GetBoardDetail: (postId: string, gatheringId?: string) => Promise<GetBoardDetailRequest>;
+    gatheringId?: string;
 }
 
 
-const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePost, CreateReply }) => {
+const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, gatheringId }) => {
     //GatheringDetail to BoardTable props
-    const { postId, gatheringId } = useParams<{ postId: string, gatheringId: string }>();
+    const { postId } = useParams<{ postId: string }>();
     const navigate = useNavigate(); //이전 게시글 다음 또는 목록으로 넘어갈때 필요 (아직 미구현)
 
     //상세 조회 상태 관리
@@ -24,7 +20,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
     // 댓글 상태 관리
     const [parentCommentContent, setParentCommentContent] = useState<string>(""); // 부모 댓글 입력
     const [reReplyContent, setReReplyContent] = useState<string>(""); // 댓글/대댓글 공통 입력
-    const [replyTarget, setReplyTarget] = useState<number | null>(null); // 대댓글 대상 ID
+    const [replyTarget, setReplyTarget] = useState<number | null>(null); // 부모 댓글 여부(대댓글 or 댓글 판단)
 
     // 댓글 데이터 불러오기
     useEffect(() => {
@@ -64,7 +60,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
                 post: {
                     ...prev.post,
                     isLike: newLikeState,
-                    likes: newLikeState ? prev.post.likes + 1 : prev.post.likes - 1,
+                    likes: newLikeState ? prev.post.likes_cnt + 1 : prev.post.likes_cnt - 1,
                 },
             };
         });
@@ -81,7 +77,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
                     post: {
                         ...prev.post,
                         isLike: !newLikeState,
-                        likes: !newLikeState ? prev.post.likes + 1 : prev.post.likes - 1,
+                        likes: !newLikeState ? prev.post.likes_cnt + 1 : prev.post.likes_cnt - 1,
                     },
                 };
             });
@@ -129,7 +125,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
                 return {
                     ...prev,
                     replys: [
-                        ...(prev.replys ?? []), // replys가 undefined일 경우 빈 배열로 처리
+                        ...(prev.replies ?? []), // replys가 undefined일 경우 빈 배열로 처리
                         newComment,
                     ],
                 } as GetBoardDetailRequest; // 명시적 타입 지정
@@ -138,7 +134,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
             // 대댓글 추가
             return {
                 ...prev,
-                replys: (prev.replys ?? []).map((parentReply) => {
+                replys: (prev.replies ?? []).map((parentReply) => {
                     if (parentReply.reply_code === replyTarget) {
                         return {
                             ...parentReply,
@@ -155,7 +151,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
 
         try {
             // 서버 API 요청 (댓글 등록)
-            await CreateReply(postId, content, replyTarget, gatheringId);
+            await CreateReply(postId, content, replyTarget, gatheringId ?? undefined); //타입에서 파라미터를 넘기지 않을 시 undifined
             await loadDetailData(); // 서버 데이터로 새로고침 (정상 등록 확인)
         } catch (error) {
             console.error("댓글 등록 중 오류 발생:", error);
@@ -168,14 +164,14 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
                 if (replyTarget === null) {
                     return {
                         ...prev,
-                        replys: prev.replys?.filter((reply) => reply.reply_code !== newComment.reply_code),
+                        replies: prev.replies?.filter((reply) => reply.reply_code !== newComment.reply_code),
                     };
                 }
 
                 // 대댓글 롤백
                 return {
                     ...prev,
-                    replys: prev.replys?.map((parentReply) =>
+                    replies: prev.replies?.map((parentReply) =>
                         parentReply.reply_code === replyTarget
                             ? {
                                 ...parentReply,
@@ -235,7 +231,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
                             <i className="fas fa-eye mr-2"></i>{detailData?.post.views}
                         </span>
                         <span className="mr-4 flex items-center">
-                            <i className="fas fa-heart mr-2"></i>{detailData?.post.likes}
+                            <i className="fas fa-heart mr-2"></i>{detailData?.post.likes_cnt}
                         </span>
 
                         <span className="ml-auto flex items-center">
@@ -264,14 +260,14 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
                     className={`px-6 py-3 bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200 flex items-center`}>
                     <i className={`fas fa-heart mr-2 ${detailData?.post.isLike ? "text-red-500" : "text-gray-500"}`}></i>
                     <span>좋아요</span>
-                    <span className="ml-2 text-gray-600">{detailData?.post.likes}</span>
+                    <span className="ml-2 text-gray-600">{detailData?.post.likes_cnt}</span>
                 </button>
             </div>
 
             <div className="border-t pt-6">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-bold">
-                        댓글 <span className="text-gray-500">{detailData?.replys?.length}</span>
+                        댓글 <span className="text-gray-500">{detailData?.replies?.length}</span>
                     </h3>
                 </div>
 
@@ -297,12 +293,12 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
                 </div> {/* end create reply */}
 
                 <div className="space-y-6"> {/* start reply rereply */}
-                    {detailData?.replys?.map((parentReply) => (
+                    {detailData?.replies?.map((parentReply) => (
                         <div key={parentReply.reply_code} className="border-b pb-6">
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center space-x-2">
                                     <span className="font-semibold">{parentReply.member_id}</span>
-                                    <span className="text-sm text-gray-500">{parentReply.date}</span>
+                                    <span className="text-sm text-gray-500">{parentReply.create_at}</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     {/* 좋아요 버튼 (부모 댓글) */}
@@ -329,7 +325,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, ToggleLikePos
                                             <div className="flex justify-between items-start mb-2">
                                                 <div className="flex items-center space-x-2">
                                                     <span className="font-semibold">{reReply.member_id}</span>
-                                                    <span className="text-sm text-gray-500">{reReply.date}</span>
+                                                    <span className="text-sm text-gray-500">{reReply.create_at}</span>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     {/* 좋아요 버튼 (대댓글) */}

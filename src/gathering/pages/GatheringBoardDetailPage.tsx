@@ -29,8 +29,10 @@ const GatheringBoardDetailPage: React.FC = () => {
 
               CreateReply={(postId, content, parentReplyCode, gatheringId) => {
                 if (!gatheringId) return;
-                createReply(gatheringId, postId, content, parentReplyCode);
+                createReply(postId, gatheringId, content, parentReplyCode);
               }}
+
+              gatheringId={gatheringId}
             />
           </div>
         </div>
