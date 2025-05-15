@@ -11,7 +11,7 @@ interface BoardProps {
   createPost: (arg0: CommuPostRequest | GatheringPostRequest) => void;
 }
 
-const GatheringCreateBoardPage: React.FC<BoardProps> = ({ createPost }) => {
+const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
   const editorRef = useRef<Editor>(null);
   const [showYoutubeModal, setShowYoutubeModal] = useState(false);
   const [youtubeQuery, setYoutubeQuery] = useState('');
@@ -299,4 +299,4 @@ const GatheringCreateBoardPage: React.FC<BoardProps> = ({ createPost }) => {
   );
 };
 
-export default GatheringCreateBoardPage;
+export default CreateBoard;

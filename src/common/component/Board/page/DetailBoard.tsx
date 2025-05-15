@@ -5,22 +5,22 @@ import { exampleData } from "../api/DetailBoard.mock";
 import { GetBoardDetailRequest } from "../type/BoardDetail.types";
 
 interface DetailBoardProps {
-    GetBoardDetail: (postId: string, gatheringId?: string) => Promise<GetBoardDetailRequest>;
-    gatheringId?: string;
+    postId: string;
+    //모임 조회 props
+    GetBoardDetail: (postId: string) => Promise<GetBoardDetailRequest>;
+    //게시글 좋아요 props arg1 : 게시글 아이디, arg2: 모임 여부
+    ToggleLikePost: (postId: string) => void;
+    CreateReply: (postId: string, replyContent: string, replyTarget: number | null) => void;
 }
 
-
-const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, gatheringId }) => {
-    //GatheringDetail to BoardTable props
-    const { postId } = useParams<{ postId: string }>();
-    const navigate = useNavigate(); //이전 게시글 다음 또는 목록으로 넘어갈때 필요 (아직 미구현)
-
+//postId는 커뮤Id or 모임Id
+const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, ToggleLikePost, CreateReply }) => {
     //상세 조회 상태 관리
     const [detailData, setDetailData] = useState<GetBoardDetailRequest>();
     // 댓글 상태 관리
     const [parentCommentContent, setParentCommentContent] = useState<string>(""); // 부모 댓글 입력
-    const [reReplyContent, setReReplyContent] = useState<string>(""); // 댓글/대댓글 공통 입력
-    const [replyTarget, setReplyTarget] = useState<number | null>(null); // 부모 댓글 여부(대댓글 or 댓글 판단)
+    const [replyContent, setReplyContent] = useState<string>(""); // 댓글/대댓글 공통 입력
+    const [reReply_yn, setReReply_yn] = useState<number | null>(null); // 부모 댓글 여부(대댓글 or 댓글 판단)
 
     // 댓글 데이터 불러오기
     useEffect(() => {
@@ -66,7 +66,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, gatheringId }
         });
 
         try {
-            await ToggleLikePost(postId); //나중에 유저 아이디 넘겨주자
+            await ToggleLikePost(postId);
         } catch (error) {
             console.error("좋아요 토글 중 오류:", error);
             // 오류 발생 시 UI 롤백
@@ -93,21 +93,21 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, gatheringId }
         }
 
         // 댓글 또는 대댓글 내용 확인
-        const content = replyTarget === null ? parentCommentContent.trim() : reReplyContent.trim();
+        const content = reReply_yn === null ? parentCommentContent.trim() : replyContent.trim();
         if (!content) {
-            console.error(replyTarget === null ? "댓글 내용을 입력하세요." : "대댓글 내용을 입력하세요.");
+            console.error(reReply_yn === null ? "댓글 내용을 입력하세요." : "대댓글 내용을 입력하세요.");
             return;
         }
 
         // UI 필드 초기화 (즉시 반영)
-        if (replyTarget === null) {
+        if (reReply_yn === null) {
             setParentCommentContent("");
         } else {
-            setReReplyContent("");
+            setReplyContent("");
         }
 
         // Optimistic UI: 즉시 댓글 UI에 추가
-        const newComment = {
+        const newReply = {
             reply_code: Date.now(), // 임시 코드 (고유값)
             member_id: "현재 사용자", // 실제 사용자 정보로 변경 필요
             content,
@@ -121,12 +121,12 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, gatheringId }
             if (!prev) return prev as unknown as GetBoardDetailRequest; // prev가 undefined일 경우 안전하게 반환
 
             // 부모 댓글 추가
-            if (replyTarget === null) {
+            if (reReply_yn === null) {
                 return {
                     ...prev,
                     replys: [
                         ...(prev.replies ?? []), // replys가 undefined일 경우 빈 배열로 처리
-                        newComment,
+                        newReply,
                     ],
                 } as GetBoardDetailRequest; // 명시적 타입 지정
             }
@@ -135,12 +135,12 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, gatheringId }
             return {
                 ...prev,
                 replys: (prev.replies ?? []).map((parentReply) => {
-                    if (parentReply.reply_code === replyTarget) {
+                    if (parentReply.reply_code === reReply_yn) {
                         return {
                             ...parentReply,
                             reReply: [
                                 ...(parentReply.reReply ?? []), // reReply가 undefined일 경우 빈 배열로 처리
-                                newComment,
+                                newReply,
                             ],
                         };
                     }
@@ -151,7 +151,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, gatheringId }
 
         try {
             // 서버 API 요청 (댓글 등록)
-            await CreateReply(postId, content, replyTarget, gatheringId ?? undefined); //타입에서 파라미터를 넘기지 않을 시 undifined
+            await CreateReply(postId, content, reReply_yn); //타입에서 파라미터를 넘기지 않을 시 undifined
             await loadDetailData(); // 서버 데이터로 새로고침 (정상 등록 확인)
         } catch (error) {
             console.error("댓글 등록 중 오류 발생:", error);
@@ -161,10 +161,10 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, gatheringId }
                 if (!prev) return prev;
 
                 // 부모 댓글 롤백
-                if (replyTarget === null) {
+                if (reReply_yn === null) {
                     return {
                         ...prev,
-                        replies: prev.replies?.filter((reply) => reply.reply_code !== newComment.reply_code),
+                        replies: prev.replies?.filter((reply) => reply.reply_code !== newReply.reply_code),
                     };
                 }
 
@@ -172,11 +172,11 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, gatheringId }
                 return {
                     ...prev,
                     replies: prev.replies?.map((parentReply) =>
-                        parentReply.reply_code === replyTarget
+                        parentReply.reply_code === reReply_yn
                             ? {
                                 ...parentReply,
                                 reReply: parentReply.reReply?.filter(
-                                    (reReply) => reReply.reply_code !== newComment.reply_code
+                                    (reReply) => reReply.reply_code !== newReply.reply_code
                                 ),
                             }
                             : parentReply
@@ -184,24 +184,24 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, gatheringId }
                 };
             });
         } finally {
-            setReplyTarget(null); // 항상 초기화
+            setReReply_yn(null); // 항상 초기화
         }
     };
 
     // 답글 클릭 로직 수정 (부모 댓글 / 대댓글 공통)
     const handleReplyClick = (replyCode: number) => {
         // 이미 열려있는 경우 클릭 시 닫힘 (토글)
-        if (replyTarget === replyCode) {
-            setReplyTarget(null);
-            setReReplyContent(""); // 초기화
+        if (reReply_yn === replyCode) {
+            setReReply_yn(null);
+            setReplyContent(""); // 초기화
         } else {
-            setReplyTarget(replyCode);
-            setReReplyContent(""); // 초기화
+            setReReply_yn(replyCode);
+            setReplyContent(""); // 초기화
         }
     };
 
 
-    if (!postId || !gatheringId) {
+    if (!postId) {
         return <div>잘못된 접근입니다.</div>; // 또는 LoadingBar 반환
     }
     return (
@@ -345,13 +345,13 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ GetBoardDetail, gatheringId }
                             )}
 
                             {/* 대댓글 입력 폼 (항상 렌더링, 조건부) */}
-                            {replyTarget === parentReply.reply_code && (
+                            {reReply_yn === parentReply.reply_code && (
                                 <div className="flex items-start space-x-4 mt-2">
                                     <textarea
                                         className="w-full h-[60px] p-2 border rounded-lg resize-none focus:outline-none"
                                         placeholder="답글을 작성해주세요."
-                                        value={reReplyContent}
-                                        onChange={(e) => setReReplyContent(e.target.value)} // 상태값 정상 반영
+                                        value={replyContent}
+                                        onChange={(e) => setReplyContent(e.target.value)} // 상태값 정상 반영
                                     ></textarea>
                                     <CustomButton onClick={handleReplySubmit} color="black" customClassName="h-[60px] px-6">
                                         등록

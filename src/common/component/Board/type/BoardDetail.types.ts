@@ -40,3 +40,11 @@ export interface Reply {                    //댓글조회 type
     create_at: string;                          // 작성일
     likes: number;                              // 좋아요
 }
+
+export interface createReply {
+    postId: string;
+    gatheringId?: string;
+    replyContent: string;
+    replyTarget?: number;
+}
+

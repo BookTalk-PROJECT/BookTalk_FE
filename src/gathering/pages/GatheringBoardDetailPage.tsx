@@ -2,12 +2,11 @@ import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import GatheringHeader from "../component/GatheringHeader";
 import { fetchGatheringBoardDetail, createReply, toggleLikePost } from "../api/GatheringBoardDetailPage.mock";
-import DetailBaord from "../../common/component/Board/page/DetailBoard";
-
+import DetailBoard from "../../common/component/Board/page/DetailBoard";
 
 const GatheringBoardDetailPage: React.FC = () => {
   //GatheringDetail to BoardTable props
-  const { gatheringId, postId } = useParams<{ gatheringId: string; postId: string }>();
+  const { postId, gatheringId } = useParams<{ postId: string, gatheringId: string; }>();
   const navigate = useNavigate();
 
   return (
@@ -18,21 +17,11 @@ const GatheringBoardDetailPage: React.FC = () => {
 
             <GatheringHeader gatheringId={gatheringId!} /> {/* 모임 헤더 불러오기 모임을 아이디를 props로 보냄 */}
 
-            <DetailBaord
-              GetBoardDetail={() =>
-                fetchGatheringBoardDetail(postId!, gatheringId!)
-              }
-
-              ToggleLikePost={() => {
-                toggleLikePost(postId!, gatheringId!); // 좋아요 상태 반전
-              }}
-
-              CreateReply={(postId, content, parentReplyCode, gatheringId) => {
-                if (!gatheringId) return;
-                createReply(postId, gatheringId, content, parentReplyCode);
-              }}
-
-              gatheringId={gatheringId}
+            <DetailBoard
+              postId={postId!}
+              GetBoardDetail={fetchGatheringBoardDetail}
+              ToggleLikePost={toggleLikePost}
+              CreateReply={createReply}
             />
           </div>
         </div>
