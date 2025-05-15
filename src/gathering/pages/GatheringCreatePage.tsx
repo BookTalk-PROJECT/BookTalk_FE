@@ -12,14 +12,10 @@ import {
   Question,
   SearchResult
 } from "../type/GatheringCreatePage.types";
-import {
-  mockBooks,
-  mockSearchResults,
-  mockQuestions,
-  createGathering
-} from "../api/GatheringCreatePage.mock";
+
 import CustomButton from "../../common/component/CustomButton";
 import CustomInput from "../../common/component/CustomInput";
+import { createGathering, mockBooks, mockQuestions, mockSearchResults } from "../api/GatheringCreateRequest";
 
 const GatheringCreatePage: React.FC = () => {
 

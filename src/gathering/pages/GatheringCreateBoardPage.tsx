@@ -1,8 +1,6 @@
-import '@toast-ui/editor/dist/toastui-editor.css';
-import { gatheringCreatePost, } from '../api/GatheringCreateBoardPage.mock';
 import CreateBoard from '../../common/component/Board/page/CreateBoard';
-import { Post } from '../../common/type/BoardTable';
 import { GatheringPostRequest } from '../../community/board/type/boardList';
+import { gatheringCreatePost } from '../api/GatheringCreateBoardRequest';
 
 const GatheringCreateBoardPage: React.FC = () => {
 

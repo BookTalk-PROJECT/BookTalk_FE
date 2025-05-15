@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
 import { Editor } from '@toast-ui/react-editor';
 import '@toast-ui/editor/dist/toastui-editor.css';
-import { searchYoutubeVideos } from '../api/CreateBoard.mock';
 import CustomInput from '../../CustomInput';
 import CustomButton from '../../CustomButton';
 import { CommuPostRequest, GatheringPostRequest } from '../../../../community/board/type/boardList';
 import { YoutubeVideo } from '../type/BoardDetail.types';
+import { searchYoutubeVideos } from '../api/CreateBoardRequest';
 
 interface BoardProps {
   createPost: (arg0: CommuPostRequest | GatheringPostRequest) => void;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import CustomButton from "../../common/component/CustomButton"; // 필요
-import { examplebooks, exampleBookInfo, fetchGatheringBooks, fetchGatheringInfo } from "../api/GatheringHeader.mock";
 import { bookInfo, Books } from "../type/GatheringHeader.types";
+import { exampleBookInfo, examplebooks, fetchGatheringBooks, fetchGatheringInfo } from "../api/GatheringHeaderRequest";
 
 interface GatheringId {
     gatheringId: string;
@@ -26,7 +26,7 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
             setBooks(booksData);
             setGatheringBookInfo(infoData);
         } catch (error) {
-            console.error("API 요청 오류:", error);
+            console.error("모임 책목록 API 요청 실패! 더미 넣는데이:", error);
             // API 요청 실패 시 더미 데이터 사용
             setBooks(examplebooks);
             setGatheringBookInfo(exampleBookInfo);

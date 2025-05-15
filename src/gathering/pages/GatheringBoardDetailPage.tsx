@@ -1,8 +1,8 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import GatheringHeader from "../component/GatheringHeader";
-import { fetchGatheringBoardDetail, createReply, toggleLikePost } from "../api/GatheringBoardDetailPage.mock";
 import DetailBoard from "../../common/component/Board/page/DetailBoard";
+import { createReply, fetchGatheringBoardDetail, toggleLikePost } from "../api/GatheringBoardDetailRequest";
 
 const GatheringBoardDetailPage: React.FC = () => {
   //GatheringDetail to BoardTable props

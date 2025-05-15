@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ButtonWrapper from "../../common/component/Button";
 import { GatheringPost } from "../type/GatheringListPage.types";
-import { fetchMockGatheringPosts } from "../api/GatheringListPage.mock";
 import GatheringCard from "../component/GatheringCard";
 import CustomButton from "../../common/component/CustomButton";
+import { fetchMockGatheringPosts } from "../api/GatheringListRequest";
 
 const GatheringListPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");

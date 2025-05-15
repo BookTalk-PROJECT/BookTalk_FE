@@ -8,7 +8,6 @@ import BoardList from "./community/board/pages/BoardList";
 import Header from "./common/component/Header";
 import Footer from "./common/component/Footer";
 import GatheringListPage from "./gathering/pages/GatheringListPage";
-import GatheringDetailPage from "./gathering/pages/GatheringDetailPage";
 import GatheringBoardDetailPage from "./gathering/pages/GatheringBoardDetailPage";
 import GatheringCreateBoardPage from "./gathering/pages/GatheringCreateBoardPage";
 import AdminCategory from "./admin/page/AdminCategory";
@@ -27,6 +26,7 @@ import MyPageGatheringApprovalManage from "./mypage/pages/MyPageGatheringApprova
 import AdminPageBoard from "./admin/page/AdminPageBoard";
 import GatheringCreatePage from "./gathering/pages/GatheringCreatePage";
 import MyPageMyGatherings from "./mypage/pages/MyPageMyGatherings";
+import GatheringDetailPage from "./gathering/pages/GatheringDetailPage";
 
 const AppContent = () => {
   const location = useLocation();

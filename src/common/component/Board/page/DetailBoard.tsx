@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CustomButton from "../../CustomButton";
-import { exampleData } from "../api/DetailBoard.mock";
 import { GetBoardDetailRequest } from "../type/BoardDetail.types";
+import { exampleData } from "../api/DetailBoardRequest";
 
 interface DetailBoardProps {
     postId: string;

@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import Pagenation from "../../../common/component/Pagination";
 import ButtonWrapper from "../../../common/component/Button";
-import { Category, CommuPost, SubCategory } from "../type/boardList";
+import { Category, CommuPostRequest, SubCategory } from "../type/boardList";
 import { getCategories, getPosts } from "../api/boardList";
-import BoardTable from "../../../common/component/BoardTable";
+import BoardTable from "../../../common/component/Board/page/BoardTable";
 const BoardList: React.FC = () => {
   // flag
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +20,7 @@ const BoardList: React.FC = () => {
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
   // data
   const [categories, setCategories] = useState<Category[]>([]);
-  const [posts, setPosts] = useState<CommuPost[]>([]);
+  const [posts, setPosts] = useState<CommuPostRequest[]>([]);
 
   const handleCategoryChange = async (catetory: Category) => {
     setIsLoading(true);

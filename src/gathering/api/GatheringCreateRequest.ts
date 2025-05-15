@@ -2,8 +2,7 @@ import axios from "axios";
 import { Books, GatheringCreateRequest, Question, SearchResult } from "../type/GatheringCreatePage.types";
 
 
-// 기본 API 주소 ENV에서 가져와야함
-const API_BASE_URL = "http://localhost:8080/api/gatherings";
+const API_BASE_URL = import.meta.env.BASE_URL;
 
 //추가된 책 테스트용
 export const mockBooks: Books[] = [

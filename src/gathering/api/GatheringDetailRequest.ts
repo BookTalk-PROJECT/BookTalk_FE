@@ -1,4 +1,7 @@
+import axios from "axios";
 import { Post } from "../../common/type/BoardTable";
+
+const API_BASE_URL = import.meta.env.BASE_URL;
 
 export const posts: Post[] = [ // 게시글 더미
     { id: 35, title: "독서모임 후기 35", date: "2023-02-24", author: "이름님 0", views: 385 },
@@ -37,3 +40,14 @@ export const posts: Post[] = [ // 게시글 더미
     { id: 2, title: "독서모임 후기 2", date: "2023-02-22", author: "이름님 2", views: 22 },
     { id: 1, title: "독서모임 후기 1", date: "2023-02-23", author: "이름님 1", views: 11 },
 ];
+
+
+// 모임 게시글 리스트API 
+export const fetchGatheringBoardList = async (postId: string): Promise<Post[]> => {
+    console.log(" 모임 번호: " + postId + " 이거 게시글 리스트 가져온다이?");
+
+    // 실제 API 요청으로 변경할 경우
+    const response = await axios.get(`${API_BASE_URL}/gatheringboard/${postId}`, {
+    });
+    return response.data;
+};
