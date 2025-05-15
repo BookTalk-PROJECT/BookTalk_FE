@@ -11,6 +11,8 @@ export const sampleQuestions: RecruitQuestion[] = [
 
 // 모임 질문 정보보 API 요청 함수
 export const GetRecruitQuestion = async (gatheringId: string): Promise<RecruitQuestion[]> => {
+    console.log("모임 " + gatheringId + "번 질문목록 가져온데이? ");
+
     const response = await axios.get(`/api/gathering/${gatheringId}/recruitquestions`);
 
     const serverQuestions = response.data.map((q: any, index: number) => ({
