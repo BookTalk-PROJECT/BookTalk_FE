@@ -8,6 +8,7 @@ import BoardList from "./community/board/pages/BoardList";
 import Header from "./common/component/Header";
 import Footer from "./common/component/Footer";
 import GatheringListPage from "./gathering/pages/GatheringListPage";
+import GatheringJoinPage from "./gathering/pages/GatheringJoinPage";
 import GatheringBoardDetailPage from "./gathering/pages/GatheringBoardDetailPage";
 import GatheringCreateBoardPage from "./gathering/pages/GatheringCreateBoardPage";
 import AdminCategory from "./admin/page/AdminCategory";
@@ -54,6 +55,7 @@ const AppContent = () => {
                 <Route index element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
                 <Route path="create" element={<GatheringCreatePage />} /> {/* 이성종 모임 상세 */}
                 <Route path=":gatheringId" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
+                <Route path=":gatheringId/join" element={<GatheringJoinPage />} /> {/* 이성종 모임 참여신청 */}
                 <Route path=":gatheringId/gatheringboard">
                   {" "}
                   {/* 모임 게시판 관련 */}
