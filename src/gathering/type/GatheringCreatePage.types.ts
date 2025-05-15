@@ -19,8 +19,8 @@ export interface Question {
 export interface GatheringCreateRequest {
     groupName: string;
     location: string;
-    meetingFormat: string;
     meetingDetails: string;
+    recruitmentPersonnel: string;
     recruitmentPeriod: string;
     activityPeriod: string;
     books: Books[];

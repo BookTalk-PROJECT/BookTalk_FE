@@ -27,12 +27,22 @@ const GatheringCreatePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>(mockSearchResults);
 
+  const [createData, setPostData] = useState({
+    groupName: "",                //  모임명
+    location: "",                 //  지역
+    meetingDetails: "",           //  모임 소개
+    recruitmentPersonnel: "",     //  모집 인원
+  });
 
-  // 모임 기본 정보
-  const [groupName, setGroupName] = useState(""); // 모임명
-  const [location, setLocation] = useState(""); // 지역
-  const [meetingFormat, setMeetingFormat] = useState(""); // 모임 방법 (오프라인, 온라인 등)
-  const [meetingDetails, setMeetingDetails] = useState(""); // 모임 소개
+  const onChangeHandler = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setPostData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   // 모집/활동 기간
   const [recruitmentPeriod, setRecruitmentPeriod] = useState(""); // 모집 시작 날짜 (문자열로 저장)
@@ -88,10 +98,7 @@ const GatheringCreatePage: React.FC = () => {
 
   const handleSubmit = async () => {
     const gatheringData: GatheringCreateRequest = {
-      groupName,
-      location,
-      meetingFormat,
-      meetingDetails,
+      ...createData, // groupName, location, meetingDetails, recruitmentPersonnel
       recruitmentPeriod,
       activityPeriod,
       books,
@@ -112,7 +119,6 @@ const GatheringCreatePage: React.FC = () => {
       //실패해도 임력폼 유지시킴 따로 처리는 필요없는듯?
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center">
@@ -211,9 +217,10 @@ const GatheringCreatePage: React.FC = () => {
                   <div className="relative">
                     <CustomInput
                       label="모임명"
+                      name="groupName"
                       placeholder="모임명을 입력하세요"
-                      value={groupName}
-                      onChange={(e) => setGroupName(e.target.value)}
+                      value={createData.groupName}
+                      onChange={onChangeHandler}
                       suffixButton={{
                         label: "중복 체크",
                         onClick: () => alert("중복체크 누름"),
@@ -226,9 +233,10 @@ const GatheringCreatePage: React.FC = () => {
                   <div className="relative">
                     <CustomInput
                       label="지역"
+                      name="location"
                       placeholder="도시 지역을 입력하세요"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
+                      value={createData.location}
+                      onChange={onChangeHandler}
                       suffixIconButton={{
                         icon: <i className="fas fa-search"></i>,
                         onClick: () => alert("도시지역 검색버튼 누름"),
@@ -239,10 +247,11 @@ const GatheringCreatePage: React.FC = () => {
                 <div className="mb-4">
                   <GatheringTextarea
                     label="모임 소개"
+                    name="meetingDetails"
                     placeholder="모임 소개를 입력하세요"
                     minHeight="400px"
-                    value={meetingDetails}
-                    onChange={(e) => setMeetingDetails(e.target.value)}
+                    value={createData.meetingDetails}
+                    onChange={onChangeHandler}
                   />
                 </div>
 
@@ -252,7 +261,10 @@ const GatheringCreatePage: React.FC = () => {
                     <div className="relative">
                       <CustomInput
                         label="모집 인원"
+                        name="recruitmentPersonnel"
                         placeholder="인원수를 입력하세요"
+                        value={createData.recruitmentPersonnel}
+                        onChange={onChangeHandler}
                       />
                     </div>
                   </div>
@@ -263,11 +275,12 @@ const GatheringCreatePage: React.FC = () => {
                       <CustomInput
                         type="date"
                         label="활동 기간"
+                        name="activityPeriod"
                         selected={activityDate}
                         onChange={(date) => {
                           setActivityDate(date);
                           if (date) {
-                            setActivityPeriod(date.toISOString().split("T")[0]);
+                            setActivityPeriod(date.toLocaleDateString().split("T")[0]);
                           }
                         }}
                         placeholder="활동 기간을 선택하세요"
@@ -281,11 +294,12 @@ const GatheringCreatePage: React.FC = () => {
                       <CustomInput
                         type="date"
                         label="모집 기간"
+                        name="recruitmentPeriod"
                         selected={recruitmentDate}
                         onChange={(date) => {
                           setRecruitmentDate(date);
                           if (date) {
-                            setActivityPeriod(date.toISOString().split("T")[0]);
+                            setRecruitmentPeriod(date.toLocaleDateString().split("T")[0]);
                           }
                         }}
                         placeholder="모집기간을 선택하세요"

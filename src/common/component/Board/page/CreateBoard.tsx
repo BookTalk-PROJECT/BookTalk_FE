@@ -33,15 +33,7 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
     const editorInstance = editorRef.current?.getInstance();
     const content = editorInstance?.getMarkdown() || '';
 
-    try {
-      const result = await createPost(postData);
-      console.log('등록 완료:', result);
-      alert('글이 성공적으로 등록되었습니다.');
-      window.history.back(); // 또는 등록 성공 후 원하는 페이지로 이동
-    } catch (error) {
-      console.error('글 등록 실패:', error);
-      alert('글 등록 중 오류가 발생했습니다.');
-    }
+    const result = await createPost(postData);
   };
 
   const handleYoutubeButtonClick = () => {
