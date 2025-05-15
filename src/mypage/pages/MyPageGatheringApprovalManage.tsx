@@ -7,7 +7,7 @@ import { myGatheringRequestMockData } from "../testdata/MyPageTestData";
 import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
 import { MyPageGatheringRequestManageType } from "../type/MyPageBoardTable";
 
-const MyPageBookReviewComment: React.FC = () => {
+const MyPageBookGatheringApprovalManage: React.FC = () => {
 
   const row: { label: string; key: keyof MyPageGatheringRequestManageType }[] = [
     { label: "번호", key: "id" },
@@ -40,16 +40,17 @@ const MyPageBookReviewComment: React.FC = () => {
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             {/* 브레드크럼 */}
-            <MyPageBreadCrumb major="북리뷰" sub="댓글 관리" />
+            <MyPageBreadCrumb major="모임" sub="신청 승인 관리" />
             {/* 테이블 */}
             <MyPageTable
               posts={myGatheringRequestMockData}
               row={row}
+              isExpandableRow={true}
               initialFilter={initialFilter}
               filterOptions={filterOption}
               manageOption={<MyPageManageRowButton
-                actions={[{ label: "수정", color: "green", onClick: () => alert("승인") },
-                          { label: "삭제", color: "red", onClick: () => alert("거절") }]}/>}
+                actions={[{ label: "승인", color: "green", onClick: () => alert("승인") },
+                          { label: "거절", color: "red", onClick: () => alert("거절") }]}/>}
               postKeys={postKeys}
             />
             {/* 페이지네이션 */}
@@ -63,4 +64,4 @@ const MyPageBookReviewComment: React.FC = () => {
 
 
 
-export default MyPageBookReviewComment;
+export default MyPageBookGatheringApprovalManage;

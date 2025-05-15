@@ -51,6 +51,7 @@ const AdminPageBoard: React.FC = () => {
           <MyPageTable
             posts={filteredPosts}
             row={row}
+            isExpandableRow={false}
             filterOptions={filterOptions}
             initialFilter={initialFilter}
             manageOption={

@@ -41,7 +41,7 @@ const MyPageBookReviewComment: React.FC = () => {
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             {/* 브레드크럼 */}
-            <MyPageBreadCrumb major="모임" sub="내 모임" />
+            <MyPageBreadCrumb major="북리뷰" sub="댓글 관리" />
             {/* 테이블 */}
             <MyPageTable
               posts={myBookCommentMockData}
