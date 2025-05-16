@@ -1,11 +1,11 @@
-import { useRef, useState } from 'react';
-import { Editor } from '@toast-ui/react-editor';
-import '@toast-ui/editor/dist/toastui-editor.css';
-import CustomInput from '../../CustomInput';
-import CustomButton from '../../CustomButton';
-import { CommuPostRequest, GatheringPostRequest } from '../../../../community/board/type/boardList';
-import { YoutubeVideo } from '../type/BoardDetail.types';
-import { searchYoutubeVideos } from '../api/CreateBoardRequest';
+import { useRef, useState } from "react";
+import { Editor } from "@toast-ui/react-editor";
+import "@toast-ui/editor/dist/toastui-editor.css";
+import CustomInput from "../../CustomInput";
+import CustomButton from "../../CustomButton";
+import { CommuPostRequest, GatheringPostRequest } from "../../../../community/board/type/boardList";
+import { YoutubeVideo } from "../type/BoardDetail.types";
+import { searchYoutubeVideos } from "../api/CreateBoardRequest";
 
 interface BoardProps {
   createPost: (arg0: CommuPostRequest | GatheringPostRequest) => void;
@@ -14,11 +14,11 @@ interface BoardProps {
 const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
   const editorRef = useRef<Editor>(null);
   const [showYoutubeModal, setShowYoutubeModal] = useState(false);
-  const [youtubeQuery, setYoutubeQuery] = useState('');
+  const [youtubeQuery, setYoutubeQuery] = useState("");
   const [youtubeResults, setYoutubeResults] = useState<YoutubeVideo[]>([]);
   const [totalResults, setTotalResults] = useState(0);
-  const [nextPageToken, setNextPageToken] = useState('');
-  const [prevPageToken, setPrevPageToken] = useState('');
+  const [nextPageToken, setNextPageToken] = useState("");
+  const [prevPageToken, setPrevPageToken] = useState("");
 
   const [postData, setPostData] = useState<CommuPostRequest | GatheringPostRequest>({
     id: 0,
@@ -31,16 +31,16 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
 
   const handleSubmit = async () => {
     const editorInstance = editorRef.current?.getInstance();
-    const content = editorInstance?.getMarkdown() || '';
+    const content = editorInstance?.getMarkdown() || "";
 
     try {
       const result = await createPost(postData);
-      console.log('등록 완료:', result);
-      alert('글이 성공적으로 등록되었습니다.');
+      console.log("등록 완료:", result);
+      alert("글이 성공적으로 등록되었습니다.");
       window.history.back(); // 또는 등록 성공 후 원하는 페이지로 이동
     } catch (error) {
-      console.error('글 등록 실패:', error);
-      alert('글 등록 중 오류가 발생했습니다.');
+      console.error("글 등록 실패:", error);
+      alert("글 등록 중 오류가 발생했습니다.");
     }
   };
 
@@ -48,7 +48,7 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
     setShowYoutubeModal(true);
   };
 
-  const handleYoutubeSearch = async (pageToken: string | number = '') => {
+  const handleYoutubeSearch = async (pageToken: string | number = "") => {
     const { items, nextPageToken, prevPageToken, totalResults } = await searchYoutubeVideos(youtubeQuery, pageToken);
     setYoutubeResults(items);
     setNextPageToken(nextPageToken);
@@ -60,26 +60,23 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
     const editorInstance = editorRef.current?.getInstance();
     if (!editorInstance) return;
 
-    editorInstance.changeMode('wysiwyg', true);
+    editorInstance.changeMode("wysiwyg", true);
     const iframeHtml = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`;
     editorInstance.insertHTML(iframeHtml);
 
     setShowYoutubeModal(false);
   };
 
-
   //Editor 내부에 추가되어 있음
   const handleUndo = () => {
-    editorRef.current?.getInstance().exec('undo');
+    editorRef.current?.getInstance().exec("undo");
   };
   //Editor 내부에 추가되어 있음
   const handleRedo = () => {
-    editorRef.current?.getInstance().exec('redo');
+    editorRef.current?.getInstance().exec("redo");
   };
 
-  const onChangeHandler = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setPostData({
       ...postData,
@@ -116,13 +113,7 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
           {/* 카테고리 입력 */}
           <div>
             <label className="block text-lg font-semibold mb-2 text-gray-700">카테고리</label>
-            <CustomInput
-              type="text"
-              name="category"
-              placeholder="카테고리를 입력하세요"
-
-              onChange={onChangeHandler}
-            />
+            <CustomInput type="text" name="category" placeholder="카테고리를 입력하세요" onChange={onChangeHandler} />
           </div>
 
           {/* 에디터 */}
@@ -188,21 +179,11 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
 
           {/* 버튼 그룹 */}
           <div className="flex justify-end space-x-4">
-            <CustomButton
-              onClick={handleSubmit}
-              color="blue"
-              customClassName='px-6 py-3'>
-              <>
-                등록하기
-              </>
+            <CustomButton onClick={handleSubmit} color="blue" customClassName="px-6 py-3">
+              <>등록하기</>
             </CustomButton>
-            <CustomButton
-              onClick={() => window.history.back()}
-              color="white"
-              customClassName='px-6 py-3'>
-              <>
-                취소
-              </>
+            <CustomButton onClick={() => window.history.back()} color="white" customClassName="px-6 py-3">
+              <>취소</>
             </CustomButton>
           </div>
         </div>
@@ -223,7 +204,7 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
               value={youtubeQuery}
               onChange={onChangeHandler}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === "Enter") {
                   handleYoutubeSearch();
                 }
               }}
@@ -238,11 +219,7 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
             <ul className="max-h-96 overflow-y-auto">
               {youtubeResults.map((video) => (
                 <li key={video.id} className="flex items-start space-x-4 p-2 border-b">
-                  <img
-                    src={video.thumbnail}
-                    alt="썸네일"
-                    className="w-32 h-20 object-cover rounded"
-                  />
+                  <img src={video.thumbnail} alt="썸네일" className="w-32 h-20 object-cover rounded" />
                   <div className="flex-1">
                     <h3 className="text-md font-semibold">{video.title}</h3>
                     <p className="text-sm text-gray-500">{video.channelTitle}</p>
@@ -253,8 +230,7 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
                   <CustomButton
                     onClick={() => handleYoutubeInsert(video.id)}
                     color="red"
-                    customClassName="py-1 px-2 self-center text-xs"
-                  >
+                    customClassName="py-1 px-2 self-center text-xs">
                     삽입
                   </CustomButton>
                 </li>
@@ -267,8 +243,7 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
                 <CustomButton
                   onClick={() => handleYoutubeSearch(prevPageToken)}
                   color="white"
-                  customClassName="px-4 py-2 hover:bg-gray-400"
-                >
+                  customClassName="px-4 py-2 hover:bg-gray-400">
                   이전
                 </CustomButton>
               )}
@@ -276,25 +251,19 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
                 <CustomButton
                   onClick={() => handleYoutubeSearch(nextPageToken)}
                   color="white"
-                  customClassName="px-4 py-2 hover:bg-gray-400"
-                >
+                  customClassName="px-4 py-2 hover:bg-gray-400">
                   다음
                 </CustomButton>
               )}
             </div>
 
             {/* 닫기 버튼 */}
-            <CustomButton
-              onClick={() => setShowYoutubeModal(false)}
-              color="white"
-              customClassName="mt-6 w-full"
-            >
+            <CustomButton onClick={() => setShowYoutubeModal(false)} color="white" customClassName="mt-6 w-full">
               닫기
             </CustomButton>
           </div>
         </div>
       )}
-
     </div>
   );
 };

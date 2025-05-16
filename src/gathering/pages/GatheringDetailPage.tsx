@@ -42,14 +42,15 @@ const GatheringDetailPage: React.FC = () => {
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-
             <GatheringHeader gatheringId={gatheringId!} />
 
             <div className="p-6 border-t">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold">게시판</h2>
 
-                <CustomButton onClick={() => navigate(`/gatheringlist/${gatheringId}/gatheringboard/create`)} color="black">
+                <CustomButton
+                  onClick={() => navigate(`/gatheringlist/${gatheringId}/gatheringboard/create`)}
+                  color="black">
                   <>
                     <i className="fas fa-pen mr-2"></i> 글쓰기
                   </>

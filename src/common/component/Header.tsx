@@ -27,12 +27,12 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           <CustomButton onClick={() => alert("로그인 클릭됨")} color="white">
             <>
-              <i className="fas fa-key">  &nbsp;로그인</i>
+              <i className="fas fa-key"> &nbsp;로그인</i>
             </>
           </CustomButton>
           <CustomButton onClick={() => alert("회원가입 클릭됨")} color="black">
             <>
-              <i className="fas fa-right-to-bracket">  &nbsp;회원가입</i>
+              <i className="fas fa-right-to-bracket"> &nbsp;회원가입</i>
             </>
           </CustomButton>
         </div>

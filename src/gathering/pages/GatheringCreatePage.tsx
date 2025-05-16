@@ -6,19 +6,13 @@ import { useNavigate } from "react-router-dom";
 import GatheringTextarea from "../component/GatheringTextarea";
 
 //타입 api 요청관련
-import {
-  Books,
-  GatheringCreateRequest,
-  Question,
-  SearchResult
-} from "../type/GatheringCreatePage.types";
+import { Books, GatheringCreateRequest, Question, SearchResult } from "../type/GatheringCreatePage.types";
 
 import CustomButton from "../../common/component/CustomButton";
 import CustomInput from "../../common/component/CustomInput";
 import { createGathering, mockBooks, mockQuestions, mockSearchResults } from "../api/GatheringCreateRequest";
 
 const GatheringCreatePage: React.FC = () => {
-
   const navigate = useNavigate();
 
   // 책 관련 상태
@@ -26,7 +20,6 @@ const GatheringCreatePage: React.FC = () => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>(mockSearchResults);
-
 
   // 모임 기본 정보
   const [groupName, setGroupName] = useState(""); // 모임명
@@ -105,14 +98,12 @@ const GatheringCreatePage: React.FC = () => {
       await createGathering(gatheringData); // 서버로 데이터 보냄
       alert("모임 신청이 완료되었습니다!");
       navigate("/gatheringlist"); // 성공하면 모임 목록 페이지로 이동함
-    }
-    catch (error) {
+    } catch (error) {
       console.error("모임 신청 실패:", error);
       alert("모임 신청에 실패했습니다. 다시 시도해주세요."); // 실패해도 그대로 유지시킴
       //실패해도 임력폼 유지시킴 따로 처리는 필요없는듯?
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center">
@@ -136,12 +127,13 @@ const GatheringCreatePage: React.FC = () => {
                   <div className="text-sm text-gray-600 mb-2">시작일: {book.startDate}</div>
                   <div className="flex justify-end">
                     <span
-                      className={`text-xs px-2 py-1 rounded ${book.status === "completed"
-                        ? "bg-green-100 text-green-800"
-                        : book.status === "in_progress"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-gray-100 text-gray-800"
-                        }`}>
+                      className={`text-xs px-2 py-1 rounded ${
+                        book.status === "completed"
+                          ? "bg-green-100 text-green-800"
+                          : book.status === "in_progress"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-gray-100 text-gray-800"
+                      }`}>
                       {book.status === "completed" ? "완료" : book.status === "in_progress" ? "진행중" : "예정"}
                     </span>
                   </div>
@@ -250,10 +242,7 @@ const GatheringCreatePage: React.FC = () => {
                   {/* 모집 기간 */}
                   <div className="flex-1">
                     <div className="relative">
-                      <CustomInput
-                        label="모집 인원"
-                        placeholder="인원수를 입력하세요"
-                      />
+                      <CustomInput label="모집 인원" placeholder="인원수를 입력하세요" />
                     </div>
                   </div>
 
@@ -347,7 +336,7 @@ const GatheringCreatePage: React.FC = () => {
                           onClick: handleAddQuestion,
                           className: `${questions.length >= 5 ? "bg-gray-400" : "bg-gray-700"} 
                 text-white w-8 h-8 flex items-center justify-center 
-                rounded-full whitespace-nowrap cursor-pointer`
+                rounded-full whitespace-nowrap cursor-pointer`,
                         }}
                       />
                     </div>
@@ -375,21 +364,11 @@ const GatheringCreatePage: React.FC = () => {
           </div>
           {/* 버튼 그룹 */}
           <div className="flex justify-end space-x-3 mt-8">
-            <CustomButton
-              onClick={handleSubmit}
-              color="black"
-              customClassName="px-6 py-2 text-lg font-semibold">
-              <>
-                신청
-              </>
+            <CustomButton onClick={handleSubmit} color="black" customClassName="px-6 py-2 text-lg font-semibold">
+              <>신청</>
             </CustomButton>
-            <CustomButton
-              onClick={handleCancel}
-              color="white"
-              customClassName="px-6 py-2 text-lg font-semibold">
-              <>
-                취소
-              </>
+            <CustomButton onClick={handleCancel} color="white" customClassName="px-6 py-2 text-lg font-semibold">
+              <>취소</>
             </CustomButton>
           </div>
         </div>

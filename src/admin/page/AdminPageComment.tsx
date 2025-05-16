@@ -164,7 +164,7 @@ const AdminPageComment: React.FC = () => {
   };
   return (
     <div className="flex min-h-screen bg-gray-50">
-        <MyPageSideBar />
+      <MyPageSideBar />
       <div className="flex-1 px-6 py-8">
         {/* 브레드크럼 네비게이션 */}
         <div className="p-6 border-b border-gray-200">
