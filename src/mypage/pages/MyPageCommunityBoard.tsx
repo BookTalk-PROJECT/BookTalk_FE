@@ -8,7 +8,6 @@ import MyPageManageButton from "../component/MyPageManageButton";
 import { MyPageBoardType } from "../type/MyPageBoardTable";
 
 const MyPageCommunityBoard: React.FC = () => {
-
   const row: { label: string; key: keyof MyPageBoardType }[] = [
     { label: "게시물 번호", key: "id" },
     { label: "제목", key: "title" },
@@ -17,24 +16,19 @@ const MyPageCommunityBoard: React.FC = () => {
     { label: "관리", key: "manage" },
   ];
 
-  {/* 초기 검색 필터*/}
-  const filterOption: { label: string; key: string}[] = [
-    row[0],
-    row[1],
-    row[2],
-    row[3],
-  ];
+  {
+    /* 초기 검색 필터*/
+  }
+  const filterOption: { label: string; key: string }[] = [row[0], row[1], row[2], row[3]];
 
-  const initialFilter: { label: string; key: string}[] = [
-    row[1]
-  ];
+  const initialFilter: { label: string; key: string }[] = [row[1]];
 
   const postKeys = bookPostMockData.length > 0 ? Object.keys(bookPostMockData[0]) : [];
 
   return (
     <div className="flex h-screen">
       {/* 사이드바 */}
-        <MyPageSideBar />
+      <MyPageSideBar />
       {/* 메인 컨텐츠 */}
       <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
@@ -47,8 +41,14 @@ const MyPageCommunityBoard: React.FC = () => {
               row={row}
               initialFilter={initialFilter}
               filterOptions={filterOption}
-              manageOption={<MyPageManageButton actions={[{ label: "수정", color: "green", onClick: () => alert("수정") },
-                { label: "삭제", color: "red", onClick: () => alert("삭제") }]} />}
+              manageOption={
+                <MyPageManageButton
+                  actions={[
+                    { label: "수정", color: "green", onClick: () => alert("수정") },
+                    { label: "삭제", color: "red", onClick: () => alert("삭제") },
+                  ]}
+                />
+              }
               postKeys={postKeys}
             />
             {/* 페이지네이션 */}
@@ -59,7 +59,5 @@ const MyPageCommunityBoard: React.FC = () => {
     </div>
   );
 };
-
-
 
 export default MyPageCommunityBoard;

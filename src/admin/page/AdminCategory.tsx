@@ -212,7 +212,7 @@ const AdminCategory: React.FC = () => {
   };
   return (
     <div className="flex min-h-screen bg-gray-50">
-        <MyPageSideBar />
+      <MyPageSideBar />
       <div className="max-w-7xl mx-auto bg-white rounded-lg shadow">
         <div className="p-6 border-b border-gray-200">
           <div className="flex justify-between items-center mb-4">
@@ -221,9 +221,9 @@ const AdminCategory: React.FC = () => {
               actions={[
                 {
                   label: "추가",
-                  color: "blue" ,
+                  color: "blue",
                   onClick: () => addCategory,
-                }
+                },
               ]}
             />
           </div>
@@ -310,7 +310,9 @@ const AdminCategory: React.FC = () => {
               {category.isExpanded && (
                 <div className="ml-8 mt-2 space-y-2">
                   {category.subCategories.map((subCategory) => (
-                    <div key={subCategory.id} className="grid grid-cols-5 gap-4 items-center bg-gray-50 p-4 rounded ml-6">
+                    <div
+                      key={subCategory.id}
+                      className="grid grid-cols-5 gap-4 items-center bg-gray-50 p-4 rounded ml-6">
                       {/* 1열: 코드 자리 비우기 */}
                       <div></div>
                       {/* 2열: 대분류 자리 비우기 */}

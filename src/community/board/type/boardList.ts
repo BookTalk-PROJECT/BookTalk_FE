@@ -1,4 +1,5 @@
-export interface GatheringPostRequest { //등록할때 사용
+export interface GatheringPostRequest {
+  //등록할때 사용
   id: number;
   title: string;
   author: string;

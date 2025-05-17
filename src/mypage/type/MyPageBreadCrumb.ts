@@ -1,4 +1,4 @@
 interface MyPageBreadCrumbProps {
   major: string;
-  sub: string ;
+  sub: string;
 }
