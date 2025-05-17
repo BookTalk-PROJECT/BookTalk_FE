@@ -149,7 +149,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, Toggl
 
     try {
       // 서버 API 요청 (댓글 등록)
-      await CreateReply(postId, content, reReply_yn); //타입에서 파라미터를 넘기지 않을 시 undifined
+      CreateReply(postId, content, reReply_yn); //타입에서 파라미터를 넘기지 않을 시 undifined
       await loadDetailData(); // 서버 데이터로 새로고침 (정상 등록 확인)
     } catch (error) {
       console.error("댓글 등록 중 오류 발생:", error);

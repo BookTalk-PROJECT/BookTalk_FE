@@ -19,7 +19,7 @@ const Header = () => {
             <a href="#" className="text-gray-700 hover:text-red-500">
               책리뷰
             </a>
-            <a href="/adminpagecomment" className="text-gray-700 hover:text-red-500">
+            <a href="/mypage" className="text-gray-700 hover:text-red-500">
               관리자 페이지
             </a>
           </nav>
