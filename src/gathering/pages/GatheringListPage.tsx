@@ -86,8 +86,7 @@ const GatheringListPage: React.FC = () => {
                   <button
                     key={label}
                     onClick={() => setStatusFilter(label)}
-                    className={`pb-2 text-sm font-medium transition-all duration-200 ${statusFilter === label ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"}`}
-                  >
+                    className={`pb-2 text-sm font-medium transition-all duration-200 ${statusFilter === label ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"}`}>
                     {label}
                   </button>
                 ))}
@@ -97,9 +96,7 @@ const GatheringListPage: React.FC = () => {
             {/* 오른쪽: 모임 개설 버튼 + 검색창 */}
             <div className="flex items-center gap-4">
               <CustomButton onClick={() => navigate("/gatheringlist/create")} color="black">
-                <>
-                  모임 개설
-                </>
+                <>모임 개설</>
               </CustomButton>
 
               <div className="flex items-center gap-0">

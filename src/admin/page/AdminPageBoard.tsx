@@ -7,7 +7,6 @@ import { adminBoardMockData } from "../../mypage/testdata/MyPageTestData"; // �
 import MyPageManageButton from "../../mypage/component/MyPageManageButton";
 
 const AdminPageBoard: React.FC = () => {
-
   const row = [
     { label: "번호", key: "id" },
     { label: "글 제목", key: "title" },
@@ -35,11 +34,7 @@ const AdminPageBoard: React.FC = () => {
             filterOptions={filterOptions}
             initialFilter={initialFilter}
             manageOption={
-              <MyPageManageButton
-                actions={[
-                  { label: "복구", color: "blue", onClick: () => alert("복구") },
-                ]}
-              />
+              <MyPageManageButton actions={[{ label: "복구", color: "blue", onClick: () => alert("복구") }]} />
             }
             postKeys={postKeys}
           />
