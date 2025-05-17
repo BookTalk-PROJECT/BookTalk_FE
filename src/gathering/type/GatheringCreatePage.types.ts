@@ -17,13 +17,13 @@ export interface Question {
 
 // 모임 개설 데이터 타입
 export interface GatheringCreateRequest {
-  groupName: string;
-  location: string;
-  meetingFormat: string;
-  meetingDetails: string;
-  recruitmentPeriod: string;
-  activityPeriod: string;
-  books: Books[];
-  questions: Question[];
-  hashtags: string[];
+    groupName: string;
+    location: string;
+    meetingDetails: string;
+    recruitmentPersonnel: string;
+    recruitmentPeriod: string;
+    activityPeriod: string;
+    books: Books[];
+    questions: Question[];
+    hashtags: string[];
 }
