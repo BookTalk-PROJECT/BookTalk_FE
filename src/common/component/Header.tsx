@@ -2,7 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import CustomButton from "./CustomButton";
 
 const Header = () => {
-
   const navigate = useNavigate();
 
   return (
@@ -28,12 +27,12 @@ const Header = () => {
           </nav>
         </div>
         <div className="flex items-center space-x-4">
-          <CustomButton color="white" onClick={() => navigate("/login")} >
-              <i className="fas fa-key">  &nbsp;로그인</i>
+          <CustomButton color="white" onClick={() => navigate("/login")}>
+            <i className="fas fa-key"> &nbsp;로그인</i>
           </CustomButton>
           <CustomButton onClick={() => navigate("/join")} color="black">
             <>
-              <i className="fas fa-right-to-bracket">  &nbsp;회원가입</i>
+              <i className="fas fa-right-to-bracket"> &nbsp;회원가입</i>
             </>
           </CustomButton>
         </div>

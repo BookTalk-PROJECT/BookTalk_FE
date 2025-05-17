@@ -8,7 +8,6 @@ import MyPageManageRowButton from "../../mypage/component/button/MyPageManageRow
 import MyPageActiveTabButton from "../../mypage/component/button/MyPageActiveTabButton";
 
 const AdminPageComment: React.FC = () => {
-
   const row = [
     { label: "번호", key: "id" },
     { label: "글 제목", key: "title" },
@@ -31,9 +30,7 @@ const AdminPageComment: React.FC = () => {
 
   // 탭 필터링 로직
   var filteredPosts =
-    activeTab === "전체"
-      ? adminCommentMockData
-      : adminCommentMockData.filter((post) => post.category === activeTab);
+    activeTab === "전체" ? adminCommentMockData : adminCommentMockData.filter((post) => post.category === activeTab);
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -42,12 +39,15 @@ const AdminPageComment: React.FC = () => {
       <div className="flex-1 px-6 py-8">
         <div className="bg-white rounded-lg shadow-md p-6">
           <MyPageBreadCrumb major="관리자" sub="댓글 관리" />
-          <MyPageActiveTabButton actions={[
-            { label: "전체", color: "blue", onClick: () => alert("전체") },
-            { label: "커뮤니티", color: "yellow", onClick: () => alert("커뮤니티") },
-            { label: "북리뷰", color: "red", onClick: () => alert("북리뷰") },
-            { label: "모임", color: "green", onClick: () => alert("모임") }
-          ]} setActiveTab={setActiveTab} />
+          <MyPageActiveTabButton
+            actions={[
+              { label: "전체", color: "blue", onClick: () => alert("전체") },
+              { label: "커뮤니티", color: "yellow", onClick: () => alert("커뮤니티") },
+              { label: "북리뷰", color: "red", onClick: () => alert("북리뷰") },
+              { label: "모임", color: "green", onClick: () => alert("모임") },
+            ]}
+            setActiveTab={setActiveTab}
+          />
 
           <MyPageTable
             posts={filteredPosts}
@@ -56,14 +56,10 @@ const AdminPageComment: React.FC = () => {
             filterOptions={filterOptions}
             initialFilter={initialFilter}
             manageOption={
-              <MyPageManageRowButton
-                actions={[
-                  { label: "복구", color: "blue", onClick: () => alert("복구") },
-                ]}
-              />
+              <MyPageManageRowButton actions={[{ label: "복구", color: "blue", onClick: () => alert("복구") }]} />
             }
             postKeys={postKeys}
-            activeTab = {activeTab}
+            activeTab={activeTab}
           />
 
           <Pagenation totalPages={10} loadPageByPageNum={() => {}} />

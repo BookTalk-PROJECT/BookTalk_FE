@@ -3,26 +3,16 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 //컴포넌트 관련
-import GatheringInput from "../component/GatheringInput";
 import GatheringTextarea from "../component/GatheringTextarea";
 
 //타입 api 요청관련
-import {
-  Books,
-  GatheringCreateRequest,
-  Question,
-  SearchResult
-} from "../type/GatheringCreatePage.types";
-import {
-  mockBooks,
-  mockSearchResults,
-  mockQuestions,
-  createGathering
-} from "../api/GatheringCreatePage.mock";
+import { Books, GatheringCreateRequest, Question, SearchResult } from "../type/GatheringCreatePage.types";
+
 import CustomButton from "../../common/component/CustomButton";
+import CustomInput from "../../common/component/CustomInput";
+import { createGathering, mockBooks, mockQuestions, mockSearchResults } from "../api/GatheringCreateRequest";
 
 const GatheringCreatePage: React.FC = () => {
-
   const navigate = useNavigate();
 
   // 책 관련 상태
@@ -31,12 +21,20 @@ const GatheringCreatePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>(mockSearchResults);
 
+  const [createData, setPostData] = useState({
+    groupName: "", //  모임명
+    location: "", //  지역
+    meetingDetails: "", //  모임 소개
+    recruitmentPersonnel: "", //  모집 인원
+  });
 
-  // 모임 기본 정보
-  const [groupName, setGroupName] = useState(""); // 모임명
-  const [location, setLocation] = useState(""); // 지역
-  const [meetingFormat, setMeetingFormat] = useState(""); // 모임 방법 (오프라인, 온라인 등)
-  const [meetingDetails, setMeetingDetails] = useState(""); // 모임 소개
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setPostData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   // 모집/활동 기간
   const [recruitmentPeriod, setRecruitmentPeriod] = useState(""); // 모집 시작 날짜 (문자열로 저장)
@@ -92,10 +90,7 @@ const GatheringCreatePage: React.FC = () => {
 
   const handleSubmit = async () => {
     const gatheringData: GatheringCreateRequest = {
-      groupName,
-      location,
-      meetingFormat,
-      meetingDetails,
+      ...createData, // groupName, location, meetingDetails, recruitmentPersonnel
       recruitmentPeriod,
       activityPeriod,
       books,
@@ -109,14 +104,12 @@ const GatheringCreatePage: React.FC = () => {
       await createGathering(gatheringData); // 서버로 데이터 보냄
       alert("모임 신청이 완료되었습니다!");
       navigate("/gatheringlist"); // 성공하면 모임 목록 페이지로 이동함
-    }
-    catch (error) {
+    } catch (error) {
       console.error("모임 신청 실패:", error);
       alert("모임 신청에 실패했습니다. 다시 시도해주세요."); // 실패해도 그대로 유지시킴
       //실패해도 임력폼 유지시킴 따로 처리는 필요없는듯?
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center">
@@ -140,12 +133,13 @@ const GatheringCreatePage: React.FC = () => {
                   <div className="text-sm text-gray-600 mb-2">시작일: {book.startDate}</div>
                   <div className="flex justify-end">
                     <span
-                      className={`text-xs px-2 py-1 rounded ${book.status === "completed"
-                        ? "bg-green-100 text-green-800"
-                        : book.status === "in_progress"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-gray-100 text-gray-800"
-                        }`}>
+                      className={`text-xs px-2 py-1 rounded ${
+                        book.status === "completed"
+                          ? "bg-green-100 text-green-800"
+                          : book.status === "in_progress"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-gray-100 text-gray-800"
+                      }`}>
                       {book.status === "completed" ? "완료" : book.status === "in_progress" ? "진행중" : "예정"}
                     </span>
                   </div>
@@ -213,11 +207,12 @@ const GatheringCreatePage: React.FC = () => {
                 <h3 className="text-lg font-bold mb-4">기준 정보</h3>
                 <div className="mb-4">
                   <div className="relative">
-                    <GatheringInput
+                    <CustomInput
                       label="모임명"
+                      name="groupName"
                       placeholder="모임명을 입력하세요"
-                      value={groupName}
-                      onChange={(e) => setGroupName(e.target.value)}
+                      value={createData.groupName}
+                      onChange={onChangeHandler}
                       suffixButton={{
                         label: "중복 체크",
                         onClick: () => alert("중복체크 누름"),
@@ -228,11 +223,12 @@ const GatheringCreatePage: React.FC = () => {
 
                 <div className="mb-4">
                   <div className="relative">
-                    <GatheringInput
+                    <CustomInput
                       label="지역"
+                      name="location"
                       placeholder="도시 지역을 입력하세요"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
+                      value={createData.location}
+                      onChange={onChangeHandler}
                       suffixIconButton={{
                         icon: <i className="fas fa-search"></i>,
                         onClick: () => alert("도시지역 검색버튼 누름"),
@@ -243,10 +239,11 @@ const GatheringCreatePage: React.FC = () => {
                 <div className="mb-4">
                   <GatheringTextarea
                     label="모임 소개"
+                    name="meetingDetails"
                     placeholder="모임 소개를 입력하세요"
                     minHeight="400px"
-                    value={meetingDetails}
-                    onChange={(e) => setMeetingDetails(e.target.value)}
+                    value={createData.meetingDetails}
+                    onChange={onChangeHandler}
                   />
                 </div>
 
@@ -254,9 +251,12 @@ const GatheringCreatePage: React.FC = () => {
                   {/* 모집 기간 */}
                   <div className="flex-1">
                     <div className="relative">
-                      <GatheringInput
+                      <CustomInput
                         label="모집 인원"
+                        name="recruitmentPersonnel"
                         placeholder="인원수를 입력하세요"
+                        value={createData.recruitmentPersonnel}
+                        onChange={onChangeHandler}
                       />
                     </div>
                   </div>
@@ -264,14 +264,15 @@ const GatheringCreatePage: React.FC = () => {
                   {/* 활동 기간 */}
                   <div className="flex-1">
                     <div className="relative">
-                      <GatheringInput
+                      <CustomInput
                         type="date"
                         label="활동 기간"
+                        name="activityPeriod"
                         selected={activityDate}
                         onChange={(date) => {
                           setActivityDate(date);
                           if (date) {
-                            setActivityPeriod(date.toISOString().split("T")[0]);
+                            setActivityPeriod(date.toLocaleDateString().split("T")[0]);
                           }
                         }}
                         placeholder="활동 기간을 선택하세요"
@@ -282,14 +283,15 @@ const GatheringCreatePage: React.FC = () => {
                   {/* 모집 기간 */}
                   <div className="flex-1">
                     <div className="relative">
-                      <GatheringInput
+                      <CustomInput
                         type="date"
                         label="모집 기간"
+                        name="recruitmentPeriod"
                         selected={recruitmentDate}
                         onChange={(date) => {
                           setRecruitmentDate(date);
                           if (date) {
-                            setActivityPeriod(date.toISOString().split("T")[0]);
+                            setRecruitmentPeriod(date.toLocaleDateString().split("T")[0]);
                           }
                         }}
                         placeholder="모집기간을 선택하세요"
@@ -335,7 +337,7 @@ const GatheringCreatePage: React.FC = () => {
                   <h3 className="text-lg font-bold mb-4">가입 질문</h3>
                   <div className="mb-4">
                     <div className="relative">
-                      <GatheringInput
+                      <CustomInput
                         label="질문"
                         placeholder="질문 사항을 입력하세요"
                         value={newQuestion}
@@ -351,7 +353,7 @@ const GatheringCreatePage: React.FC = () => {
                           onClick: handleAddQuestion,
                           className: `${questions.length >= 5 ? "bg-gray-400" : "bg-gray-700"} 
                 text-white w-8 h-8 flex items-center justify-center 
-                rounded-full whitespace-nowrap cursor-pointer`
+                rounded-full whitespace-nowrap cursor-pointer`,
                         }}
                       />
                     </div>
@@ -379,21 +381,11 @@ const GatheringCreatePage: React.FC = () => {
           </div>
           {/* 버튼 그룹 */}
           <div className="flex justify-end space-x-3 mt-8">
-            <CustomButton
-              onClick={handleSubmit}
-              color="black"
-              customClassName="px-6 py-2 text-lg font-semibold">
-              <>
-                신청
-              </>
+            <CustomButton onClick={handleSubmit} color="black" customClassName="px-6 py-2 text-lg font-semibold">
+              <>신청</>
             </CustomButton>
-            <CustomButton
-              onClick={handleCancel}
-              color="white"
-              customClassName="px-6 py-2 text-lg font-semibold">
-              <>
-                취소
-              </>
+            <CustomButton onClick={handleCancel} color="white" customClassName="px-6 py-2 text-lg font-semibold">
+              <>취소</>
             </CustomButton>
           </div>
         </div>

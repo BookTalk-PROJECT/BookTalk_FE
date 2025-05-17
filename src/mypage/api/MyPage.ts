@@ -13,7 +13,7 @@ export async function getMyPageBookReviewBoard(userId: string) {
         resolve(res.data);
       } catch (err) {
         reject(err);
-        console.log("error occurs while to get MyPage Board Data :"+err);
+        console.log("error occurs while to get MyPage Board Data :" + err);
       }
     })();
   });
@@ -28,7 +28,7 @@ export async function getMyPageBookReviewComment(userId: string) {
         resolve(res.data);
       } catch (err) {
         reject(err);
-        console.log("error occurs while to get MyPage Board Data :"+err);
+        console.log("error occurs while to get MyPage Board Data :" + err);
       }
     })();
   });
@@ -43,7 +43,7 @@ export async function getMyPageCommunityBoard(userId: string) {
         resolve(res.data);
       } catch (err) {
         reject(err);
-        console.log("error occurs while to get MyPage Board Data :"+err);
+        console.log("error occurs while to get MyPage Board Data :" + err);
       }
     })();
   });
@@ -58,9 +58,8 @@ export async function getMyPageCommunityComment(userId: string) {
         resolve(res.data);
       } catch (err) {
         reject(err);
-        console.log("error occurs while to get MyPage Board Data :"+err);
+        console.log("error occurs while to get MyPage Board Data :" + err);
       }
     })();
   });
 }
-

@@ -38,7 +38,7 @@ const MyPageTable = <T extends { [key: string]: any }>({
   const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
 
   const toggleExpandRow = (id: number) => {
-    setExpandedRowId(prev => (prev === id ? null : id));
+    setExpandedRowId((prev) => (prev === id ? null : id));
   };
 
   const handleSort = (field: keyof T) => {
@@ -133,13 +133,14 @@ const MyPageTable = <T extends { [key: string]: any }>({
 
   const renderRow = (post: any) => (
     <React.Fragment key={post.id}>
-      <tr
-        className="hover:bg-gray-50 border-b"
-        {...(isExpandableRow && { onClick: () => toggleExpandRow(post.id) })}
-      >
+      <tr className="hover:bg-gray-50 border-b" {...(isExpandableRow && { onClick: () => toggleExpandRow(post.id) })}>
         {row.map(({ key }) => {
           if (key === "id") {
-            return <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{post[key]}</td>;
+            return (
+              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                {post[key]}
+              </td>
+            );
           } else if (key === "manage") {
             return <td key={key}>{manageOption}</td>;
           } else if (key === "deleteReason") {
@@ -154,7 +155,11 @@ const MyPageTable = <T extends { [key: string]: any }>({
               </td>
             );
           } else {
-            return <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post[key]}</td>;
+            return (
+              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {post[key]}
+              </td>
+            );
           }
         })}
       </tr>

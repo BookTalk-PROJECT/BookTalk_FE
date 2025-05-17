@@ -39,8 +39,9 @@ const Pagenation: React.FC<PagenationProps> = ({ totalPages, loadPageByPageNum }
         <button
           key={index}
           onClick={() => setCurrentPage(value - 1)}
-          className={`!rounded-button whitespace-nowrap px-3 py-1 ${currentPage === value - 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
-            }`}>
+          className={`!rounded-button whitespace-nowrap px-3 py-1 ${
+            currentPage === value - 1 ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
+          }`}>
           {value}
         </button>
       ))}

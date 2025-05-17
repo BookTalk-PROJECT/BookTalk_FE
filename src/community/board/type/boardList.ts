@@ -1,5 +1,11 @@
-import { Post } from "../../../common/component/BoardTable";
-
+export interface GatheringPostRequest {
+  //등록할때 사용
+  id: number;
+  title: string;
+  author: string;
+  date: string;
+  views: number;
+}
 export interface BoardCategories {
   hello: string;
 }
@@ -15,6 +21,6 @@ export interface SubCategory {
   name: string;
 }
 
-export interface CommuPost extends Post {
+export interface CommuPostRequest extends GatheringPostRequest {
   categoryId: number;
 }

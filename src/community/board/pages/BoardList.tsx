@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import Footer from "../../../common/component/Footer";
-import Header from "../../../common/component/Header";
 import Pagenation from "../../../common/component/Pagination";
 import ButtonWrapper from "../../../common/component/Button";
-import { Category, CommuPost, SubCategory } from "../type/boardList";
+import { Category, CommuPostRequest, SubCategory } from "../type/boardList";
 import { getCategories, getPosts } from "../api/boardList";
-import BoardTable from "../../../common/component/BoardTable";
+import BoardTable from "../../../common/component/Board/page/BoardTable";
+import { useNavigate } from "react-router";
 const BoardList: React.FC = () => {
+  const navigate = useNavigate();
   // flag
   const [isLoading, setIsLoading] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -22,7 +22,7 @@ const BoardList: React.FC = () => {
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
   // data
   const [categories, setCategories] = useState<Category[]>([]);
-  const [posts, setPosts] = useState<CommuPost[]>([]);
+  const [posts, setPosts] = useState<CommuPostRequest[]>([]);
 
   const handleCategoryChange = async (catetory: Category) => {
     setIsLoading(true);
@@ -149,10 +149,7 @@ const BoardList: React.FC = () => {
                   )}
                 </div>
               </div>
-              <ButtonWrapper
-                onClick={() => {
-                  alert("Button Clicked!!");
-                }}>
+              <ButtonWrapper onClick={() => navigate(`/boardCreate`)}>
                 <>
                   <i className="fas fa-pencil-alt mr-1"></i> 글쓰기
                 </>
@@ -239,6 +236,7 @@ const BoardList: React.FC = () => {
 
                   return true;
                 })}
+                requestUrl={`boardDetail`} //여기에 커뮤니티 이벤트 요청 url이 들어가야함
               />
             </div>
             {/* Pagination */}

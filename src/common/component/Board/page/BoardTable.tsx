@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Post } from "../type/BoardTable";
+import { Post } from "../../../type/BoardTable";
 
 interface BoadTableProps {
   posts: Post[];
