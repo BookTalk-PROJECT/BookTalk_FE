@@ -1,5 +1,5 @@
 import React from "react";
-import ButtonWrapper from "../../common/component/Button";
+import ButtonWrapper from "../../../common/component/Button";
 
 type ButtonProperties = {
   label: string;
@@ -11,7 +11,7 @@ interface MyPageManageButtonProps {
   actions: ButtonProperties[];
 }
 
-const MyPageManageButton = ({ actions }: MyPageManageButtonProps) => {
+const MyPageManageRowButton = ({ actions }: MyPageManageButtonProps) => {
   const colorMap: Record<ButtonProperties["color"], string> = {
     green: "text-green-500",
     red: "text-red-500",
@@ -40,4 +40,4 @@ const MyPageManageButton = ({ actions }: MyPageManageButtonProps) => {
   );
 };
 
-export default MyPageManageButton;
+export default MyPageManageRowButton;
