@@ -71,7 +71,7 @@ const AppContent = () => {
               {/* Auth */}
               <Route path="/join" element={<JoinPage />} /> {/* 최형석 회원 가입 페이지 */}
               <Route path="/login" element={<LoginPage />} /> {/* 최형석 로그인 페이지 */}
-              {/* MyPage */}
+              {/* MyPage.ts */}
               <Route path="/mypage" element={<MyPage />} /> {/* 최형석 마이 페이지 */}
               <Route path="/mypage/bookreview/board" element={<MyPageBookReviewBoard />} />{" "}
               {/* 최형석 마이 페이지 북리뷰 게시판  */}

@@ -22,15 +22,13 @@ const GatheringCreatePage: React.FC = () => {
   const [searchResults, setSearchResults] = useState<SearchResult[]>(mockSearchResults);
 
   const [createData, setPostData] = useState({
-    groupName: "",                //  모임명
-    location: "",                 //  지역
-    meetingDetails: "",           //  모임 소개
-    recruitmentPersonnel: "",     //  모집 인원
+    groupName: "", //  모임명
+    location: "", //  지역
+    meetingDetails: "", //  모임 소개
+    recruitmentPersonnel: "", //  모집 인원
   });
 
-  const onChangeHandler = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setPostData((prev) => ({
       ...prev,
