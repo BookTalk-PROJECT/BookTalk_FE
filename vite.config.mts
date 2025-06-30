@@ -1,10 +1,11 @@
-import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+  ],
   server: {
     host: "localhost",
     // https: {
@@ -12,9 +13,9 @@ export default defineConfig({
     //   cert: fs.readFileSync("localhost+3.pem")
     // },
     proxy: {
-      "/api": {
-        target: "http://localhost:8080",
-        rewrite: (path) => path.replace(/^\/api/, ""),
+      '/api': {
+        target: 'http://localhost:8080',
+        rewrite: (path) => path.replace(/^\/api/, ''),
         changeOrigin: true,
         secure: false,
         ws: true,
