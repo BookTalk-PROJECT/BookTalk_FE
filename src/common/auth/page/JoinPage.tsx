@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { fetchJoin } from "../api/Join.mock";
+import { Join } from "../type";
 
 const JoinPage: React.FC = () => {
   const navigate = useNavigate();
@@ -73,8 +76,8 @@ const JoinPage: React.FC = () => {
 
     if (!password) {
       newErrors.password = "비밀번호를 입력하세요";
-    } else if (password.length < 12) {
-      newErrors.password = "비밀번호는 12자리 이상이어야 합니다";
+    } else if (password.length < 9) {
+      newErrors.password = "비밀번호는 9자리 이상이어야 합니다";
     }
 
     if (!passwordConfirm) {
@@ -102,6 +105,17 @@ const JoinPage: React.FC = () => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
+      const joinData = {
+        email,
+        password,
+        phone,
+        address,
+        birthDate,
+        gender,
+        agreeTerms,
+      }
+      fetchJoin(joinData);
+
       alert("회원가입 성공!");
       navigate("/login");
     }
@@ -180,7 +194,7 @@ const JoinPage: React.FC = () => {
                   <div className="absolute right-2 top-1/2 transform -translate-y-1/2 group">
                     <span className="text-gray-400 cursor-pointer">ℹ️</span>
                     <div className="absolute right-0 hidden group-hover:block bg-gray-700 text-white text-xs rounded px-2 py-1 mt-2 w-max">
-                      비밀번호는 12자리 이상으로 입력하세요
+                      비밀번호는 9자리 이상으로 입력하세요
                     </div>
                   </div>
                 </div>
