@@ -1,9 +1,10 @@
 export interface Join {
+  name: string;
   email: string;
   password: string;
-  phone: string;
+  phoneNumber: string;
   address: string;
-  birthDate: string;
+  birth: string;
   gender: string;
-  agreeTerms: boolean;
+  authType: string;
 }

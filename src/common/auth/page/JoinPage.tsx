@@ -6,19 +6,21 @@ import { Join } from "../type";
 
 const JoinPage: React.FC = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [address, setAddress] = useState("");
   const [detailAddress, setDetailAddress] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [phone, setPhone] = useState("");
+  const [birth, setBirth] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [gender, setGender] = useState("male");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [emailStatus, setEmailStatus] = useState<"none" | "invalid" | "duplicate" | "available">("none");
   const [isChecking, setIsChecking] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [passwordMatchError, setPasswordMatchError] = useState("");
+  const [authType, setAuthType] = useState<"OWN" | "KAKAO" | "NAVER">("OWN");
 
   /* 패스워드 상태가 실시간으로 바뀔 때마다 매칭 여부 확인 후 메세지 띄움 */
   useEffect(() => {
@@ -64,6 +66,10 @@ const JoinPage: React.FC = () => {
     e.preventDefault();
     const newErrors: { [key: string]: string } = {};
 
+    if(!name){
+      newErrors.name = "이름을 입력하세요";
+    }
+
     if (!email) {
       newErrors.email = "이메일을 입력하세요";
     } else if (!validateEmail(email)) {
@@ -86,16 +92,16 @@ const JoinPage: React.FC = () => {
       newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다";
     }
 
-    if (!phone) {
-      newErrors.phone = "연락처를 입력하세요";
+    if (!phoneNumber) {
+      newErrors.phoneNumber = "연락처를 입력하세요";
     }
 
     if (!address) {
       newErrors.address = "주소를 입력하세요";
     }
 
-    if (!birthDate) {
-      newErrors.birthDate = "생년월일을 입력하세요";
+    if (!birth) {
+      newErrors.birth = "생년월일을 입력하세요";
     }
 
     if (!agreeTerms) {
@@ -106,13 +112,14 @@ const JoinPage: React.FC = () => {
 
     if (Object.keys(newErrors).length === 0) {
       const joinData = {
+        name,
         email,
         password,
-        phone,
+        phoneNumber,
         address,
-        birthDate,
+        birth,
         gender,
-        agreeTerms,
+        authType,
       }
       fetchJoin(joinData);
 
@@ -150,6 +157,21 @@ const JoinPage: React.FC = () => {
           <div className="bg-white rounded-lg p-8 shadow">
             <h2 className="text-2xl font-bold mb-8 text-center">회원가입</h2>
             <form className="space-y-6" onSubmit={handleSubmit}>
+
+              {/* 이름 입력 */}
+              <div className="relative">
+                <label className="block text-sm mb-1">이름</label>
+                <div className="relative">
+                  <input
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm"
+                      placeholder="이름을 입력해주세요"
+                  />
+                </div>
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+              </div>
+              
               {/* 이메일 입력 */}
               <div className="relative">
                 <label className="block text-sm mb-1">이메일</label>
@@ -234,13 +256,13 @@ const JoinPage: React.FC = () => {
                   </select>
                   <input
                     type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
                     className="flex-1 border border-gray-300 rounded-md px-4 py-2 text-sm"
                     placeholder="연락처를 입력하세요"
                   />
                 </div>
-                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
               </div>
 
               {/* 주소 */}
@@ -296,11 +318,11 @@ const JoinPage: React.FC = () => {
                 <label className="block text-sm mb-1">생년월일</label>
                 <input
                   type="date"
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
+                  value={birth}
+                  onChange={(e) => setBirth(e.target.value)}
                   className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm"
                 />
-                {errors.birthDate && <p className="text-red-500 text-sm mt-1">{errors.birthDate}</p>}
+                {errors.birth && <p className="text-red-500 text-sm mt-1">{errors.birth}</p>}
               </div>
 
               {/* 개인정보 수집 동의 */}
