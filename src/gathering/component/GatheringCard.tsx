@@ -8,13 +8,18 @@ interface GatheringCardProps {
   lastRef?: React.Ref<HTMLDivElement>;
 }
 
+
+
 const GatheringCard: React.FC<GatheringCardProps> = ({ gathering, lastRef }) => {
   const navigate = useNavigate();
 
+  const statusType = gathering.status.type;
+  const statusName = gathering.status.name;
+
   return (
     <div
-      key={gathering.id}
-      onClick={() => navigate(`/gatheringlist/${gathering.id}`)}
+      key={gathering.code}
+      onClick={() => navigate(`/gatheringlist/${gathering.code}`)}
       ref={lastRef || null}
       className="cursor-pointer bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-gray-100">
       <div className="relative">
@@ -42,18 +47,17 @@ const GatheringCard: React.FC<GatheringCardProps> = ({ gathering, lastRef }) => 
                 </span>
               ))}
             </div>
-            <span
-              className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap
-                            ${
-                              gathering.status === GatheringStatus.intended
-                                ? "bg-green-100 text-green-600"
-                                : gathering.status === GatheringStatus.progress
-                                  ? "bg-yellow-100 text-yellow-600"
-                                  : "bg-gray-200 text-gray-600"
-                            }
-                            `}>
-              {gathering.status}
-            </span>
+              <span
+                className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap
+                  ${
+                    statusType === "INTENDED"
+                      ? "bg-green-100 text-green-600"
+                      : statusType === "PROGRESS"
+                      ? "bg-yellow-100 text-yellow-600"
+                      : "bg-gray-200 text-gray-600"
+                  }`}>
+                {statusName}
+              </span>
           </div>
         </div>
       </div>

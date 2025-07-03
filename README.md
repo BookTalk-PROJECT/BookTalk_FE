@@ -30,4 +30,5 @@ _도서 정보 공유 및 독서 모임 커뮤니티 플랫폼_
 1. pnpm install or pnpm update
 2. .env 및 vite.config.ts 추가(설정 내용 참조)
 3. pnpm run dev
+4. npm install react-datepicker
 ```

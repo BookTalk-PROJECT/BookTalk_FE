@@ -1,8 +1,8 @@
 export interface Books {
-  id: number; //책 ISBN
+  isbn: string | number; //책 ISBN
   name: string; // 책 이름
-  startDate: string; // 시작일(등록일)
-  status: "planned" | "in_progress" | "completed"; // 모임 내부 독서 상태(예정, 진행중, 완료)
+  order : number;
+  complete_yn: "planned" | "in_progress" | "completed"; // 모임 내부 독서 상태(예정, 진행중, 완료)
 }
 
 export interface SearchResult {
@@ -12,7 +12,7 @@ export interface SearchResult {
 
 export interface Question {
   id: number;
-  text: string;
+  question: string;
 }
 
 // 모임 개설 데이터 타입
