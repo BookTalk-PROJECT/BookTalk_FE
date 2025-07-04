@@ -8,3 +8,8 @@ export interface Join {
   gender: string;
   authType: string;
 }
+
+export interface Login {
+  username: string,
+  password: string,
+}

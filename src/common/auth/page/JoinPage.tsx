@@ -10,10 +10,11 @@ const JoinPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [address, setAddress] = useState("");
+  const [normalAddress, setNormalAddress] = useState("");
   const [detailAddress, setDetailAddress] = useState("");
   const [birth, setBirth] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [p_phoneNumber, setP_phoneNumber] = useState("010");
+  const [b_phoneNumber, setB_PhoneNumber] = useState("");
   const [gender, setGender] = useState("male");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [emailStatus, setEmailStatus] = useState<"none" | "invalid" | "duplicate" | "available">("none");
@@ -21,6 +22,10 @@ const JoinPage: React.FC = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [passwordMatchError, setPasswordMatchError] = useState("");
   const [authType, setAuthType] = useState<"OWN" | "KAKAO" | "NAVER">("OWN");
+
+  const onSelectP_phoneNumber = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setP_phoneNumber(e.target.value);
+  };
 
   /* 패스워드 상태가 실시간으로 바뀔 때마다 매칭 여부 확인 후 메세지 띄움 */
   useEffect(() => {
@@ -92,11 +97,11 @@ const JoinPage: React.FC = () => {
       newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다";
     }
 
-    if (!phoneNumber) {
+    if (!b_phoneNumber) {
       newErrors.phoneNumber = "연락처를 입력하세요";
     }
 
-    if (!address) {
+    if (!normalAddress) {
       newErrors.address = "주소를 입력하세요";
     }
 
@@ -111,6 +116,10 @@ const JoinPage: React.FC = () => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
+
+      const address = `${normalAddress} ${detailAddress}`;
+      const phoneNumber = `${p_phoneNumber}-${b_phoneNumber}`;
+
       const joinData = {
         name,
         email,
@@ -138,7 +147,7 @@ const JoinPage: React.FC = () => {
   const handleAddressSearch = () => {
     new (window as any).daum.Postcode({
       oncomplete: function (data: any) {
-        setAddress(data.address);
+        setNormalAddress(data.address);
       },
     }).open();
   };
@@ -171,7 +180,7 @@ const JoinPage: React.FC = () => {
                 </div>
                 {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
               </div>
-              
+
               {/* 이메일 입력 */}
               <div className="relative">
                 <label className="block text-sm mb-1">이메일</label>
@@ -246,7 +255,8 @@ const JoinPage: React.FC = () => {
               <div className="relative">
                 <label className="block text-sm mb-1">연락처</label>
                 <div className="flex gap-2">
-                  <select className="w-24 border border-gray-300 rounded-md px-4 py-2 text-sm" defaultValue="010">
+                  <select  className="w-24 border border-gray-300 rounded-md px-4 py-2 text-sm" defaultValue="010"  value={p_phoneNumber}
+                           onChange={onSelectP_phoneNumber}>
                     <option value="010">010</option>
                     <option value="011">011</option>
                     <option value="016">016</option>
@@ -256,8 +266,8 @@ const JoinPage: React.FC = () => {
                   </select>
                   <input
                     type="tel"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    value={b_phoneNumber}
+                    onChange={(e) => setB_PhoneNumber(e.target.value)}
                     className="flex-1 border border-gray-300 rounded-md px-4 py-2 text-sm"
                     placeholder="연락처를 입력하세요"
                   />
@@ -270,7 +280,7 @@ const JoinPage: React.FC = () => {
                 <label className="block text-sm mb-1">주소</label>
                 <input
                   type="text"
-                  value={address}
+                  value={normalAddress}
                   onClick={handleAddressSearch}
                   readOnly
                   className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm cursor-pointer"
