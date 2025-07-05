@@ -1,8 +1,19 @@
 import React, { useState } from "react";
+import { fetchLogin } from "../api/login.mock";
 
 const LoginPage: React.FC = () => {
-  const [userId, setUserId] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // 폼 전송 기본 동작 막기
+
+    const loginData = {
+      username,
+      password,
+    }
+    fetchLogin(loginData);
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 overflow-x-hidden">
@@ -25,7 +36,7 @@ const LoginPage: React.FC = () => {
               <p className="text-sm"> </p>
             </div>
 
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label htmlFor="userId" className="block text-sm font-medium text-gray-700 mb-1">
                   아이디
@@ -35,8 +46,8 @@ const LoginPage: React.FC = () => {
                   id="userId"
                   className="border border-gray-200 rounded-md p-2 w-full text-sm"
                   placeholder="아이디를 입력해주세요"
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
               <div className="mb-6">
