@@ -136,4 +136,5 @@ _wildcard.*
 /yarn-error.log*
 /.env
 /vite.config.ts
+/pnpm-lock.yaml
 *.pem
