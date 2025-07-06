@@ -30,6 +30,7 @@ import MyPageMyGatherings from "./mypage/pages/MyPageMyGatherings";
 import GatheringDetailPage from "./gathering/pages/GatheringDetailPage";
 import BoardCreate from "./community/board/pages/BoardCreate";
 import BoardDetail from "./community/board/pages/BoardDetail";
+import './common/auth/config/tokenInterceptor';
 
 const AppContent = () => {
   const location = useLocation();
