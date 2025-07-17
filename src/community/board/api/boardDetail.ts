@@ -1,10 +1,16 @@
 import axios from "axios";
 import { GetBoardDetailRequest } from "../../../common/component/Board/type/BoardDetail.types";
+import { CommuPostRequest } from "../type/boardList";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const getBoardDetail = async (postId: string): Promise<GetBoardDetailRequest> => {
   const response = await axios.get<GetBoardDetailRequest>(`${BASE_URL}/board/getDetail/${postId}`);
+  return response.data;
+};
+
+export const postBoard = async (req:CommuPostRequest, categoryId:number|null) => {
+  const response = await axios.post(`${BASE_URL}/community/board/create`, {...req, categoryId: categoryId});
   return response.data;
 };
 

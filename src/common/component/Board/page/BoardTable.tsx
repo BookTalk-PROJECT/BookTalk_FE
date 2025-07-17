@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Post } from "../../../type/BoardTable";
+import { PostInfo } from "../type/BoardDetail.types";
 
 interface BoadTableProps {
-  posts: Post[];
+  posts: PostInfo[];
   requestUrl: string;
 }
 
@@ -89,11 +90,11 @@ const BoardTable: React.FC<BoadTableProps> = ({ posts, requestUrl }) => {
       </thead>
       <tbody className="bg-white divide-y divide-gray-200">
         {filteredPosts.map((post, index) => (
-          <tr key={post.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.id}</td>
+          <tr key={post.board_code} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.board_code}</td>
             <td className="px-6 py-4 text-sm">
               {/* 커뮤니티 또는 모임으로 분기 존재함 requestPosition에 url 받아옴 */}
-              <a href={`/${requestUrl}/${post.id}`} className="text-gray-900 hover:text-blue-600">
+              <a href={`/${requestUrl}/${post.board_code}`} className="text-gray-900 hover:text-blue-600">
                 {post.title}
               </a>
             </td>

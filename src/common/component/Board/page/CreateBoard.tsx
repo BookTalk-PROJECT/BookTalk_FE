@@ -8,7 +8,7 @@ import { YoutubeVideo } from "../type/BoardDetail.types";
 import { searchYoutubeVideos } from "../api/CreateBoardRequest";
 
 interface BoardProps {
-  createPost: (arg0: CommuPostRequest | GatheringPostRequest) => void;
+  createPost: (arg0: CommuPostRequest | GatheringPostRequest, categoryId: number | null) => void;
 }
 
 const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
@@ -21,27 +21,13 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
   const [prevPageToken, setPrevPageToken] = useState("");
 
   const [postData, setPostData] = useState<CommuPostRequest | GatheringPostRequest>({
-    id: 0,
     title: "",
-    author: "",
-    date: "",
-    views: 0,
-    categoryId: 0,
+    content: "",
+    notification: false,
   });
 
   const handleSubmit = async () => {
-    const editorInstance = editorRef.current?.getInstance();
-    const content = editorInstance?.getMarkdown() || "";
-
-    try {
-      const result = await createPost(postData);
-      console.log("등록 완료:", result);
-      alert("글이 성공적으로 등록되었습니다.");
-      window.history.back(); // 또는 등록 성공 후 원하는 페이지로 이동
-    } catch (error) {
-      console.error("글 등록 실패:", error);
-      alert("글 등록 중 오류가 발생했습니다.");
-    }
+    await createPost(postData, 0);
   };
 
   const handleYoutubeButtonClick = () => {
@@ -71,6 +57,7 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
   const handleUndo = () => {
     editorRef.current?.getInstance().exec("undo");
   };
+
   //Editor 내부에 추가되어 있음
   const handleRedo = () => {
     editorRef.current?.getInstance().exec("redo");

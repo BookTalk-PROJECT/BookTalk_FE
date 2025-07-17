@@ -16,6 +16,15 @@ export interface GetBoardDetailRequest {
   replies?: Reply[]; // 댓글 목록
 }
 
+export interface PostInfo {
+  board_code: string;
+  categoryId: number;
+  title: string;
+  author: string;
+  date: string;
+  views: number;
+}
+
 export interface PostDetail {
   //게시글 조회 common type
   board_code: string; // 게시글 ID

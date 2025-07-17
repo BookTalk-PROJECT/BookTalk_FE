@@ -5,6 +5,7 @@ import { Category, CommuPostRequest, SubCategory } from "../type/boardList";
 import { getCategories, getPosts } from "../api/boardList";
 import BoardTable from "../../../common/component/Board/page/BoardTable";
 import { useNavigate } from "react-router";
+import { PostInfo } from "../../../common/component/Board/type/BoardDetail.types";
 const BoardList: React.FC = () => {
   const navigate = useNavigate();
   // flag
@@ -22,7 +23,8 @@ const BoardList: React.FC = () => {
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
   // data
   const [categories, setCategories] = useState<Category[]>([]);
-  const [posts, setPosts] = useState<CommuPostRequest[]>([]);
+  const [posts, setPosts] = useState<PostInfo[]>([]);
+  const [totalPages, setTotalPages] = useState(0);
 
   const handleCategoryChange = async (catetory: Category) => {
     setIsLoading(true);
@@ -54,7 +56,10 @@ const BoardList: React.FC = () => {
       setActiveCategory(categories[0]);
       setActiveSubCategory(categories[0].subCategories[0]);
     });
-    getPosts().then((posts) => setPosts(posts));
+    getPosts(0,1).then((res) => {
+      setPosts(res.data.content);
+      setTotalPages(res.data.totalPages);
+    });
     checkScrollButtons();
     window.addEventListener("resize", checkScrollButtons);
     return () => window.removeEventListener("resize", checkScrollButtons);
@@ -214,33 +219,14 @@ const BoardList: React.FC = () => {
                   </div>
                 </div>
               )}
+              {posts && (
               <BoardTable
-                posts={posts.filter((post) => {
-                  // Category filter
-                  // if (post.categoryId !== activeCategory?.id) return false;
-                  if (post.categoryId !== activeSubCategory?.id) return false;
-
-                  // Search filter
-                  if (searchTerm) {
-                    const searchValue = searchTerm.toLowerCase();
-                    if (searchField === "title") {
-                      return post.title.toLowerCase().includes(searchValue);
-                    } else if (searchField === "author") {
-                      return post.author.toLowerCase().includes(searchValue);
-                    }
-                  }
-
-                  // Date range filter
-                  if (dateRange.start && new Date(post.date) < new Date(dateRange.start)) return false;
-                  if (dateRange.end && new Date(post.date) > new Date(dateRange.end)) return false;
-
-                  return true;
-                })}
+                posts={posts}
                 requestUrl={`boardDetail`} //여기에 커뮤니티 이벤트 요청 url이 들어가야함
-              />
+              />)}
             </div>
             {/* Pagination */}
-            <Pagenation totalPages={21} loadPageByPageNum={(num) => {}} />
+            <Pagenation totalPages={totalPages} loadPageByPageNum={(num) => {}} />
           </div>
         </div>
       </main>
