@@ -46,7 +46,7 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
       {/* 모임 정보 영역 */}
       <div className="p-6 border-b">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold">즐거운 독서</h1>
+          <h1 className="text-2xl font-bold">{gatheringBookInfo?.gatheringName}</h1>
           <div className="flex space-x-3">
             <CustomButton onClick={() => alert("공유하기 클릭됨")} color="white">
               <>
@@ -139,10 +139,11 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
 
                     <div className="flex items-center text-sm text-gray-500">
                       <span>{book.author}</span>
-                      <span className="ml-auto flex items-center">
-                        <i className="far fa-calendar-alt mr-1"></i>
-                        {book.date}
-                      </span>
+                        <span className="ml-auto flex items-center">
+                          <i className="far fa-calendar-alt mr-1"></i>
+                          {book.startDate} ~
+                          {book.endDate ? ` ${book.endDate}` : ""}
+                        </span>
                     </div>
                   </div>
                 </div>

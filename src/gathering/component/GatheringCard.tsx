@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { GatheringPost } from "../type/GatheringListPage.types";
 import { GatheringStatus } from "../../common/type/Status";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 interface GatheringCardProps {
   gathering: GatheringPost;
   lastRef?: React.Ref<HTMLDivElement>;
@@ -19,11 +21,11 @@ const GatheringCard: React.FC<GatheringCardProps> = ({ gathering, lastRef }) => 
   return (
     <div
       key={gathering.code}
-      onClick={() => navigate(`/gatheringlist/${gathering.code}`)}
+      onClick={() => navigate(`/gathering/detail/${gathering.code}`)}
       ref={lastRef || null}
       className="cursor-pointer bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-gray-100">
       <div className="relative">
-        <img src={gathering.imageUrl} alt="영상 썸네일" className="w-full h-48 object-cover object-top" />
+        <img src={`${API_BASE_URL}${gathering.imageUrl}`} alt="영상 썸네일" className="w-full h-48 object-cover object-top" />
       </div>
       <div className="p-4">
         <h3 className="font-semibold text-lg mb-2 text-gray-800">{gathering.title}</h3>

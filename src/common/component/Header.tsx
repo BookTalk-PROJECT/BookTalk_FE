@@ -15,7 +15,7 @@ const Header = () => {
             <a href="/boardList" className="text-gray-700 hover:text-red-500">
               커뮤니티
             </a>
-            <a href="/gatheringlist" className="text-gray-700 hover:text-red-500">
+            <a href="/gathering" className="text-gray-700 hover:text-red-500">
               모임
             </a>
             <a href="#" className="text-gray-700 hover:text-red-500">

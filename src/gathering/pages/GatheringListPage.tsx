@@ -97,7 +97,7 @@ const GatheringListPage: React.FC = () => {
 
             {/* 오른쪽: 모임 개설 버튼 + 검색창 */}
             <div className="flex items-center gap-4">
-              <CustomButton onClick={() => navigate("/gatheringlist/create")} color="black">
+              <CustomButton onClick={() => navigate("/gathering/create")} color="black">
                 <>모임 개설</>
               </CustomButton>
 
