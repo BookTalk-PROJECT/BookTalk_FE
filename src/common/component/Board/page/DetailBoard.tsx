@@ -3,39 +3,41 @@ import { useParams, useNavigate } from "react-router-dom";
 import CustomButton from "../../CustomButton";
 import { GetBoardDetailRequest } from "../type/BoardDetail.types";
 import { exampleData } from "../api/DetailBoardRequest";
+import { ReplyRequest } from "../../../../community/board/type/reply";
 
 interface DetailBoardProps {
-  postId: string;
+  postCode: string;
   //모임 조회 props
   GetBoardDetail: (postId: string) => Promise<GetBoardDetailRequest>;
+  DeleteBoard: (postId: string) => void;
   //게시글 좋아요 props arg1 : 게시글 아이디, arg2: 모임 여부
   ToggleLikePost: (postId: string) => void;
-  CreateReply: (postId: string, replyContent: string, replyTarget: number | null) => void;
+  CreateReply: (req: ReplyRequest) => void;
 }
 
 //postId는 커뮤Id or 모임Id
-const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, ToggleLikePost, CreateReply }) => {
+const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, DeleteBoard, ToggleLikePost, CreateReply }) => {
   //상세 조회 상태 관리
   const [detailData, setDetailData] = useState<GetBoardDetailRequest>();
   // 댓글 상태 관리
   const [parentCommentContent, setParentCommentContent] = useState<string>(""); // 부모 댓글 입력
   const [replyContent, setReplyContent] = useState<string>(""); // 댓글/대댓글 공통 입력
-  const [reReply_yn, setReReply_yn] = useState<number | null>(null); // 부모 댓글 여부(대댓글 or 댓글 판단)
+  const [reReply_yn, setReReply_yn] = useState<string | null>(null); // 부모 댓글 여부(대댓글 or 댓글 판단)
 
   // 댓글 데이터 불러오기
   useEffect(() => {
     loadDetailData();
-  }, [postId]);
+  }, [postCode]);
 
   const loadDetailData = async () => {
-    if (!postId) {
-      console.log("postId: " + postId + "가 이상함");
+    if (!postCode) {
+      console.log("postId: " + postCode + "가 이상함");
       return;
     }
 
     try {
-      const data = await GetBoardDetail(postId);
-      setDetailData(data);
+      const data = await GetBoardDetail(postCode);
+      setDetailData(data.data);
     } catch (error) {
       console.error("API 요청 오류:", error);
       setDetailData(exampleData);
@@ -44,12 +46,12 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, Toggl
 
   // 좋아요 토글 상태관리 (Optimistic UI)
   const handleLikeToggle = async () => {
-    if (!postId) {
-      console.log("또는 postId: " + postId + "가 이상함");
+    if (!postCode) {
+      console.log("또는 postId: " + postCode + "가 이상함");
       return;
     }
 
-    const newLikeState = !detailData?.post.isLike;
+    const newLikeState = !detailData?.post.is_liked;
 
     // Optimistic UI 업데이트
     setDetailData((prev) => {
@@ -65,7 +67,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, Toggl
     });
 
     try {
-      await ToggleLikePost(postId);
+      await ToggleLikePost(postCode);
     } catch (error) {
       console.error("좋아요 토글 중 오류:", error);
       // 오류 발생 시 UI 롤백
@@ -85,7 +87,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, Toggl
 
   // 댓글 등록 로직 (간결한 구조)
   const handleReplySubmit = async () => {
-    if (!postId) {
+    if (!postCode) {
       console.error("모임 ID 또는 게시글 ID가 누락되었습니다.");
       return;
     }
@@ -106,7 +108,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, Toggl
 
     // Optimistic UI: 즉시 댓글 UI에 추가
     const newReply = {
-      reply_code: Date.now(), // 임시 코드 (고유값)
+      reply_code: Date.now().toString(), // 임시 코드 (고유값)
       member_id: "현재 사용자", // 실제 사용자 정보로 변경 필요
       content,
       date: new Date().toISOString().slice(0, 10),
@@ -149,7 +151,12 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, Toggl
 
     try {
       // 서버 API 요청 (댓글 등록)
-      await CreateReply(postId, content, reReply_yn); //타입에서 파라미터를 넘기지 않을 시 undifined
+      console.log(reReply_yn);
+      await CreateReply({
+        postCode: postCode,
+        content: content,
+        parentReplyCode: reReply_yn
+      }); //타입에서 파라미터를 넘기지 않을 시 undifined
       await loadDetailData(); // 서버 데이터로 새로고침 (정상 등록 확인)
     } catch (error) {
       console.error("댓글 등록 중 오류 발생:", error);
@@ -185,7 +192,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, Toggl
   };
 
   // 답글 클릭 로직 수정 (부모 댓글 / 대댓글 공통)
-  const handleReplyClick = (replyCode: number) => {
+  const handleReplyClick = (replyCode: string) => {
     // 이미 열려있는 경우 클릭 시 닫힘 (토글)
     if (reReply_yn === replyCode) {
       setReReply_yn(null);
@@ -194,9 +201,10 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, Toggl
       setReReply_yn(replyCode);
       setReplyContent(""); // 초기화
     }
+    console.log(reReply_yn);
   };
 
-  if (!postId) {
+  if (!postCode) {
     return <div>잘못된 접근입니다.</div>; // 또는 LoadingBar 반환
   }
   return (
@@ -211,7 +219,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, Toggl
                   <i className="fas fa-edit mr-2"></i>수정
                 </>
               </CustomButton>
-              <CustomButton onClick={() => alert("모임 게시글 상세 수정 버튼 클릭릭")} color="red">
+              <CustomButton onClick={() => DeleteBoard(postCode)} color="red">
                 <>
                   <i className="fas fa-trash-alt mr-2"></i>삭제
                 </>
@@ -234,16 +242,16 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, Toggl
 
             <span className="ml-auto flex items-center">
               <i className="fas fa-calendar mr-2"></i>
-              {detailData?.post.create_at}
+              {detailData?.post.reg_date}
             </span>
           </div>
         </div>
       </div>
 
       <div className="mb-8">
-        <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden mb-6">
+        {/* <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden mb-6">
           <img src={detailData?.post.imageUrl} alt="독서모임 사진" className="w-full h-full object-cover" />
-        </div>
+        </div> */}
         <div className="prose max-w-none">
           <p className="text-gray-800 leading-relaxed">{detailData?.post.content}</p>
         </div>
@@ -253,7 +261,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, Toggl
         <button
           onClick={handleLikeToggle}
           className={`px-6 py-3 bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200 flex items-center`}>
-          <i className={`fas fa-heart mr-2 ${detailData?.post.isLike ? "text-red-500" : "text-gray-500"}`}></i>
+          <i className={`fas fa-heart mr-2 ${detailData?.post.is_liked ? "text-red-500" : "text-gray-500"}`}></i>
           <span>좋아요</span>
           <span className="ml-2 text-gray-600">{detailData?.post.likes_cnt}</span>
         </button>
@@ -310,9 +318,9 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postId, GetBoardDetail, Toggl
               <p className="text-gray-800">{parentReply.content}</p>
 
               {/* 대댓글 렌더링 (있는 경우만) */}
-              {parentReply.reReply && parentReply.reReply.length > 0 && (
+              {parentReply.replies && parentReply.replies.length > 0 && (
                 <div className="ml-6 mt-4 space-y-4">
-                  {parentReply.reReply.map((reReply) => (
+                  {parentReply.replies.map((reReply) => (
                     <div key={reReply.reply_code} className="border-l-2 pl-4">
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center space-x-2">

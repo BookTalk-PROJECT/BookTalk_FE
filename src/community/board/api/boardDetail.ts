@@ -1,11 +1,12 @@
 import axios from "axios";
 import { GetBoardDetailRequest } from "../../../common/component/Board/type/BoardDetail.types";
 import { CommuPostRequest } from "../type/boardList";
+import { ReplyRequest } from "../type/reply";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const getBoardDetail = async (postId: string): Promise<GetBoardDetailRequest> => {
-  const response = await axios.get<GetBoardDetailRequest>(`${BASE_URL}/board/getDetail/${postId}`);
+  const response = await axios.get<GetBoardDetailRequest>(`${BASE_URL}/community/board/detail/${postId}`);
   return response.data;
 };
 
@@ -14,12 +15,14 @@ export const postBoard = async (req:CommuPostRequest, categoryId:number|null) =>
   return response.data;
 };
 
+export const deleteBoard = async (postId: string): Promise<void> => {
+  const response = await axios.delete(`${BASE_URL}/community/board/delete/${postId}`);
+  return response.data;
+};
+
 // 댓글 등록 (부모 댓글 & 대댓글)
-export const postReply = async (postId: string, content: string, parentReplyCode?: number | null) => {
-  const response = await axios.post(`${BASE_URL}/board/createreply/${postId}`, {
-    content,
-    p_reply_code: parentReplyCode ?? null, // 부모 댓글일 경우 null, 대댓글일 경우 부모 댓글 ID
-  });
+export const postReply = async (req: ReplyRequest) => {
+  const response = await axios.post(`${BASE_URL}/reply/create`, req);
   return response.data;
 };
 
