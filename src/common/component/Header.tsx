@@ -3,6 +3,12 @@ import CustomButton from "./CustomButton";
 
 const Header = () => {
   const navigate = useNavigate();
+  const logoutHandler = () => {
+    console.log("찍")
+    localStorage.removeItem("accessToken");
+    navigate("/");
+  }
+
 
   return (
     <header className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
@@ -27,14 +33,22 @@ const Header = () => {
           </nav>
         </div>
         <div className="flex items-center space-x-4">
-          <CustomButton color="white" onClick={() => navigate("/login")}>
-            <i className="fas fa-key"> &nbsp;로그인</i>
-          </CustomButton>
+          {localStorage.getItem("accessToken") ?
+            <CustomButton color="white" onClick={logoutHandler}>
+              <i className="fas fa-key"> &nbsp;로그아웃</i>
+            </CustomButton>:
+            <CustomButton color="white" onClick={() => navigate("/login")}>
+              <i className="fas fa-key"> &nbsp;로그인</i>
+            </CustomButton>
+          }
+          { !localStorage.getItem("accessToken")?
           <CustomButton onClick={() => navigate("/join")} color="black">
             <>
               <i className="fas fa-right-to-bracket"> &nbsp;회원가입</i>
             </>
-          </CustomButton>
+          </CustomButton>:
+              <div></div>
+          }
         </div>
       </div>
     </header>
