@@ -19,7 +19,7 @@ export const fetchLogin = async (loginData: Login) => {
         localStorage.setItem("refreshToken", refreshToken);
 
         // 3. 기본 Authorization 헤더 설정 (axios 공통 헤더)
-        axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+        //axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
         window.location.href = "/dashboard";
       } else {
         console.error("로그인 실패", response.status);

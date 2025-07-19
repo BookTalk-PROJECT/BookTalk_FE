@@ -41,12 +41,14 @@ const Header = () => {
               <i className="fas fa-key"> &nbsp;로그인</i>
             </CustomButton>
           }
-
+          { !localStorage.getItem("accessToken")?
           <CustomButton onClick={() => navigate("/join")} color="black">
             <>
               <i className="fas fa-right-to-bracket"> &nbsp;회원가입</i>
             </>
-          </CustomButton>
+          </CustomButton>:
+              <div></div>
+          }
         </div>
       </div>
     </header>
