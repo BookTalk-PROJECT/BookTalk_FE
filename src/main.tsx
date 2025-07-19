@@ -30,6 +30,7 @@ import MyPageMyGatherings from "./mypage/pages/MyPageMyGatherings";
 import GatheringDetailPage from "./gathering/pages/GatheringDetailPage";
 import BoardCreate from "./community/board/pages/BoardCreate";
 import BoardDetail from "./community/board/pages/BoardDetail";
+import './common/auth/config/tokenInterceptor';
 
 const AppContent = () => {
   const location = useLocation();
@@ -54,12 +55,12 @@ const AppContent = () => {
               <Route path="/boardCreate" element={<BoardCreate />} />
               <Route path="/boardDetail/:postId" element={<BoardDetail />} />
               {/* Gathering */}
-              <Route path="/gatheringlist">
+              <Route path="/gathering">
                 {" "}
                 {/* 모임 관련 */}
                 <Route index element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
                 <Route path="create" element={<GatheringCreatePage />} /> {/* 이성종 모임 상세 */}
-                <Route path=":gatheringId" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
+                <Route path="detail/:gatheringId" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
                 <Route path=":gatheringId/join" element={<GatheringJoinPage />} /> {/* 이성종 모임 참여신청 */}
                 <Route path=":gatheringId/gatheringboard">
                   {" "}

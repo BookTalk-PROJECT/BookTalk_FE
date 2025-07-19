@@ -1,10 +1,8 @@
 export interface GatheringPostRequest {
-  //등록할때 사용
-  id: number;
+  //등록할때 사용=
   title: string;
-  author: string;
-  date: string;
-  views: number;
+  content: string;
+  notification: boolean;
 }
 export interface BoardCategories {
   hello: string;
@@ -21,6 +19,8 @@ export interface SubCategory {
   name: string;
 }
 
-export interface CommuPostRequest extends GatheringPostRequest {
-  categoryId: number;
+export interface CommuPostRequest {
+  title: string;
+  content: string;
+  notification: boolean;
 }

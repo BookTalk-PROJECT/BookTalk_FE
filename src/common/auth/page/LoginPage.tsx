@@ -12,7 +12,7 @@ const LoginPage: React.FC = () => {
       username,
       password,
     }
-    fetchLogin(loginData);
+    await fetchLogin(loginData);
   }
 
   return (

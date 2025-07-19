@@ -111,7 +111,7 @@ const handleSubmit = async () => {
   try {
     await createGathering(formData); // 수정 필요
     alert("모임 신청이 완료되었습니다!");
-    navigate("/gatheringlist");
+    navigate("/gathering");
   } catch (error) {
     console.error("모임 신청 실패:", error);
     alert("모임 신청에 실패했습니다. 다시 시도해주세요.");
@@ -195,6 +195,7 @@ const handleSubmit = async () => {
                               name: result.title,
                               order: 0,
                               complete_yn: "planned",
+                              startDate: new Date().toISOString().split("T")[0],
                             },
                           ]);
                           setIsSearchModalOpen(false);
