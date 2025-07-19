@@ -3,22 +3,29 @@ import { useNavigate } from "react-router-dom";
 import { GatheringPost } from "../type/GatheringListPage.types";
 import { GatheringStatus } from "../../common/type/Status";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 interface GatheringCardProps {
   gathering: GatheringPost;
   lastRef?: React.Ref<HTMLDivElement>;
 }
 
+
+
 const GatheringCard: React.FC<GatheringCardProps> = ({ gathering, lastRef }) => {
   const navigate = useNavigate();
 
+  const statusType = gathering.status.type;
+  const statusName = gathering.status.name;
+
   return (
     <div
-      key={gathering.id}
-      onClick={() => navigate(`/gatheringlist/${gathering.id}`)}
+      key={gathering.code}
+      onClick={() => navigate(`/gathering/detail/${gathering.code}`)}
       ref={lastRef || null}
       className="cursor-pointer bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-gray-100">
       <div className="relative">
-        <img src={gathering.imageUrl} alt="영상 썸네일" className="w-full h-48 object-cover object-top" />
+        <img src={`${API_BASE_URL}${gathering.imageUrl}`} alt="영상 썸네일" className="w-full h-48 object-cover object-top" />
       </div>
       <div className="p-4">
         <h3 className="font-semibold text-lg mb-2 text-gray-800">{gathering.title}</h3>
@@ -42,18 +49,17 @@ const GatheringCard: React.FC<GatheringCardProps> = ({ gathering, lastRef }) => 
                 </span>
               ))}
             </div>
-            <span
-              className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap
-                            ${
-                              gathering.status === GatheringStatus.intended
-                                ? "bg-green-100 text-green-600"
-                                : gathering.status === GatheringStatus.progress
-                                  ? "bg-yellow-100 text-yellow-600"
-                                  : "bg-gray-200 text-gray-600"
-                            }
-                            `}>
-              {gathering.status}
-            </span>
+              <span
+                className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap
+                  ${
+                    statusType === "INTENDED"
+                      ? "bg-green-100 text-green-600"
+                      : statusType === "PROGRESS"
+                      ? "bg-yellow-100 text-yellow-600"
+                      : "bg-gray-200 text-gray-600"
+                  }`}>
+                {statusName}
+              </span>
           </div>
         </div>
       </div>

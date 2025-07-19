@@ -1,21 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { fetchJoin } from "../api/Join.mock";
+import { Join } from "../type/type";
 
 const JoinPage: React.FC = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [address, setAddress] = useState("");
+  const [normalAddress, setNormalAddress] = useState("");
   const [detailAddress, setDetailAddress] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [phone, setPhone] = useState("");
+  const [birth, setBirth] = useState("");
+  const [p_phoneNumber, setP_phoneNumber] = useState("010");
+  const [b_phoneNumber, setB_PhoneNumber] = useState("");
   const [gender, setGender] = useState("male");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [emailStatus, setEmailStatus] = useState<"none" | "invalid" | "duplicate" | "available">("none");
   const [isChecking, setIsChecking] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [passwordMatchError, setPasswordMatchError] = useState("");
+  const [authType, setAuthType] = useState<"OWN" | "KAKAO" | "NAVER">("OWN");
+
+  const onSelectP_phoneNumber = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setP_phoneNumber(e.target.value);
+  };
 
   /* 패스워드 상태가 실시간으로 바뀔 때마다 매칭 여부 확인 후 메세지 띄움 */
   useEffect(() => {
@@ -61,6 +71,10 @@ const JoinPage: React.FC = () => {
     e.preventDefault();
     const newErrors: { [key: string]: string } = {};
 
+    if(!name){
+      newErrors.name = "이름을 입력하세요";
+    }
+
     if (!email) {
       newErrors.email = "이메일을 입력하세요";
     } else if (!validateEmail(email)) {
@@ -73,8 +87,8 @@ const JoinPage: React.FC = () => {
 
     if (!password) {
       newErrors.password = "비밀번호를 입력하세요";
-    } else if (password.length < 12) {
-      newErrors.password = "비밀번호는 12자리 이상이어야 합니다";
+    } else if (password.length < 9) {
+      newErrors.password = "비밀번호는 9자리 이상이어야 합니다";
     }
 
     if (!passwordConfirm) {
@@ -83,16 +97,16 @@ const JoinPage: React.FC = () => {
       newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다";
     }
 
-    if (!phone) {
-      newErrors.phone = "연락처를 입력하세요";
+    if (!b_phoneNumber) {
+      newErrors.phoneNumber = "연락처를 입력하세요";
     }
 
-    if (!address) {
+    if (!normalAddress) {
       newErrors.address = "주소를 입력하세요";
     }
 
-    if (!birthDate) {
-      newErrors.birthDate = "생년월일을 입력하세요";
+    if (!birth) {
+      newErrors.birth = "생년월일을 입력하세요";
     }
 
     if (!agreeTerms) {
@@ -102,6 +116,22 @@ const JoinPage: React.FC = () => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
+
+      const address = `${normalAddress} ${detailAddress}`;
+      const phoneNumber = `${p_phoneNumber}-${b_phoneNumber}`;
+
+      const joinData = {
+        name,
+        email,
+        password,
+        phoneNumber,
+        address,
+        birth,
+        gender,
+        authType,
+      }
+      fetchJoin(joinData);
+
       alert("회원가입 성공!");
       navigate("/login");
     }
@@ -117,7 +147,7 @@ const JoinPage: React.FC = () => {
   const handleAddressSearch = () => {
     new (window as any).daum.Postcode({
       oncomplete: function (data: any) {
-        setAddress(data.address);
+        setNormalAddress(data.address);
       },
     }).open();
   };
@@ -136,6 +166,21 @@ const JoinPage: React.FC = () => {
           <div className="bg-white rounded-lg p-8 shadow">
             <h2 className="text-2xl font-bold mb-8 text-center">회원가입</h2>
             <form className="space-y-6" onSubmit={handleSubmit}>
+
+              {/* 이름 입력 */}
+              <div className="relative">
+                <label className="block text-sm mb-1">이름</label>
+                <div className="relative">
+                  <input
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm"
+                      placeholder="이름을 입력해주세요"
+                  />
+                </div>
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+              </div>
+
               {/* 이메일 입력 */}
               <div className="relative">
                 <label className="block text-sm mb-1">이메일</label>
@@ -180,7 +225,7 @@ const JoinPage: React.FC = () => {
                   <div className="absolute right-2 top-1/2 transform -translate-y-1/2 group">
                     <span className="text-gray-400 cursor-pointer">ℹ️</span>
                     <div className="absolute right-0 hidden group-hover:block bg-gray-700 text-white text-xs rounded px-2 py-1 mt-2 w-max">
-                      비밀번호는 12자리 이상으로 입력하세요
+                      비밀번호는 9자리 이상으로 입력하세요
                     </div>
                   </div>
                 </div>
@@ -210,7 +255,8 @@ const JoinPage: React.FC = () => {
               <div className="relative">
                 <label className="block text-sm mb-1">연락처</label>
                 <div className="flex gap-2">
-                  <select className="w-24 border border-gray-300 rounded-md px-4 py-2 text-sm" defaultValue="010">
+                  <select  className="w-24 border border-gray-300 rounded-md px-4 py-2 text-sm" defaultValue="010"  value={p_phoneNumber}
+                           onChange={onSelectP_phoneNumber}>
                     <option value="010">010</option>
                     <option value="011">011</option>
                     <option value="016">016</option>
@@ -220,13 +266,13 @@ const JoinPage: React.FC = () => {
                   </select>
                   <input
                     type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    value={b_phoneNumber}
+                    onChange={(e) => setB_PhoneNumber(e.target.value)}
                     className="flex-1 border border-gray-300 rounded-md px-4 py-2 text-sm"
                     placeholder="연락처를 입력하세요"
                   />
                 </div>
-                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
               </div>
 
               {/* 주소 */}
@@ -234,7 +280,7 @@ const JoinPage: React.FC = () => {
                 <label className="block text-sm mb-1">주소</label>
                 <input
                   type="text"
-                  value={address}
+                  value={normalAddress}
                   onClick={handleAddressSearch}
                   readOnly
                   className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm cursor-pointer"
@@ -282,11 +328,11 @@ const JoinPage: React.FC = () => {
                 <label className="block text-sm mb-1">생년월일</label>
                 <input
                   type="date"
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
+                  value={birth}
+                  onChange={(e) => setBirth(e.target.value)}
                   className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm"
                 />
-                {errors.birthDate && <p className="text-red-500 text-sm mt-1">{errors.birthDate}</p>}
+                {errors.birth && <p className="text-red-500 text-sm mt-1">{errors.birth}</p>}
               </div>
 
               {/* 개인정보 수집 동의 */}
