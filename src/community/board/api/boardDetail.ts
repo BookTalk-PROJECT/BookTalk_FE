@@ -3,7 +3,7 @@ import { GetBoardDetailRequest } from "../../../common/component/Board/type/Boar
 import { CommuPostRequest } from "../type/boardList";
 import { ReplyRequest } from "../type/reply";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const getBoardDetail = async (postId: string): Promise<GetBoardDetailRequest> => {
   const response = await axios.get<GetBoardDetailRequest>(`${BASE_URL}/community/board/detail/${postId}`);

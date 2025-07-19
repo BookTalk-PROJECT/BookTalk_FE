@@ -2,7 +2,7 @@ import axios from "axios";
 import { GatheringStatus } from "../../common/type/Status";
 import { GatheringPost } from "../type/GatheringListPage.types";
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // export const mockGatheringPosts: GatheringPost[] = Array.from({ length: 100 }, (_, i) => {
 //   // 임시 더미데이터
