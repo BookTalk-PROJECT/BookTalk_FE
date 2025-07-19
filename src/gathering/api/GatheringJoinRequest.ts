@@ -1,6 +1,8 @@
 import axios from "axios";
 import { JoinAnswer, RecruitQuestion } from "../type/GatheringJoin.types";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export const sampleQuestions: RecruitQuestion[] = [
   { id: 1, question: "이 모임에 가입하고자 하는 이유는 무엇인가요????", required: true, maxLength: 300 },
   {
