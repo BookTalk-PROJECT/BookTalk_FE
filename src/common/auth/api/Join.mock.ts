@@ -1,7 +1,7 @@
 import { Join } from "../type";
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_BASE_URL;
+const baseURL = import.meta.env.VITE_API_URL;
 
 export const fetchJoin = async (joinData: Join) => {
     try{
