@@ -8,7 +8,7 @@ import { YoutubeVideo } from "../type/BoardDetail.types";
 import { searchYoutubeVideos } from "../api/CreateBoardRequest";
 
 interface BoardProps {
-  createPost: (arg0: CommuPostRequest | GatheringPostRequest) => void;
+  createPost: (arg0: CommuPostRequest | GatheringPostRequest, categoryId: number | null) => void;
 }
 
 const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
@@ -21,19 +21,13 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
   const [prevPageToken, setPrevPageToken] = useState("");
 
   const [postData, setPostData] = useState<CommuPostRequest | GatheringPostRequest>({
-    id: 0,
     title: "",
-    author: "",
-    date: "",
-    views: 0,
-    categoryId: 0,
+    content: "",
+    notification: false,
   });
 
   const handleSubmit = async () => {
-    const editorInstance = editorRef.current?.getInstance();
-    const content = editorInstance?.getMarkdown() || "";
-
-    const result = await createPost(postData);
+    await createPost(postData, 0);
   };
 
   const handleYoutubeButtonClick = () => {
@@ -63,6 +57,7 @@ const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
   const handleUndo = () => {
     editorRef.current?.getInstance().exec("undo");
   };
+
   //Editor 내부에 추가되어 있음
   const handleRedo = () => {
     editorRef.current?.getInstance().exec("redo");
