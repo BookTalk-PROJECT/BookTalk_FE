@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { fetchJoin } from "../api/Join.mock";
+import { fetchJoin, fetchValidationEmail } from "../api/Join.mock";
 import { Join } from "../type/type";
 
 const JoinPage: React.FC = () => {
@@ -56,6 +56,11 @@ const JoinPage: React.FC = () => {
     }
     setIsChecking(true);
     try {
+      const emailJson = {
+        email,
+      }
+      await fetchValidationEmail(emailJson);
+
       await new Promise((resolve) => setTimeout(resolve, 1000));
       if (email === "test@example.com") {
         setEmailStatus("duplicate");
