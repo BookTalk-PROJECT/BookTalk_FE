@@ -16,7 +16,7 @@ export const fetchJoin = async (joinData: Join) => {
 export const fetchValidationEmail = async (email: ValidationEmail) => {
   try {
     const response = await axios.post(`${baseURL}/member/validation`, email);
-    return response.statusText
+    return response.data.data.isExistMember
   } catch (error) {
     console.error(`아이디 중복검사 API 요청 오류-${error}`)
     return "아이디 중복검사 요청 실패";

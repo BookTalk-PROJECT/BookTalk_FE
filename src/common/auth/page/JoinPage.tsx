@@ -59,10 +59,11 @@ const JoinPage: React.FC = () => {
       const emailJson = {
         email,
       }
-      await fetchValidationEmail(emailJson);
+      const isExistMember = await fetchValidationEmail(emailJson);
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      if (email === "test@example.com") {
+
+      if (isExistMember) {
         setEmailStatus("duplicate");
       } else {
         setEmailStatus("available");
