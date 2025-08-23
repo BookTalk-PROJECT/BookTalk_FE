@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import axios from "axios";
+import { fetchJoin, fetchValidationEmail } from "../api/Join.mock";
+import { Join } from "../type/type";
+
+
 const JoinPage: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -46,8 +51,14 @@ const JoinPage: React.FC = () => {
     }
     setIsChecking(true);
     try {
+      const emailJson = {
+        email,
+      }
+      const isExistMember = await fetchValidationEmail(emailJson);
+
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      if (email === "test@example.com") {
+
+      if (isExistMember) {
         setEmailStatus("duplicate");
       } else {
         setEmailStatus("available");

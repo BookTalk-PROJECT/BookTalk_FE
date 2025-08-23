@@ -13,3 +13,7 @@ export interface Login {
   username: string,
   password: string,
 }
+
+export interface ValidationEmail {
+  email: string,
+}
