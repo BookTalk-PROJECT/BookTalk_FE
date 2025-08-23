@@ -18,18 +18,18 @@ const Header = () => {
             책톡
           </Link>
           <nav className="hidden md:flex space-x-4">
-            <a href="/boardList" className="text-gray-700 hover:text-red-500">
+            <Link to="/boardList" className="text-gray-700 hover:text-red-500">
               커뮤니티
-            </a>
-            <a href="/gathering" className="text-gray-700 hover:text-red-500">
+            </Link>
+            <Link to="/gathering" className="text-gray-700 hover:text-red-500">
               모임
-            </a>
-            <a href="#" className="text-gray-700 hover:text-red-500">
+            </Link>
+            <Link to="#" className="text-gray-700 hover:text-red-500">
               책리뷰
-            </a>
-            <a href="/mypage" className="text-gray-700 hover:text-red-500">
+            </Link>
+            <Link to="/mypage" className="text-gray-700 hover:text-red-500">
               관리자 페이지
-            </a>
+            </Link>
           </nav>
         </div>
         <div className="flex items-center space-x-4">
