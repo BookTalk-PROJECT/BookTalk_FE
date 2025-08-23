@@ -6,6 +6,7 @@ const GatheringCreateBoardPage: React.FC = () => {
   const handleSubmit = async (gatheringPost: GatheringPostRequest) => {
     try {
       const result = await gatheringCreatePost(gatheringPost);
+      console.log("등록 완료:", result);
       alert("글이 성공적으로 등록되었습니다.");
       window.history.back(); // 또는 등록 성공 후 원하는 페이지로 이동
     } catch (error) {

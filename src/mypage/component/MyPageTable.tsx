@@ -4,12 +4,10 @@ import { MyPageTableProps } from "../type/MyPageBoardTable";
 const MyPageTable = <T extends { [key: string]: any }>({
   posts,
   row,
-  isExpandableRow,
   filterOptions,
   initialFilter,
   manageOption,
   postKeys,
-  activeTab,
 }: MyPageTableProps<T>) => {
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
 
@@ -34,13 +32,6 @@ const MyPageTable = <T extends { [key: string]: any }>({
   {
     /* 정렬 필드 설정 함수 */
   }
-
-  const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
-
-  const toggleExpandRow = (id: number) => {
-    setExpandedRowId((prev) => (prev === id ? null : id));
-  };
-
   const handleSort = (field: keyof T) => {
     if (sortField === field) {
       //이미 해당 필드일 시 정렬만 해줌
@@ -59,6 +50,7 @@ const MyPageTable = <T extends { [key: string]: any }>({
     // 1. 검색 필터 적용
     const filtered = posts.filter((post) => {
       const targetValue = (() => {
+        console.log(post);
         if (postKeys.includes(selectedFilter.key)) {
           if (typeof post[selectedFilter.key] === "string") {
             return post[selectedFilter.key];
@@ -72,7 +64,7 @@ const MyPageTable = <T extends { [key: string]: any }>({
 
       return targetValue.includes(searchTerm);
     });
-    console.log(posts);
+
     // 2. 정렬 적용
     return [...filtered].sort((a, b) => {
       const aValue = a[sortField];
@@ -92,18 +84,18 @@ const MyPageTable = <T extends { [key: string]: any }>({
         ? String(aValue).localeCompare(String(bValue))
         : String(bValue).localeCompare(String(aValue));
     });
-  }, [sortField, sortOrder, searchTerm, selectedFilter, activeTab]);
+  }, [sortField, sortOrder, searchTerm, selectedFilter]);
 
   const renderHeader = () => (
     <tr>
       {row.map(({ label, key }) => {
-        if (key === "manage" || key === "deleteReason") {
+        if (key === "manage") {
           return (
             <th
               key="manage"
               onClick={() => handleSort("manage")}
               className="px-4 py-2 text-left text-sm font-medium text-gray-700 whitespace-nowrap cursor-pointer">
-              <span>{label}</span>
+              <span>관리</span>
             </th>
           );
         } else {
@@ -132,54 +124,17 @@ const MyPageTable = <T extends { [key: string]: any }>({
   );
 
   const renderRow = (post: any) => (
-    <React.Fragment key={post.id}>
-      <tr className="hover:bg-gray-50 border-b" {...(isExpandableRow && { onClick: () => toggleExpandRow(post.id) })}>
-        {row.map(({ key }) => {
-          if (key === "id") {
-            return (
-              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {post[key]}
-              </td>
-            );
-          } else if (key === "manage") {
-            return <td key={key}>{manageOption}</td>;
-          } else if (key === "deleteReason") {
-            return (
-              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 relative group">
-                <div className="w-4 h-4 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xl font-bold">
-                  i
-                </div>
-                <div className="absolute z-10 hidden group-hover:block w-64 p-2 bg-gray-800 text-white text-xs rounded shadow-lg left-6 top-0">
-                  삭제 사유: {post[key]}
-                </div>
-              </td>
-            );
-          } else {
-            return (
-              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {post[key]}
-              </td>
-            );
-          }
-        })}
-      </tr>
-
-      {/* 👇 확장 영역: 클릭된 row 아래에만 표시 */}
-      {expandedRowId === post.id && post.questions && (
-        <tr>
-          <td colSpan={row.length} className="px-6 py-4 bg-gray-50">
-            <div className="space-y-2">
-              {post.questions.map((q: any, index: number) => (
-                <div key={index} className="text-sm">
-                  <div className="font-medium">{q.question}</div>
-                  <div className="ml-4 text-gray-700">⇒ {q.answer}</div>
-                </div>
-              ))}
-            </div>
-          </td>
-        </tr>
-      )}
-    </React.Fragment>
+    <tr key={post.id} className="hover:bg-gray-50 border-b">
+      {row.map(({ key }) => {
+        if (key === "id") {
+          return <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{post[key]}</td>;
+        } else if (key === "manage") {
+          return manageOption;
+        } else {
+          return <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post[key]}</td>;
+        }
+      })}
+    </tr>
   );
 
   return (
@@ -228,7 +183,7 @@ const MyPageTable = <T extends { [key: string]: any }>({
       </div>
       {/* 테이블 구조 */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <table className="min-w-full w-full table-auto text-sm ">
+        <table className="min-w-full w-full table-auto text-sm">
           <thead className="bg-gray-50 border-b border-gray-200">{renderHeader()}</thead>
           <tbody>{filteredAndSortedPosts.map((post) => renderRow(post))}</tbody>
         </table>
