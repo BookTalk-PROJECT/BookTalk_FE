@@ -180,7 +180,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
             parentReply.reply_code === reReply_yn
               ? {
                   ...parentReply,
-                  reReply: parentReply.reRepies?.filter((reReply) => reReply.reply_code !== newReply.reply_code),
+                  reReply: parentReply.reReply?.filter((reReply) => reReply.reply_code !== newReply.reply_code),
                 }
               : parentReply
           ),
