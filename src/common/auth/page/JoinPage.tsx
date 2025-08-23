@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import axios from "axios";
 import { fetchJoin, fetchValidationEmail } from "../api/Join.mock";
 import { Join } from "../type/type";
