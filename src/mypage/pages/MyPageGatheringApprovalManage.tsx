@@ -4,10 +4,10 @@ import Pagenation from "../../common/component/Pagination";
 import MyPageTable from "../component/MyPageTable";
 import MyPageBreadCrumb from "../component/MyPageBreadCrumb";
 import { myGatheringRequestMockData } from "../testdata/MyPageTestData";
-import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
+import MyPageManageButton from "../component/MyPageManageButton";
 import { MyPageGatheringRequestManageType } from "../type/MyPageBoardTable";
 
-const MyPageBookGatheringApprovalManage: React.FC = () => {
+const MyPageBookReviewComment: React.FC = () => {
   const row: { label: string; key: keyof MyPageGatheringRequestManageType }[] = [
     { label: "번호", key: "id" },
     { label: "모임명", key: "gathering" },
@@ -35,19 +35,18 @@ const MyPageBookGatheringApprovalManage: React.FC = () => {
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             {/* 브레드크럼 */}
-            <MyPageBreadCrumb major="모임" sub="신청 승인 관리" />
+            <MyPageBreadCrumb major="북리뷰" sub="댓글 관리" />
             {/* 테이블 */}
             <MyPageTable
               posts={myGatheringRequestMockData}
               row={row}
-              isExpandableRow={true}
               initialFilter={initialFilter}
               filterOptions={filterOption}
               manageOption={
-                <MyPageManageRowButton
+                <MyPageManageButton
                   actions={[
-                    { label: "승인", color: "green", onClick: () => alert("승인") },
-                    { label: "거절", color: "red", onClick: () => alert("거절") },
+                    { label: "수정", color: "green", onClick: () => alert("승인") },
+                    { label: "삭제", color: "red", onClick: () => alert("거절") },
                   ]}
                 />
               }
@@ -62,4 +61,4 @@ const MyPageBookGatheringApprovalManage: React.FC = () => {
   );
 };
 
-export default MyPageBookGatheringApprovalManage;
+export default MyPageBookReviewComment;

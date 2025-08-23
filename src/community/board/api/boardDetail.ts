@@ -10,7 +10,7 @@ export const getBoardDetail = async (postId: string): Promise<GetBoardDetailRequ
   return response.data;
 };
 
-export const postBoard = async (req:CommuPostRequest, categoryId:number|null) => {
+export const postBoard = async (req:CommuPostRequest, categoryId:number) => {
   const response = await axios.post(`${BASE_URL}/community/board/create`, {...req, categoryId: categoryId});
   return response.data;
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Post } from "../../common/type/BoardTable";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.BASE_URL;
 
 export const posts: Post[] = [
   // 게시글 더미
