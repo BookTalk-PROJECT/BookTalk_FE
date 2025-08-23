@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import CustomInput from "../../CustomInput";
@@ -6,15 +6,12 @@ import CustomButton from "../../CustomButton";
 import { CommuPostRequest, GatheringPostRequest } from "../../../../community/board/type/boardList";
 import { YoutubeVideo } from "../type/BoardDetail.types";
 import { searchYoutubeVideos } from "../api/CreateBoardRequest";
-import { useNavigate, useSearchParams } from "react-router";
 
 interface BoardProps {
-  categoryId: number;
-  createPost: (arg0: CommuPostRequest | GatheringPostRequest, categoryId: number) => void;
+  createPost: (arg0: CommuPostRequest | GatheringPostRequest, categoryId: number | null) => void;
 }
 
-const CreateBoard: React.FC<BoardProps> = ({ categoryId, createPost }) => {
-  const navigate = useNavigate();
+const CreateBoard: React.FC<BoardProps> = ({ createPost }) => {
   const editorRef = useRef<Editor>(null);
   const [showYoutubeModal, setShowYoutubeModal] = useState(false);
   const [youtubeQuery, setYoutubeQuery] = useState("");
@@ -22,15 +19,15 @@ const CreateBoard: React.FC<BoardProps> = ({ categoryId, createPost }) => {
   const [totalResults, setTotalResults] = useState(0);
   const [nextPageToken, setNextPageToken] = useState("");
   const [prevPageToken, setPrevPageToken] = useState("");
+
   const [postData, setPostData] = useState<CommuPostRequest | GatheringPostRequest>({
     title: "",
     content: "",
     notification: false,
   });
 
-  const handleSubmit = () => {
-    createPost(postData, categoryId);
-    navigate(`/boardList?categoryId=${categoryId}`)
+  const handleSubmit = async () => {
+    await createPost(postData, 0);
   };
 
   const handleYoutubeButtonClick = () => {
@@ -101,10 +98,10 @@ const CreateBoard: React.FC<BoardProps> = ({ categoryId, createPost }) => {
           </div>
 
           {/* 카테고리 입력 */}
-          {/* <div>
+          <div>
             <label className="block text-lg font-semibold mb-2 text-gray-700">카테고리</label>
             <CustomInput type="text" name="category" placeholder="카테고리를 입력하세요" onChange={onChangeHandler} />
-          </div> */}
+          </div>
 
           {/* 에디터 */}
           <div>
