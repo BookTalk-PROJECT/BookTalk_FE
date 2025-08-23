@@ -2,7 +2,7 @@
 import axios from "axios";
 import { GatheringPostRequest } from "../../community/board/type/boardList";
 
-const apiKey = import.meta.env.BASE_URL;
+const apiKey = import.meta.env.VITE_API_URL;
 
 //게시글 등록 api
 export const gatheringCreatePost = async (postData: GatheringPostRequest) => {

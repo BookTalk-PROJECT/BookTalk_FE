@@ -4,12 +4,10 @@ import ButtonWrapper from "../../../common/component/Button";
 import { Category, CommuPostRequest, SubCategory } from "../type/boardList";
 import { getCategories, getPosts } from "../api/boardList";
 import BoardTable from "../../../common/component/Board/page/BoardTable";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate } from "react-router";
 import { PostInfo } from "../../../common/component/Board/type/BoardDetail.types";
 const BoardList: React.FC = () => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  // const [categoryIdParam, setCategoryIdParam] = useState<number>();
   // flag
   const [isLoading, setIsLoading] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -53,59 +51,19 @@ const BoardList: React.FC = () => {
     }
   };
   useEffect(() => {
-    getCategories().then((res) => {
-      const categories = res.data;
-      const filteredCategories = categories.filter((category: { subCategories: SubCategory[]; }) => 
-        category.subCategories && category.subCategories.length > 0
-      );
-      setCategories(filteredCategories);
-      const param = searchParams.get('categoryId');
-      if(param) {
-        const categoryIdNum = parseInt(param);
-        // param과 같은 subCategory가 속한 카테고리를 찾음
-        let activeCategory = null;
-        let activeSubCategory = null;
-
-        for (const category of filteredCategories) {
-          const matchedSubCategory = category.subCategories.find((subCategory: { categoryId: number; }) => 
-            subCategory.categoryId === categoryIdNum
-          );
-          if (matchedSubCategory) {
-            activeCategory = category;
-            activeSubCategory = matchedSubCategory;
-            break;
-          }
-        }
-
-        if (activeCategory && activeSubCategory) {
-          setActiveCategory(activeCategory);
-          setActiveSubCategory(activeSubCategory);
-        }
-      }else {
-        setActiveCategory(filteredCategories[0]);
-        setActiveSubCategory(filteredCategories[0].subCategories[0]);
-      }
+    getCategories().then((categories) => {
+      setCategories(categories);
+      setActiveCategory(categories[0]);
+      setActiveSubCategory(categories[0].subCategories[0]);
     });
-    if(activeSubCategory) {
-      getPosts(activeSubCategory?.categoryId, 1).then((res) => {
-        setPosts(res.data.content);
-        setTotalPages(res.data.totalPages);
-      });
-    }
+    getPosts(0,1).then((res) => {
+      setPosts(res.data.content);
+      setTotalPages(res.data.totalPages);
+    });
     checkScrollButtons();
     window.addEventListener("resize", checkScrollButtons);
     return () => window.removeEventListener("resize", checkScrollButtons);
   }, []);
-
-  useEffect(() => {
-    if(activeSubCategory) {
-      getPosts(activeSubCategory.categoryId, 1).then((res) => {
-        setPosts(res.data.content);
-        setTotalPages(res.data.totalPages);
-      });
-      setSearchParams({categoryId: activeSubCategory.categoryId.toString()});
-    }
-  },[activeSubCategory])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -124,7 +82,7 @@ const BoardList: React.FC = () => {
                 )}
                 <div ref={tabsRef} className="flex overflow-x-auto py-2 px-4" onScroll={checkScrollButtons}>
                   {categories.map((category) => (
-                    <div key={category.categoryId} className="relative group">
+                    <div key={category.id} className="relative group">
                       <button
                         className={`px-4 py-2 font-medium text-sm whitespace-nowrap cursor-pointer transition-all duration-300 relative ${
                           activeCategory === category
@@ -135,7 +93,7 @@ const BoardList: React.FC = () => {
                           setIsLoading(true);
                           await handleCategoryChange(category);
                         }}>
-                        {category.value}
+                        {category.name}
                         {activeCategory === category && (
                           <>
                             <span className="absolute -right-1 -top-1 flex h-3 w-3">
@@ -167,7 +125,7 @@ const BoardList: React.FC = () => {
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center space-x-1 focus:outline-none">
                     <span>
-                      {activeCategory?.value} &gt; {activeSubCategory?.value}
+                      {activeCategory?.name} &gt; {activeSubCategory?.name}
                     </span>
                     <i
                       className={`fas fa-chevron-down transition-transform duration-200 ${isDropdownOpen ? "transform rotate-180" : ""}`}></i>
@@ -187,7 +145,7 @@ const BoardList: React.FC = () => {
                               setActiveSubCategory(subCategory);
                               setIsDropdownOpen(false);
                             }}>
-                            <span>{subCategory.value}</span>
+                            <span>{subCategory.name}</span>
                             {activeSubCategory === subCategory && <i className="fas fa-check text-blue-600"></i>}
                           </div>
                         ))}
@@ -196,7 +154,7 @@ const BoardList: React.FC = () => {
                   )}
                 </div>
               </div>
-              <ButtonWrapper onClick={() => navigate(`/boardCreate?categoryId=${activeSubCategory?.categoryId}`)}>
+              <ButtonWrapper onClick={() => navigate(`/boardCreate`)}>
                 <>
                   <i className="fas fa-pencil-alt mr-1"></i> 글쓰기
                 </>

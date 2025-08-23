@@ -23,8 +23,8 @@ const GatheringListPage: React.FC = () => {
     if (loading || !hasMore) return;
     setLoading(true);
 
-    setTimeout(() => {
-      const newPosts = fetchMockGatheringPosts(statusFilter, searchQuery, page, POSTS_PER_PAGE);
+    setTimeout(async () => {
+      const newPosts = await fetchMockGatheringPosts(statusFilter, searchQuery, page, POSTS_PER_PAGE);
       setPosts((prev) => [...prev, ...newPosts]);
       setHasMore(newPosts.length === POSTS_PER_PAGE);
       setLoading(false);
@@ -85,8 +85,10 @@ const GatheringListPage: React.FC = () => {
                 {["전체", "모집중", "진행중", "완료"].map((label) => (
                   <button
                     key={label}
-                    onClick={() => setStatusFilter(label)}
-                    className={`pb-2 text-sm font-medium transition-all duration-200 ${statusFilter === label ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"}`}>
+                    onClick={() => setStatusFilter(label)} // 그대로 유지
+                    className={`pb-2 text-sm font-medium transition-all duration-200 ${
+                      statusFilter === label ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"
+                    }`}>
                     {label}
                   </button>
                 ))}
@@ -95,7 +97,7 @@ const GatheringListPage: React.FC = () => {
 
             {/* 오른쪽: 모임 개설 버튼 + 검색창 */}
             <div className="flex items-center gap-4">
-              <CustomButton onClick={() => navigate("/gatheringlist/create")} color="black">
+              <CustomButton onClick={() => navigate("/gathering/create")} color="black">
                 <>모임 개설</>
               </CustomButton>
 
@@ -139,7 +141,7 @@ const GatheringListPage: React.FC = () => {
             {/* 모임 카드 생성부 */}
             {posts.map((gathering, index) => (
               <GatheringCard
-                key={gathering.id}
+                key={gathering.code}
                 gathering={gathering}
                 lastRef={index === posts.length - 1 ? lastPostElementRef : undefined}
               />

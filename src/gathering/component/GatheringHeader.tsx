@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import CustomButton from "../../common/component/CustomButton"; // 필요
 import { bookInfo, Books } from "../type/GatheringHeader.types";
 import { exampleBookInfo, examplebooks, fetchGatheringBooks, fetchGatheringInfo } from "../api/GatheringHeaderRequest";
+import { useNavigate } from "react-router";
 
 interface GatheringId {
   gatheringId: string;
@@ -9,6 +10,7 @@ interface GatheringId {
 
 // 나중에 gatheringId(모임만의 PK평문)을 이용해서 API요청 보낼것
 const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
+  const navigate = useNavigate();
   const [books, setBooks] = useState<Books[]>([]);
   const [gatheringBookInfo, setGatheringBookInfo] = useState<bookInfo | null>(null);
 
@@ -44,14 +46,14 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
       {/* 모임 정보 영역 */}
       <div className="p-6 border-b">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold">즐거운 독서</h1>
+          <h1 className="text-2xl font-bold">{gatheringBookInfo?.gatheringName}</h1>
           <div className="flex space-x-3">
             <CustomButton onClick={() => alert("공유하기 클릭됨")} color="white">
               <>
                 <i className="fas fa-share-alt mr-2"></i>공유하기
               </>
             </CustomButton>
-            <CustomButton onClick={() => alert("가입하기 클릭됨")} color="black">
+            <CustomButton onClick={() => navigate(`/gatheringlist/${gatheringId}/join`)} color="black">
               <>
                 <i className="fas fa-user-plus mr-2"></i>가입하기
               </>
@@ -137,10 +139,11 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
 
                     <div className="flex items-center text-sm text-gray-500">
                       <span>{book.author}</span>
-                      <span className="ml-auto flex items-center">
-                        <i className="far fa-calendar-alt mr-1"></i>
-                        {book.date}
-                      </span>
+                        <span className="ml-auto flex items-center">
+                          <i className="far fa-calendar-alt mr-1"></i>
+                          {book.startDate} ~
+                          {book.endDate ? ` ${book.endDate}` : ""}
+                        </span>
                     </div>
                   </div>
                 </div>
