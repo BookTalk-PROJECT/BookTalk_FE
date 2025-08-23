@@ -18,8 +18,8 @@ const BoardCreate: React.FC = () => {
   return (
     <CreateBoard
       categoryId={categoryId ?? 0}
-      createPost={(arg0:CommuPostRequest, categoryId:number) => {
-        postBoard(arg0, categoryId);
+      createPost={ async (arg0:CommuPostRequest, categoryId:number) => {
+        await postBoard(arg0, categoryId);
       }}
     />
   );

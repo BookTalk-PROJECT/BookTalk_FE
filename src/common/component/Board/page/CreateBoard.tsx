@@ -28,7 +28,7 @@ const CreateBoard: React.FC<BoardProps> = ({ categoryId, createPost }) => {
     notification: false,
   });
 
-  const handleSubmit = () => {
+  const handleSubmit = () => { 
     createPost(postData, categoryId);
     navigate(`/boardList?categoryId=${categoryId}`)
   };

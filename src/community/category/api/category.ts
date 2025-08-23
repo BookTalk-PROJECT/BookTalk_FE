@@ -12,7 +12,7 @@ export const createCategory = async (value: string, pCategoryId?:number, ): Prom
     return response.data;
 }
 
-export const getCategories = async (): Promise<ApiResponse<AdminCategoryT>> => {
+export const getCategories = async (): Promise<ApiResponse<AdminCategoryT[]>> => {
     const response = await axios.get(`${BASE_URL}/community/category/list`);
     return response.data;
 }

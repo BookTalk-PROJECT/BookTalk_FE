@@ -87,7 +87,7 @@ const BoardList: React.FC = () => {
       }
     });
     if(activeSubCategory) {
-      getPosts(activeSubCategory?.categoryId, 1).then((res) => {
+      const posts = getPosts(activeSubCategory?.categoryId, 1).then((res) => {
         setPosts(res.data.content);
         setTotalPages(res.data.totalPages);
       });
