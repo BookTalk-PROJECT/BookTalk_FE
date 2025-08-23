@@ -18,6 +18,7 @@ export const mockGatheringPosts: GatheringPost[] = Array.from({ length: 100 }, (
     imageUrl: `https://readdy.ai/api/search-image?query=Cozy%20book%20club%20meeting%20space%20with%20comfortable%20seating%2C%20warm%20lighting%2C%20bookshelves%2C%20and%20a%20welcoming%20atmosphere%2C%20modern%20minimalist%20interior%20design%20with%20natural%20elements&width=400&height=250&seq=${i + 1}&orientation=landscape`,
   };
 });
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export const fetchMockGatheringPosts = (
   statusFilter: string,

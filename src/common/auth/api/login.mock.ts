@@ -1,7 +1,7 @@
 import { Login } from "../type/type";
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_BASE_URL;
+const baseURL = import.meta.env.VITE_API_URL;
 
 export const fetchLogin = async (loginData: Login) => {
     try{

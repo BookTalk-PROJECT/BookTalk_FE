@@ -1,8 +1,7 @@
 import axios from "axios";
 import { Books, GatheringCreateRequest, Question, SearchResult } from "../type/GatheringCreatePage.types";
 
-const API_BASE_URL = import.meta.env.BASE_URL;
-
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 //추가된 책 테스트용
 export const mockBooks: Books[] = [
   // {
