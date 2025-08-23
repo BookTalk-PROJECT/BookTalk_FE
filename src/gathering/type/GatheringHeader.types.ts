@@ -3,12 +3,10 @@ export interface Books {
   title: string;
   author: string;
   status: 0 | 1;
-  startDate: string;
-  endDate?: string;
+  date: string;
 }
 
 export interface bookInfo {
-  gatheringName: string;
   totalMembers: number;
   completeBooks: number;
   weeklyDay: string;

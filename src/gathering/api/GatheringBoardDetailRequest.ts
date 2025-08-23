@@ -2,7 +2,7 @@ import axios from "axios";
 import { GetBoardDetailRequest } from "../../common/component/Board/type/BoardDetail.types";
 
 // API 키 및 기본 URL 설정
-const baseURL = import.meta.env.VITE_API_URL;
+const baseURL = import.meta.env.BASE_URL;
 
 //모임 게시글 상세 조회
 export const fetchGatheringBoardDetail = async (postId: string): Promise<GetBoardDetailRequest> => {

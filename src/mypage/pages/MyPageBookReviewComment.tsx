@@ -4,7 +4,7 @@ import Pagenation from "../../common/component/Pagination";
 import MyPageTable from "../component/MyPageTable";
 import MyPageBreadCrumb from "../component/MyPageBreadCrumb";
 import { myBookCommentMockData } from "../testdata/MyPageTestData";
-import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
+import MyPageManageButton from "../component/MyPageManageButton";
 import { MyPageBookCommentType } from "../type/MyPageBoardTable";
 
 const MyPageBookReviewComment: React.FC = () => {
@@ -35,7 +35,7 @@ const MyPageBookReviewComment: React.FC = () => {
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             {/* 브레드크럼 */}
-            <MyPageBreadCrumb major="북리뷰" sub="댓글 관리" />
+            <MyPageBreadCrumb major="모임" sub="내 모임" />
             {/* 테이블 */}
             <MyPageTable
               posts={myBookCommentMockData}
@@ -43,7 +43,7 @@ const MyPageBookReviewComment: React.FC = () => {
               initialFilter={initialFilter}
               filterOptions={filterOption}
               manageOption={
-                <MyPageManageRowButton
+                <MyPageManageButton
                   actions={[
                     { label: "수정", color: "green", onClick: () => alert("수정") },
                     { label: "삭제", color: "red", onClick: () => alert("삭제") },

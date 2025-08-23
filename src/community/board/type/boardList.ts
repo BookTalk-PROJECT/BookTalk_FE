@@ -4,19 +4,18 @@ export interface GatheringPostRequest {
   content: string;
   notification: boolean;
 }
-export interface BoardCategories {
-  hello: string;
-}
 
 export interface Category {
-  id: number;
-  name: string;
+  categoryId: number;
+  value: string;
+  isActive: boolean;
   subCategories: SubCategory[];
 }
 
 export interface SubCategory {
-  id: number;
-  name: string;
+  categoryId: number;
+  value: string;
+  isActive: boolean;
 }
 
 export interface CommuPostRequest {

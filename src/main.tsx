@@ -8,7 +8,6 @@ import BoardList from "./community/board/pages/BoardList";
 import Header from "./common/component/Header";
 import Footer from "./common/component/Footer";
 import GatheringListPage from "./gathering/pages/GatheringListPage";
-import GatheringJoinPage from "./gathering/pages/GatheringJoinPage";
 import GatheringBoardDetailPage from "./gathering/pages/GatheringBoardDetailPage";
 import GatheringCreateBoardPage from "./gathering/pages/GatheringCreateBoardPage";
 import AdminCategory from "./admin/page/AdminCategory";
@@ -30,7 +29,6 @@ import MyPageMyGatherings from "./mypage/pages/MyPageMyGatherings";
 import GatheringDetailPage from "./gathering/pages/GatheringDetailPage";
 import BoardCreate from "./community/board/pages/BoardCreate";
 import BoardDetail from "./community/board/pages/BoardDetail";
-import './common/auth/config/tokenInterceptor';
 
 const AppContent = () => {
   const location = useLocation();
@@ -55,13 +53,12 @@ const AppContent = () => {
               <Route path="/boardCreate" element={<BoardCreate />} />
               <Route path="/boardDetail/:postId" element={<BoardDetail />} />
               {/* Gathering */}
-              <Route path="/gathering">
+              <Route path="/gatheringlist">
                 {" "}
                 {/* 모임 관련 */}
                 <Route index element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
                 <Route path="create" element={<GatheringCreatePage />} /> {/* 이성종 모임 상세 */}
-                <Route path="detail/:gatheringId" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
-                <Route path=":gatheringId/join" element={<GatheringJoinPage />} /> {/* 이성종 모임 참여신청 */}
+                <Route path=":gatheringId" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
                 <Route path=":gatheringId/gatheringboard">
                   {" "}
                   {/* 모임 게시판 관련 */}
@@ -72,7 +69,7 @@ const AppContent = () => {
               {/* Auth */}
               <Route path="/join" element={<JoinPage />} /> {/* 최형석 회원 가입 페이지 */}
               <Route path="/login" element={<LoginPage />} /> {/* 최형석 로그인 페이지 */}
-              {/* MyPage.ts */}
+              {/* MyPage */}
               <Route path="/mypage" element={<MyPage />} /> {/* 최형석 마이 페이지 */}
               <Route path="/mypage/bookreview/board" element={<MyPageBookReviewBoard />} />{" "}
               {/* 최형석 마이 페이지 북리뷰 게시판  */}
