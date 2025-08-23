@@ -4,7 +4,7 @@ import Pagenation from "../../common/component/Pagination";
 import MyPageTable from "../component/MyPageTable";
 import MyPageBreadCrumb from "../component/MyPageBreadCrumb";
 import { myBookCommentMockData } from "../testdata/MyPageTestData";
-import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
+import MyPageManageButton from "../component/MyPageManageButton";
 import { MyPageBookCommentType } from "../type/MyPageBoardTable";
 
 const MyPageBookGatheringComment: React.FC = () => {
@@ -43,7 +43,7 @@ const MyPageBookGatheringComment: React.FC = () => {
               initialFilter={initialFilter}
               filterOptions={filterOption}
               manageOption={
-                <MyPageManageRowButton
+                <MyPageManageButton
                   actions={[
                     { label: "수정", color: "green", onClick: () => alert("수정") },
                     { label: "삭제", color: "red", onClick: () => alert("삭제") },

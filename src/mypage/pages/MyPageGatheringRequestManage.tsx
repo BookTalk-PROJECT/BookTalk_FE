@@ -4,7 +4,7 @@ import Pagenation from "../../common/component/Pagination";
 import MyPageTable from "../component/MyPageTable";
 import MyPageBreadCrumb from "../component/MyPageBreadCrumb";
 import { myGatheringPostMockData } from "../testdata/MyPageTestData";
-import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
+import MyPageManageButton from "../component/MyPageManageButton";
 import { MyPageMyGatheringType } from "../type/MyPageBoardTable";
 
 const MyPageGatheringBoard: React.FC = () => {
@@ -43,7 +43,7 @@ const MyPageGatheringBoard: React.FC = () => {
               initialFilter={initialFilter}
               filterOptions={filterOption}
               manageOption={
-                <MyPageManageRowButton
+                <MyPageManageButton
                   actions={[{ label: "신청 철회", color: "gray", onClick: () => alert("신청 철회") }]}
                 />
               }
