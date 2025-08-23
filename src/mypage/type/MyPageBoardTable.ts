@@ -3,12 +3,10 @@ import React from "react";
 export interface MyPageTableProps<T> {
   posts: T[];
   row: { label: string; key: string }[];
-  isExpandableRow: boolean;
   filterOptions: { label: string; key: string }[];
   initialFilter: { label: string; key: string }[];
   manageOption: React.ReactNode;
   postKeys: string[];
-  activeTab?: string;
 }
 
 export interface MyPageTableCommonColType {
@@ -51,9 +49,4 @@ export interface GatheringRequestQuestion {
 export interface AdminBoardType extends MyPageBoardType {
   deleteReason: string;
   author: string;
-}
-
-export interface AdminCommentType extends MyPageBookCommentType {
-  deleteReason: string;
-  category: string;
 }
