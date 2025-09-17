@@ -29,6 +29,8 @@ import MyPageMyGatherings from "./mypage/pages/MyPageMyGatherings";
 import GatheringDetailPage from "./gathering/pages/GatheringDetailPage";
 import BoardCreate from "./community/board/pages/BoardCreate";
 import BoardDetail from "./community/board/pages/BoardDetail";
+import EditBoard from "./community/board/pages/BoardEdit";
+import BoardEdit from "./community/board/pages/BoardEdit";
 
 const AppContent = () => {
   const location = useLocation();
@@ -51,6 +53,7 @@ const AppContent = () => {
               {/* Board */}
               <Route path="/boardList" element={<BoardList />} />
               <Route path="/boardCreate" element={<BoardCreate />} />
+              <Route path="/boardEdit" element={< BoardEdit/>} />
               <Route path="/boardDetail/:postId" element={<BoardDetail />} />
               {/* Gathering */}
               <Route path="/gatheringlist">

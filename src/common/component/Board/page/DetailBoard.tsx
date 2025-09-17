@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import CustomButton from "../../CustomButton";
 import { GetBoardDetailRequest } from "../type/BoardDetail.types";
 import { exampleData } from "../api/DetailBoardRequest";
 import { ReplyRequest } from "../../../../community/board/type/reply";
+import { deleteReply, editReply } from "../../../../community/board/api/replyDetail";
 
 interface DetailBoardProps {
   postCode: string;
@@ -17,12 +18,21 @@ interface DetailBoardProps {
 
 //postId는 커뮤Id or 모임Id
 const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, DeleteBoard, ToggleLikePost, CreateReply }) => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   //상세 조회 상태 관리
   const [detailData, setDetailData] = useState<GetBoardDetailRequest>();
   // 댓글 상태 관리
   const [parentCommentContent, setParentCommentContent] = useState<string>(""); // 부모 댓글 입력
   const [replyContent, setReplyContent] = useState<string>(""); // 댓글/대댓글 공통 입력
   const [reReply_yn, setReReply_yn] = useState<string | null>(null); // 부모 댓글 여부(대댓글 or 댓글 판단)
+  const [editingReplyId, setEditingReplyId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState<string>(""); // 수정 중인 글 내용
+
+  const handleEditOn = (replyCode: string, currentContent: string) => {
+    setEditingReplyId(replyCode);
+    setEditContent(currentContent);
+  };
 
   // 댓글 데이터 불러오기
   useEffect(() => {
@@ -43,6 +53,13 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
       setDetailData(exampleData);
     }
   };
+
+  const handleDeleteBoard = async (postId: string) => {
+    if(confirm("게시글을 삭제하시겠습니까?")) {
+      await DeleteBoard(postId);
+      navigate(`/boardList?categoryId=${searchParams.get('categoryId')}`)
+    }
+  }
 
   // 좋아요 토글 상태관리 (Optimistic UI)
   const handleLikeToggle = async () => {
@@ -84,6 +101,18 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
       });
     }
   };
+
+  const handleEditReply = (replyCode: string, content: string) => {
+    // editReply(replyCode, content);
+    handleEditOn(replyCode, content);
+  }
+
+  const handleDeleteReply = async (replyCode: string) => {
+    if(confirm("댓글을 삭제하시겠습니까?")) {
+      await deleteReply(replyCode);
+      loadDetailData();
+    }
+  }
 
   // 댓글 등록 로직 (간결한 구조)
   const handleReplySubmit = async () => {
@@ -214,12 +243,12 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold">{detailData?.post.title}</h1>
             <div className="flex items-center space-x-4">
-              <CustomButton onClick={() => alert("모임 게시글 상세 수정 버튼 클릭릭")} color="white">
+              <CustomButton onClick={() => navigate(`/boardEdit?postCode=${postCode}&categoryId=${searchParams.get('categoryId')}`)} color="white">
                 <>
                   <i className="fas fa-edit mr-2"></i>수정
                 </>
               </CustomButton>
-              <CustomButton onClick={() => DeleteBoard(postCode)} color="red">
+              <CustomButton onClick={() => handleDeleteBoard(postCode)} color="red">
                 <>
                   <i className="fas fa-trash-alt mr-2"></i>삭제
                 </>
@@ -313,9 +342,44 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
                   <CustomButton onClick={() => handleReplyClick(parentReply.reply_code)} color="none">
                     <i className="fas fa-reply mr-1"></i>답글
                   </CustomButton>
+                  <CustomButton onClick={() => handleEditReply(parentReply.reply_code, parentReply.content)} color="none">
+                    <i className="fas fa-pencil"></i>
+                  </CustomButton>
+                  <CustomButton onClick={() => handleDeleteReply(parentReply.reply_code)} color="none">
+                    <i className="fas fa-trash mr-1"></i>
+                  </CustomButton>
                 </div>
               </div>
-              <p className="text-gray-800">{parentReply.content}</p>
+              {editingReplyId === parentReply.reply_code ? (
+                <textarea
+                  className="w-full p-2 border rounded"
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  rows={4}
+                />
+              ) : (
+                <p className="text-gray-800">{parentReply.content}</p>
+              )}
+              {editingReplyId === parentReply.reply_code && (
+                <div className="mt-2 space-x-2 flex justify-end">
+                  <button
+                    onClick={ async () => {
+                      await editReply(editingReplyId!, editContent);
+                      loadDetailData();
+                      setEditingReplyId(null);
+                    }}
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow transition"
+                  >
+                    저장
+                  </button>
+                  <button
+                    onClick={() => setEditingReplyId(null)}
+                    className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition"
+                  >
+                    취소
+                  </button>
+                </div>
+              )}
 
               {/* 대댓글 렌더링 (있는 경우만) */}
               {parentReply.replies && parentReply.replies.length > 0 && (
@@ -335,9 +399,44 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
                             <i className="fas fa-heart mr-1 text-red-500"></i>
                             {reReply.likes}
                           </CustomButton>
+                          <CustomButton onClick={() => handleEditReply(reReply.reply_code, reReply.content)} color="none">
+                            <i className="fas fa-pencil"></i>
+                          </CustomButton>
+                          <CustomButton onClick={() => handleDeleteReply(reReply.reply_code)} color="none">
+                            <i className="fas fa-trash mr-1"></i>
+                          </CustomButton>
                         </div>
                       </div>
-                      <p className="text-gray-800">{reReply.content}</p>
+                      {editingReplyId === reReply.reply_code ? (
+                        <textarea
+                          className="w-full p-2 border rounded"
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                          rows={4}
+                        />
+                      ) : (
+                        <p className="text-gray-800">{reReply.content}</p>
+                      )}
+                      {editingReplyId === reReply.reply_code && (
+                        <div className="mt-2 space-x-2 flex justify-end">
+                          <button
+                            onClick={ async () => {
+                              await editReply(editingReplyId!, editContent);
+                              loadDetailData();
+                              setEditingReplyId(null);
+                            }}
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow transition"
+                          >
+                            저장
+                          </button>
+                          <button
+                            onClick={() => setEditingReplyId(null)}
+                            className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition"
+                          >
+                            취소
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

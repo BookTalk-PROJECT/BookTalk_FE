@@ -15,6 +15,11 @@ export const postBoard = async (req:CommuPostRequest, categoryId:number) => {
   return response.data;
 };
 
+export const editBoard = async (req:CommuPostRequest, postCode: string) => {
+  const response = await axios.patch(`${BASE_URL}/community/board/modify`, {...req, boardCode: postCode});
+  return response.data;
+}
+
 export const deleteBoard = async (postId: string): Promise<void> => {
   const response = await axios.delete(`${BASE_URL}/community/board/delete/${postId}`);
   return response.data;

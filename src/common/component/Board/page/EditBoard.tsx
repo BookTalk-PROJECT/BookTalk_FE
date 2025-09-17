@@ -7,13 +7,16 @@ import { CommuPostRequest, GatheringPostRequest } from "../../../../community/bo
 import { YoutubeVideo } from "../type/BoardDetail.types";
 import { searchYoutubeVideos } from "../api/CreateBoardRequest";
 import { useNavigate, useSearchParams } from "react-router";
+import { getBoardDetail } from "../../../../community/board/api/boardDetail";
+import { title } from "process";
 
 interface BoardProps {
-  categoryId: number;
-  createPost: (arg0: CommuPostRequest | GatheringPostRequest, categoryId: number) => void;
+    categoryId: number;
+    postCode: string;
+    editPost: (arg0:CommuPostRequest, postCode: string) => void;
 }
 
-const CreateBoard: React.FC<BoardProps> = ({ categoryId, createPost }) => {
+const EditBoard: React.FC<BoardProps> = ({ categoryId, postCode, editPost }) => {
   const navigate = useNavigate();
   const editorRef = useRef<Editor>(null);
   const [showYoutubeModal, setShowYoutubeModal] = useState(false);
@@ -28,9 +31,37 @@ const CreateBoard: React.FC<BoardProps> = ({ categoryId, createPost }) => {
     notification_yn: false,
   });
 
+  useEffect(() => {
+    loadDetailData();
+  }, []);
+
+    useEffect(() => {
+    // postData.content 변경될 때마다 반영
+    if (editorRef.current) {
+        editorRef.current.getInstance().setMarkdown(postData.content || "");
+    }
+  }, [postData.content]);
+
+    const loadDetailData = async () => {
+        if (!postCode) {
+            console.log("postId: " + postCode + "가 이상함");
+            return;
+        }
+        try {
+        const data = await getBoardDetail(postCode);
+        setPostData({
+            title: data.data.post.title,
+            content: data.data.post.content,
+            notification_yn: data.data.post.notification_yn
+        });
+        } catch (error) {
+        console.error("API 요청 오류:", error);
+        }
+    };
+
   const handleSubmit = () => { 
-    createPost(postData, categoryId);
-    navigate(`/boardList?categoryId=${categoryId}`)
+    editPost(postData, postCode);
+    navigate(`/boardDetail/${postCode}?categoryId=${categoryId}`)
   };
 
   const handleYoutubeButtonClick = () => {
@@ -84,7 +115,7 @@ const CreateBoard: React.FC<BoardProps> = ({ categoryId, createPost }) => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-8 py-12">
-        <h1 className="text-3xl font-bold mb-10">글쓰기</h1>
+        <h1 className="text-3xl font-bold mb-10">글수정</h1>
 
         <div className="bg-white shadow-md rounded-2xl p-10 space-y-10">
           {/* 제목 입력 */}
@@ -126,7 +157,7 @@ const CreateBoard: React.FC<BoardProps> = ({ categoryId, createPost }) => {
             {/* 에디터 */}
             <Editor
               ref={editorRef}
-              initialValue=""
+              initialValue={postData.content}
               previewStyle="vertical"
               height="400px"
               initialEditType="wysiwyg"
@@ -258,4 +289,4 @@ const CreateBoard: React.FC<BoardProps> = ({ categoryId, createPost }) => {
   );
 };
 
-export default CreateBoard;
+export default EditBoard;

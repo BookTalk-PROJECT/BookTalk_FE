@@ -264,6 +264,7 @@ const BoardList: React.FC = () => {
               {posts && (
               <BoardTable
                 posts={posts}
+                categoryId={searchParams.get('categoryId')!}
                 requestUrl={`boardDetail`} //여기에 커뮤니티 이벤트 요청 url이 들어가야함
               />)}
             </div>

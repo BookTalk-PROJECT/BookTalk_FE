@@ -21,5 +21,5 @@ export interface SubCategory {
 export interface CommuPostRequest {
   title: string;
   content: string;
-  notification: boolean;
+  notification_yn?: boolean;
 }
