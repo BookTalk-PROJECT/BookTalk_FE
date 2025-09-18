@@ -1,8 +1,7 @@
-export interface GatheringPostRequest {
-  //등록할때 사용=
-  title: string;
-  content: string;
-  notification: boolean;
+import { PostDetail, PostDetailInfo } from "../../../common/component/Board/type/BoardDetail.types";
+
+export interface CommuDetail extends PostDetailInfo {
+  category_id: string;
 }
 
 export interface Category {

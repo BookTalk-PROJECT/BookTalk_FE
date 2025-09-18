@@ -3,12 +3,11 @@ import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import CustomInput from "../../CustomInput";
 import CustomButton from "../../CustomButton";
-import { CommuPostRequest, GatheringPostRequest } from "../../../../community/board/type/boardList";
 import { YoutubeVideo } from "../type/BoardDetail.types";
 import { searchYoutubeVideos } from "../api/CreateBoardRequest";
-import { useNavigate, useSearchParams } from "react-router";
-import { getBoardDetail } from "../../../../community/board/api/boardDetail";
-import { title } from "process";
+import { useNavigate } from "react-router";
+import { getBoardDetail } from "../../../../community/board/api/boardApi";
+import { CommuPostRequest } from "../../../../community/board/type/board";
 
 interface BoardProps {
     categoryId: number;
@@ -25,7 +24,7 @@ const EditBoard: React.FC<BoardProps> = ({ categoryId, postCode, editPost }) => 
   const [totalResults, setTotalResults] = useState(0);
   const [nextPageToken, setNextPageToken] = useState("");
   const [prevPageToken, setPrevPageToken] = useState("");
-  const [postData, setPostData] = useState<CommuPostRequest | GatheringPostRequest>({
+  const [postData, setPostData] = useState<CommuPostRequest>({
     title: "",
     content: "",
     notification_yn: false,
@@ -59,8 +58,8 @@ const EditBoard: React.FC<BoardProps> = ({ categoryId, postCode, editPost }) => 
         }
     };
 
-  const handleSubmit = () => { 
-    editPost(postData, postCode);
+  const handleSubmit = async () => { 
+    await editPost(postData, postCode);
     navigate(`/boardDetail/${postCode}?categoryId=${categoryId}`)
   };
 

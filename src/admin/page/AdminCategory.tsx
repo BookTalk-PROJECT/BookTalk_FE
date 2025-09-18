@@ -3,26 +3,26 @@ import React, { useEffect, useState } from "react";
 import Pagenation from "../../common/component/Pagination";
 import MyPageSideBar from "../../mypage/component/MyPageSideBar";
 import MyPageManageButton from "../../mypage/component/MyPageManageButton";
-import { AdminCategoryT, AdminSubCategoryT } from "../../community/category/type/category";
-import { createCategory, getCategories } from "../../community/category/api/category";
+import { createCategory, getAdminCategories, getCategories } from "../../community/category/api/categoryApi";
+import { AdminCategoryT } from "../../community/category/type/category";
 
 const AdminCategory: React.FC = () => {
   const [categories, setCategories] = useState<AdminCategoryT[]>([]);
-
+  const [nextId, setNextId] = useState(-1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+  const [sortConfig, setSortConfig] = useState({ field: "", direction: "asc" });
+  
   useEffect(() => {
     //카테고리 조회 API 호출
-    getCategories().then((res) => {
+    getAdminCategories().then((res) => {
       //categories State Update
       if(res.data) {
         setCategories(res.data);
       }
     });
   }, [])
-
-  const [nextId, setNextId] = useState(-1);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
-  const [sortConfig, setSortConfig] = useState({ field: "", direction: "asc" });
+  
   const handleSort = (field: string) => {
     setSortConfig((prev) => ({
       field,

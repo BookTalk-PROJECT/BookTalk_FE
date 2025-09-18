@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import Pagenation from "../../../common/component/Pagination";
 import ButtonWrapper from "../../../common/component/Button";
-import { Category, CommuPostRequest, SubCategory } from "../type/boardList";
-import { getCategories, getPosts } from "../api/boardList";
 import BoardTable from "../../../common/component/Board/page/BoardTable";
 import { useNavigate, useSearchParams } from "react-router";
-import { PostInfo } from "../../../common/component/Board/type/BoardDetail.types";
+import { Category, SubCategory } from "../type/board";
+import { PostSimpleInfo } from "../../../common/component/Board/type/BoardDetail.types";
+import { getCategories } from "../../category/api/categoryApi";
+import { getBoards } from "../api/boardApi";
 const BoardList: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,7 +26,7 @@ const BoardList: React.FC = () => {
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
   // data
   const [categories, setCategories] = useState<Category[]>([]);
-  const [posts, setPosts] = useState<PostInfo[]>([]);
+  const [posts, setPosts] = useState<PostSimpleInfo[]>([]);
   const [totalPages, setTotalPages] = useState(0);
 
   const handleCategoryChange = async (catetory: Category) => {
@@ -87,7 +88,7 @@ const BoardList: React.FC = () => {
       }
     });
     if(activeSubCategory) {
-      const posts = getPosts(activeSubCategory?.categoryId, 1).then((res) => {
+      const posts = getBoards(activeSubCategory?.categoryId, 1).then((res) => {
         setPosts(res.data.content);
         setTotalPages(res.data.totalPages);
       });
@@ -99,7 +100,7 @@ const BoardList: React.FC = () => {
 
   useEffect(() => {
     if(activeSubCategory) {
-      getPosts(activeSubCategory.categoryId, 1).then((res) => {
+      getBoards(activeSubCategory.categoryId, 1).then((res) => {
         setPosts(res.data.content);
         setTotalPages(res.data.totalPages);
       });

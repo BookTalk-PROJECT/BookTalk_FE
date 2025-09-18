@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Post } from "../../../type/BoardTable";
-import { PostInfo } from "../type/BoardDetail.types";
+import { PostSimpleInfo } from "../type/BoardDetail.types";
 
 interface BoadTableProps {
-  posts: PostInfo[];
+  posts: PostSimpleInfo[];
   categoryId: string;
   requestUrl: string;
 }

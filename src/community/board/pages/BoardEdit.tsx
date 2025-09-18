@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import CreateBoard from "../../../common/component/Board/page/CreateBoard";
-import { editBoard, postBoard } from "../api/boardDetail";
-import { CommuPostRequest } from "../type/boardList";
+import { editBoard, postBoard } from "../api/boardApi";
 import { useSearchParams } from "react-router";
 import EditBoard from "../../../common/component/Board/page/EditBoard";
+import { CommuPostRequest } from "../type/board";
 
 const BoardEdit: React.FC = () => {
   const [searchParams] = useSearchParams();
