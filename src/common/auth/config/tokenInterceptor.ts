@@ -2,7 +2,6 @@ import axios from 'axios';
 
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
-  console.log("엑세스 토큰 인터셉트!!");
   // 내 서버 주소일 때만 헤더 붙임
   const BASE_URL = import.meta.env.VITE_API_URL;
   const isInternal = config.url?.startsWith(BASE_URL) || config.baseURL?.includes(BASE_URL);
