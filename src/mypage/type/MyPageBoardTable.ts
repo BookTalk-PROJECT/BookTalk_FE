@@ -3,26 +3,29 @@ import React from "react";
 export interface MyPageTableProps<T> {
   posts: T[];
   row: { label: string; key: string }[];
-  isExpandableRow: boolean;
+  isExpandableRow?: boolean;
   filterOptions: { label: string; key: string }[];
   initialFilter: { label: string; key: string }[];
-  manageOption: React.ReactNode;
+  manageOption?: React.ReactNode;
   postKeys: string[];
   activeTab?: string;
+  renderRow: (post: any) => React.JSX.Element;
 }
 
 export interface MyPageTableCommonColType {
-  id: number;
   date: string;
   manage: string;
+  deleteReason: string;
 }
 
 export interface MyPageBoardType extends MyPageTableCommonColType {
+  board_code: string;
   title: string;
   category: string;
 }
 
 export interface MyPageBookCommentType extends MyPageTableCommonColType {
+  board_code: string;
   title: string;
   author: string;
   content: string;

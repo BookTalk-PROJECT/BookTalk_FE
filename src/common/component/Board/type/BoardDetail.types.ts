@@ -55,3 +55,13 @@ export interface Reply {
   create_at: string; // 작성일
   likes: number; // 좋아요
 }
+
+export interface ReplySimpleInfo {
+  reply_code: string;
+  post_code: string;
+  post_title: string;
+  member_id: number;
+  content: string;
+  delete_reason: string;
+  date: string;
+}

@@ -87,26 +87,27 @@ const BoardList: React.FC = () => {
         setActiveSubCategory(filteredCategories[0].subCategories[0]);
       }
     });
-    if(activeSubCategory) {
-      const posts = getBoards(activeSubCategory?.categoryId, 1).then((res) => {
-        setPosts(res.data.content);
-        setTotalPages(res.data.totalPages);
-      });
-    }
+    loadBoards(1);
     checkScrollButtons();
     window.addEventListener("resize", checkScrollButtons);
     return () => window.removeEventListener("resize", checkScrollButtons);
   }, []);
 
-  useEffect(() => {
+  const loadBoards = (pageNum: number) => {
     if(activeSubCategory) {
-      getBoards(activeSubCategory.categoryId, 1).then((res) => {
+      getBoards(activeSubCategory.categoryId, pageNum).then((res) => {
         setPosts(res.data.content);
         setTotalPages(res.data.totalPages);
       });
+    }
+  }
+
+  useEffect(() => {
+    if(activeSubCategory) {
+      loadBoards(1);
       setSearchParams({categoryId: activeSubCategory.categoryId.toString()});
     }
-  },[activeSubCategory])
+  },[activeSubCategory]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -270,7 +271,7 @@ const BoardList: React.FC = () => {
               />)}
             </div>
             {/* Pagination */}
-            <Pagenation totalPages={totalPages} loadPageByPageNum={(num) => {}} />
+            <Pagenation totalPages={totalPages} loadPageByPageNum={(num) => loadBoards(num)} />
           </div>
         </div>
       </main>

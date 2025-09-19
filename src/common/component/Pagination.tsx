@@ -25,8 +25,8 @@ const Pagenation: React.FC<PagenationProps> = ({ totalPages, loadPageByPageNum }
 
   useEffect(() => {
     initStates();
-    loadPageByPageNum(currentPage);
-  }, [currentPage]);
+    loadPageByPageNum(currentPage+1);
+  }, [currentPage, totalPages]);
   return (
     <div className="flex justify-center items-center space-x-2 p-4 border-t">
       <button

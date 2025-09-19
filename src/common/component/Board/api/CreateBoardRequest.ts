@@ -1,7 +1,8 @@
 import axios from "axios";
-import { YoutubeVideo } from "../type/BoardDetail.types";
+import { PostSimpleInfo, YoutubeVideo } from "../type/BoardDetail.types";
+import { ApiResponse, PageResponse } from "../../../type/ApiResponse";
 
-const apiKey = import.meta.env.BASE_URL;
+const BASE_URL = import.meta.env.VITE_API_URL;
 const youtubeKey = import.meta.env.VITE_YOUTUBE_API_KEY;
 
 const RESULTS_PER_PAGE = 5;
@@ -36,3 +37,4 @@ export const searchYoutubeVideos = async (query: string, pageToken: string | num
     totalResults: response.data.pageInfo.totalResults || 0,
   };
 };
+

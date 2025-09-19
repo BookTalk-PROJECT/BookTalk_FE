@@ -6,7 +6,7 @@ import { ApiResponse, PageResponse } from "../../../common/type/ApiResponse";
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const getBoards = async (categoryId:number, pageNum:number): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
-  const posts = await axios.get(`${BASE_URL}/community/board/list?categoryId=${categoryId}&pageNum=${pageNum}`);
+  const posts = await axios.get<ApiResponse<PageResponse<PostSimpleInfo>>>(`${BASE_URL}/community/board/list?categoryId=${categoryId}&pageNum=${pageNum}`);
   return posts.data;
 };
 
