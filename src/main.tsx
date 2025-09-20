@@ -53,7 +53,7 @@ const AppContent = () => {
               <Route path="/boardCreate" element={<BoardCreate />} />
               <Route path="/boardDetail/:postId" element={<BoardDetail />} />
               {/* Gathering */}
-              <Route path="/gatheringlist">
+              <Route path="/gathering">
                 {" "}
                 {/* 모임 관련 */}
                 <Route index element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}

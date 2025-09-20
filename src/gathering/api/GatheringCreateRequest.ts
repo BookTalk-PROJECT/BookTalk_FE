@@ -50,10 +50,12 @@ export const mockQuestions: Question[] = [
 // };
 
 export const createGathering = async (formData: FormData) => {
+  const token = localStorage.getItem("accessToken");
   try {
     const response = await axios.post(`${API_BASE_URL}/gathering/create`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
