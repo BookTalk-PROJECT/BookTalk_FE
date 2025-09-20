@@ -29,7 +29,7 @@ import MyPageMyGatherings from "./mypage/pages/MyPageMyGatherings";
 import GatheringDetailPage from "./gathering/pages/GatheringDetailPage";
 import BoardCreate from "./community/board/pages/BoardCreate";
 import BoardDetail from "./community/board/pages/BoardDetail";
-import EditBoard from "./community/board/pages/BoardEdit";
+import "./common/auth/config/tokenInterceptor"
 import BoardEdit from "./community/board/pages/BoardEdit";
 
 const AppContent = () => {
