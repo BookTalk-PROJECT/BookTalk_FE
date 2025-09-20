@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import Pagenation from "../../../common/component/Pagination";
 import ButtonWrapper from "../../../common/component/Button";
-import { Category, CommuPostRequest, SubCategory } from "../type/boardList";
-import { getCategories, getPosts } from "../api/boardList";
 import BoardTable from "../../../common/component/Board/page/BoardTable";
 import { useNavigate, useSearchParams } from "react-router";
-import { PostInfo } from "../../../common/component/Board/type/BoardDetail.types";
+import { Category, SubCategory } from "../type/board";
+import { PostSimpleInfo } from "../../../common/component/Board/type/BoardDetail.types";
+import { getCategories } from "../../category/api/categoryApi";
+import { getBoards } from "../api/boardApi";
 const BoardList: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,7 +26,7 @@ const BoardList: React.FC = () => {
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
   // data
   const [categories, setCategories] = useState<Category[]>([]);
-  const [posts, setPosts] = useState<PostInfo[]>([]);
+  const [posts, setPosts] = useState<PostSimpleInfo[]>([]);
   const [totalPages, setTotalPages] = useState(0);
 
   const handleCategoryChange = async (catetory: Category) => {
@@ -86,26 +87,27 @@ const BoardList: React.FC = () => {
         setActiveSubCategory(filteredCategories[0].subCategories[0]);
       }
     });
-    if(activeSubCategory) {
-      const posts = getPosts(activeSubCategory?.categoryId, 1).then((res) => {
-        setPosts(res.data.content);
-        setTotalPages(res.data.totalPages);
-      });
-    }
+    loadBoards(1);
     checkScrollButtons();
     window.addEventListener("resize", checkScrollButtons);
     return () => window.removeEventListener("resize", checkScrollButtons);
   }, []);
 
-  useEffect(() => {
+  const loadBoards = (pageNum: number) => {
     if(activeSubCategory) {
-      getPosts(activeSubCategory.categoryId, 1).then((res) => {
+      getBoards(activeSubCategory.categoryId, pageNum).then((res) => {
         setPosts(res.data.content);
         setTotalPages(res.data.totalPages);
       });
+    }
+  }
+
+  useEffect(() => {
+    if(activeSubCategory) {
+      loadBoards(1);
       setSearchParams({categoryId: activeSubCategory.categoryId.toString()});
     }
-  },[activeSubCategory])
+  },[activeSubCategory]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -264,11 +266,12 @@ const BoardList: React.FC = () => {
               {posts && (
               <BoardTable
                 posts={posts}
+                categoryId={searchParams.get('categoryId')!}
                 requestUrl={`boardDetail`} //여기에 커뮤니티 이벤트 요청 url이 들어가야함
               />)}
             </div>
             {/* Pagination */}
-            <Pagenation totalPages={totalPages} loadPageByPageNum={(num) => {}} />
+            <Pagenation totalPages={totalPages} loadPageByPageNum={(num) => loadBoards(num)} />
           </div>
         </div>
       </main>

@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import DetailBaord from "../../../common/component/Board/page/DetailBoard";
-import { createReply, GetBoardDetailRequest } from "../../../common/component/Board/type/BoardDetail.types";
-import { deleteBoard, getBoardDetail, postReply, toggleLikePost } from "../api/boardDetail";
+import { deleteBoard, getBoardDetail, toggleLikePost } from "../api/boardApi";
+import { postReply } from "../../reply/api/replyApi";
 
 const BoardDetail: React.FC = () => {
   const { postId } = useParams<string>();

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import CreateBoard from "../../../common/component/Board/page/CreateBoard";
-import { postBoard } from "../api/boardDetail";
-import { CommuPostRequest } from "../type/boardList";
+import { postBoard } from "../api/boardApi";
 import { useSearchParams } from "react-router";
+import { CommuPostRequest } from "../type/board";
 
 const BoardCreate: React.FC = () => {
   const [categoryId, setCategoryId] = useState<number>();
