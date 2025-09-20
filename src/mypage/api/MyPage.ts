@@ -1,8 +1,10 @@
 import axios from "axios";
 import { MyPageBoardType, MyPageBookCommentType } from "../type/MyPageBoardTable";
+import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
+import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetail.types";
 
 //BASE URL import
-const BASE_URL = process.env.VITE_BASE_URL;
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 //마이페이지 book review board 요청 get 메서드
 export async function getMyPageBookReviewBoard(userId: string) {
@@ -62,4 +64,35 @@ export async function getMyPageCommunityComment(userId: string) {
       }
     })();
   });
+}
+
+
+export const getBoardAdminAll = async (pageNum: number): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
+  const posts = await axios.get<ApiResponse<PageResponse<PostSimpleInfo>>>(`${BASE_URL}/community/board/admin/all?pageNum=${pageNum}`);
+  return posts.data;
+}
+
+export const restrictBoard = async (boardCode: string, del_reason: string): Promise<ApiResponse<string>> => {
+  const posts = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/community/board/restrict`, {targetCode: boardCode, delReason: del_reason});
+  return posts.data;
+}
+
+export const recoverBoard = async (boardCode: string): Promise<ApiResponse<string>> => {
+  const posts = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/community/board/recover/${boardCode}`);
+  return posts.data;
+}
+
+export const getCommentAdminAll = async (pageNum: number): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
+  const posts = await axios.get<ApiResponse<PageResponse<ReplySimpleInfo>>>(`${BASE_URL}/reply/admin/all?pageNum=${pageNum}`);
+  return posts.data;
+}
+
+export const restrictComment = async (boardCode: string, del_reason: string): Promise<ApiResponse<string>> => {
+  const posts = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/reply/restrict`, {targetCode: boardCode, delReason: del_reason});
+  return posts.data;
+}
+
+export const recoverComment = async (boardCode: string): Promise<ApiResponse<string>> => {
+  const posts = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/reply/recover/${boardCode}`);
+  return posts.data;
 }

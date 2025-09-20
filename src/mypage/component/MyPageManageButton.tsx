@@ -21,7 +21,7 @@ const MyPageManageButton = ({ actions }: MyPageManageButtonProps) => {
   };
 
   return (
-    <td className="whitespace-nowrap">
+    <div className="whitespace-nowrap">
       {actions.map((action, index) => (
         <span key={index} className="inline-flex items-center">
           <ButtonWrapper
@@ -36,7 +36,7 @@ const MyPageManageButton = ({ actions }: MyPageManageButtonProps) => {
           {index < actions.length - 1 && <span className="text-gray-400 mx-2">┆</span>}
         </span>
       ))}
-    </td>
+    </div>
   );
 };
 

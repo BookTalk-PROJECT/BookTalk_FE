@@ -7,9 +7,10 @@ const MyPageTable = <T extends { [key: string]: any }>({
   isExpandableRow,
   filterOptions,
   initialFilter,
-  manageOption,
   postKeys,
   activeTab,
+  manageOption,
+  renderRow
 }: MyPageTableProps<T>) => {
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
 
@@ -70,9 +71,10 @@ const MyPageTable = <T extends { [key: string]: any }>({
         }
       })();
 
-      return targetValue.includes(searchTerm);
+      return (targetValue || "").includes(searchTerm);
+
     });
-    console.log(posts);
+    
     // 2. 정렬 적용
     return [...filtered].sort((a, b) => {
       const aValue = a[sortField];
@@ -92,7 +94,7 @@ const MyPageTable = <T extends { [key: string]: any }>({
         ? String(aValue).localeCompare(String(bValue))
         : String(bValue).localeCompare(String(aValue));
     });
-  }, [sortField, sortOrder, searchTerm, selectedFilter, activeTab]);
+  }, [posts, sortField, sortOrder, searchTerm, selectedFilter, activeTab]);
 
   const renderHeader = () => (
     <tr>
@@ -100,7 +102,7 @@ const MyPageTable = <T extends { [key: string]: any }>({
         if (key === "manage" || key === "deleteReason") {
           return (
             <th
-              key="manage"
+              key={String(key)}
               onClick={() => handleSort("manage")}
               className="px-4 py-2 text-left text-sm font-medium text-gray-700 whitespace-nowrap cursor-pointer">
               <span>{label}</span>
@@ -131,58 +133,8 @@ const MyPageTable = <T extends { [key: string]: any }>({
     </tr>
   );
 
-  const renderRow = (post: any) => (
-    <React.Fragment key={post.id}>
-      <tr className="hover:bg-gray-50 border-b" {...(isExpandableRow && { onClick: () => toggleExpandRow(post.id) })}>
-        {row.map(({ key }) => {
-          if (key === "id") {
-            return (
-              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {post[key]}
-              </td>
-            );
-          } else if (key === "manage") {
-            return <td key={key}>{manageOption}</td>;
-          } else if (key === "deleteReason") {
-            return (
-              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 relative group">
-                <div className="w-4 h-4 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xl font-bold">
-                  i
-                </div>
-                <div className="absolute z-10 hidden group-hover:block w-64 p-2 bg-gray-800 text-white text-xs rounded shadow-lg left-6 top-0">
-                  삭제 사유: {post[key]}
-                </div>
-              </td>
-            );
-          } else {
-            return (
-              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {post[key]}
-              </td>
-            );
-          }
-        })}
-      </tr>
-
-      {/* 👇 확장 영역: 클릭된 row 아래에만 표시 */}
-      {expandedRowId === post.id && post.questions && (
-        <tr>
-          <td colSpan={row.length} className="px-6 py-4 bg-gray-50">
-            <div className="space-y-2">
-              {post.questions.map((q: any, index: number) => (
-                <div key={index} className="text-sm">
-                  <div className="font-medium">{q.question}</div>
-                  <div className="ml-4 text-gray-700">⇒ {q.answer}</div>
-                </div>
-              ))}
-            </div>
-          </td>
-        </tr>
-      )}
-    </React.Fragment>
-  );
-
   return (
+    <>
     <div>
       <div className="flex justify-end items-center gap-2 mt-6 mb-6 pr-5">
         <div className="relative">
@@ -227,13 +179,67 @@ const MyPageTable = <T extends { [key: string]: any }>({
         </button>
       </div>
       {/* 테이블 구조 */}
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm ">
         <table className="min-w-full w-full table-auto text-sm ">
           <thead className="bg-gray-50 border-b border-gray-200">{renderHeader()}</thead>
-          <tbody>{filteredAndSortedPosts.map((post) => renderRow(post))}</tbody>
+          <tbody>
+            {renderRow
+            ? filteredAndSortedPosts.map((post) => renderRow(post))
+            : filteredAndSortedPosts.map((post) => (
+                <React.Fragment key={post.id}>
+                  <tr className="hover:bg-gray-50 border-b" {...(isExpandableRow && { onClick: () => toggleExpandRow(post.id) })}>
+                    {row.map(({ key }) => {
+                      if (key === "id") {
+                        return (
+                          <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {post[key]}
+                          </td>
+                        );
+                      } else if (key === "manage") {
+                        return <td key={key}>{manageOption}</td>;
+                      } else if (key === "deleteReason") {
+                        return (
+                          <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 relative group">
+                            <div className="w-4 h-4 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xl font-bold">
+                              i
+                            </div>
+                            <div className="absolute z-10 hidden group-hover:block w-64 p-2 bg-gray-800 text-white text-xs rounded shadow-lg left-6 top-0">
+                              삭제 사유: {post[key]}
+                            </div>
+                          </td>
+                        );
+                      } else {
+                        return (
+                          <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {post[key]}
+                          </td>
+                        );
+                      }
+                    })}
+                  </tr>
+
+                  {/* 👇 확장 영역: 클릭된 row 아래에만 표시 */}
+                  {expandedRowId === post.id && post.questions && (
+                    <tr>
+                      <td colSpan={row.length} className="px-6 py-4 bg-gray-50">
+                        <div className="space-y-2">
+                          {post.questions.map((q: any, index: number) => (
+                            <div key={index} className="text-sm">
+                              <div className="font-medium">{q.question}</div>
+                              <div className="ml-4 text-gray-700">⇒ {q.answer}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+            ))}
+          </tbody>
         </table>
       </div>
     </div>
+    </>
   );
 };
 
