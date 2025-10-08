@@ -1,4 +1,4 @@
-export interface Join {
+export interface Member {
   name: string;
   email: string;
   password: string;

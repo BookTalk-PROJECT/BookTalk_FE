@@ -1,10 +1,26 @@
 import axios from "axios";
-import { MyPageBoardType, MyPageBookCommentType } from "../type/MyPageBoardTable";
+import {
+  MyPageBoardType,
+  MyPageBookCommentType,
+  MyPageMemberDataType,
+  MyPageModifyMemberDataType,
+} from "../type/MyPageBoardTable";
 import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
 import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetail.types";
+import { Member } from "../../common/auth/type/type";
 
 //BASE URL import
 const BASE_URL = import.meta.env.VITE_API_URL;
+
+export const getMyInformation = async (): Promise<ApiResponse<MyPageMemberDataType>> => {
+  const member = await axios.get<ApiResponse<MyPageMemberDataType>>(`${BASE_URL}/member/authentication`);
+  return member.data;
+}
+
+export const modifyMember = async (memberData: MyPageModifyMemberDataType) => {
+  const member = await axios.patch<ApiResponse<MyPageModifyMemberDataType>>(`${BASE_URL}/member/modify`, memberData);
+  return member.data;
+};
 
 //마이페이지 book review board 요청 get 메서드
 export async function getMyPageBookReviewBoard(userId: string) {

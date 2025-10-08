@@ -1,9 +1,9 @@
-import { Join, ValidationEmail } from "../type/type";
+import { Member, ValidationEmail } from "../type/type";
 import axios from "axios";
 
 const baseURL = import.meta.env.VITE_API_URL;
 
-export const fetchJoin = async (joinData: Join) => {
+export const createMember = async (joinData: Member) => {
     try{
       const response = await axios.post(`${baseURL}/member/create`,joinData);
       return response.statusText
@@ -13,7 +13,7 @@ export const fetchJoin = async (joinData: Join) => {
     }
 }
 
-export const fetchValidationEmail = async (email: ValidationEmail) => {
+export const validationEmail = async (email: ValidationEmail) => {
   try {
     const response = await axios.post(`${baseURL}/member/validation`, email);
     return response.data.data.isExistMember
