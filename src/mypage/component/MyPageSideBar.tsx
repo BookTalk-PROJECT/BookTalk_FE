@@ -82,6 +82,7 @@ const MyPageSideBar: React.FC = () => {
     { id: "admin-post", icon: "fa-file-alt", label: "게시글 관리", url: "/admin/board", indent: true },
     { id: "admin-comment", icon: "fa-comments", label: "댓글 관리", url: "/admin/comment", indent: true },
     { id: "admin-category", icon: "fa-folder", label: "카테고리 관리", url: "/admin/category", indent: true },
+    { id: "admin-role.ts", icon: "fa-folder", label: "권한 관리", url: "/admin/role", indent: true },
   ];
   return (
     <div className="flex h-full overflow-y-scroll ">
