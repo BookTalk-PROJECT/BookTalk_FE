@@ -195,6 +195,7 @@ const AdminCategory: React.FC = () => {
     setCategories(
       categories.map((category) => {
         if (category.categoryId === categoryId) {
+          category.isEditing = true;
           if (isMain) {
             return { ...category, isActive: !category.isActive };
           } else {

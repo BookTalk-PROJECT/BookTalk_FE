@@ -5,7 +5,7 @@ import MyPageTable from "../component/MyPageTable";
 import MyPageBreadCrumb from "../component/MyPageBreadCrumb";
 import { MyPageBookCommentType } from "../type/MyPageBoardTable";
 import { ReplySimpleInfo } from "../../common/component/Board/type/BoardDetail.types";
-import { getCommentAdminAll, recoverComment, restrictComment } from "../api/MyPage";
+import { getCommentAdminAll, getMyCommentAll, recoverComment, restrictComment } from "../api/MyPage";
 import DeleteModal from "../component/DeleteModal";
 import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
 import { Link } from "react-router-dom";
@@ -28,7 +28,7 @@ const MyPageCommunityComment: React.FC = () => {
   };
 
   const loadComments = (pageNum: number) => {
-    getCommentAdminAll(pageNum).then((res) => {
+    getMyCommentAll(pageNum).then((res) => {
       setComments(res.data.content);
       setTotalPages(res.data.totalPages);
       setPostKeys(comments.length > 0 ? Object.keys(comments[0]) : []);
@@ -54,10 +54,7 @@ const MyPageCommunityComment: React.FC = () => {
     { label: "댓글 번호", key: "reply_code" },
     { label: "글 번호", key: "post_code" },
     { label: "댓글 내용", key: "content" },
-    { label: "작성자", key: "author" },
     { label: "작성일", key: "date" },
-    { label: "관리", key: "manage" },
-    { label: "사유", key: "deleteReason" },
   ];
 
   {
@@ -73,13 +70,13 @@ const MyPageCommunityComment: React.FC = () => {
         {row.map(({ key }) => {
           if (key === "reply_code") {
             return (
-              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <td key={key} className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                 {post[key]}
               </td>
             );
           } else if(key === "content") {
             return (
-              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <td key={key} className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                 <Link to={`/boardDetail/${post["post_code"]}`}>
                   {post[key]}
                 </Link>
@@ -106,7 +103,7 @@ const MyPageCommunityComment: React.FC = () => {
           } else if (key === "deleteReason") {
             return (
               post[key] && 
-              (<td key={key} className="relative group overflow-visible flex items-center justify-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              (<td key={key} className="relative group overflow-visible flex items-center justify-center px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                 <div className="w-4 h-4 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xl font-bold">
                   i
                 </div>
@@ -117,7 +114,7 @@ const MyPageCommunityComment: React.FC = () => {
             );
           } else {
             return (
-              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td key={key} className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                 {post[key]}
               </td>
             );

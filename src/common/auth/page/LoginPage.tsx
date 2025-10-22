@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { fetchLogin } from "../api/login.mock";
+import { useAuthStore } from "../../../store";
+import { useNavigate } from "react-router";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const {login} = useAuthStore();
+  const navigatge = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 폼 전송 기본 동작 막기
@@ -12,7 +16,11 @@ const LoginPage: React.FC = () => {
       username,
       password,
     }
-    await fetchLogin(loginData);
+    fetchLogin(loginData)
+    .then((res) => {
+      login();
+      navigatge("/dashboard");
+    })
   }
 
   return (

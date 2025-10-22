@@ -9,7 +9,7 @@ export interface MyPageTableProps<T> {
   manageOption?: React.ReactNode;
   postKeys: string[];
   activeTab?: string;
-  renderRow: (post: any) => React.JSX.Element;
+  renderRow?: (post: any) => React.JSX.Element;
 }
 
 export interface MyPageTableCommonColType {
@@ -22,10 +22,12 @@ export interface MyPageBoardType extends MyPageTableCommonColType {
   board_code: string;
   title: string;
   category: string;
+  author: string;
 }
 
 export interface MyPageBookCommentType extends MyPageTableCommonColType {
-  board_code: string;
+  reply_code: string;
+  post_code: string;
   title: string;
   author: string;
   content: string;

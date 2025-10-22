@@ -5,6 +5,7 @@ import { ReplyRequest } from "../../../../community/reply/type/reply";
 import { deleteReply, editReply } from "../../../../community/reply/api/replyApi";
 import { PostDetail } from "../type/BoardDetail.types";
 import { ApiResponse } from "../../../type/ApiResponse";
+import axios, { AxiosError } from "axios";
 
 interface DetailBoardProps {
   postCode: string;
@@ -12,7 +13,7 @@ interface DetailBoardProps {
   DeleteBoard: (postId: string) => void;
   //게시글 좋아요 props arg1 : 게시글 아이디, arg2: 모임 여부
   ToggleLikePost: (postId: string) => void;
-  CreateReply: (req: ReplyRequest) => void;
+  CreateReply: (req: ReplyRequest) => Promise<ApiResponse<string>>;
 }
 
 //postId는 커뮤Id or 모임Id
@@ -38,34 +39,33 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
 
   const loadDetailData = async () => {
     if (!postCode) {
-      console.log("postId: " + postCode + "가 이상함");
       return;
     }
-
     try {
       const data = await GetBoardDetail(postCode);
       setDetailData(data.data);
     } catch (error) {
-      console.error("API 요청 오류:", error);
+      //삭제된 게시글 일 경우 네비게이트
+      if(axios.isAxiosError(error) && error.response?.data.code === 400) {
+        alert(error.response.data.data);
+        navigate(-1);
+      }
     }
   };
 
   const handleDeleteBoard = async (postId: string) => {
     if(confirm("게시글을 삭제하시겠습니까?")) {
       await DeleteBoard(postId);
-      navigate(`/boardList?categoryId=${searchParams.get('categoryId')}`)
+      navigate(-1)
     }
   }
 
   // 좋아요 토글 상태관리 (Optimistic UI)
   const handleLikeToggle = async () => {
     if (!postCode) {
-      console.log("또는 postId: " + postCode + "가 이상함");
       return;
     }
-
     const newLikeState = !detailData?.post.is_liked;
-
     // Optimistic UI 업데이트
     setDetailData((prev) => {
       if (!prev) return prev;
@@ -110,53 +110,87 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
     }
   }
 
-  // 댓글 등록 로직 (간결한 구조)
   const handleReplySubmit = async () => {
     if (!postCode) {
-      console.error("모임 ID 또는 게시글 ID가 누락되었습니다.");
       return;
     }
 
-    // 댓글 또는 대댓글 내용 확인
     const content = reReply_yn === null ? parentCommentContent.trim() : replyContent.trim();
     if (!content) {
-      console.error(reReply_yn === null ? "댓글 내용을 입력하세요." : "대댓글 내용을 입력하세요.");
+      alert(reReply_yn === null ? "댓글 내용을 입력하세요." : "대댓글 내용을 입력하세요.");
       return;
     }
 
-    // UI 필드 초기화 (즉시 반영)
     if (reReply_yn === null) {
       setParentCommentContent("");
     } else {
       setReplyContent("");
     }
 
-    // Optimistic UI: 즉시 댓글 UI에 추가
     const newReply = {
       reply_code: Date.now().toString(), // 임시 코드 (고유값)
-      member_id: "현재 사용자", // 실제 사용자 정보로 변경 필요
+      member_id: "현재 사용자", // TODO 실제 사용자 정보로 변경 필요
       content,
       date: new Date().toISOString().slice(0, 10),
       likes: 0,
       reReply: [],
     };
 
-    // 댓글 추가 (Optimistic UI) - 안전한 타입 처리
-    setDetailData((prev) => {
-      if (!prev) return prev as unknown as PostDetail; // prev가 undefined일 경우 안전하게 반환
+    setNewReply(newReply);
 
-      // 부모 댓글 추가
+    try {
+      CreateReply({
+        postCode: postCode,
+        content: content,
+        parentReplyCode: reReply_yn
+      }).then((res) => {
+        loadDetailData();
+      }) 
+    } catch (error) {
+      if(axios.isAxiosError(error)) {
+        alert(error.response?.data.data);
+      }
+      rollbackReply(newReply);
+    } finally {
+      setReReply_yn(null);
+    }
+  };
+
+  const rollbackReply = (newReply: any) => {
+    setDetailData((prev) => {
+      if (!prev) return prev;
+      if (reReply_yn === null) {
+        return {
+          ...prev,
+          replies: prev.replies?.filter((reply) => reply.reply_code !== newReply.reply_code),
+        };
+      }
+      return {
+        ...prev,
+        replies: prev.replies?.map((parentReply) =>
+          parentReply.reply_code === reReply_yn
+            ? {
+                ...parentReply,
+                reReply: parentReply.replies?.filter((reReply) => reReply.reply_code !== newReply.reply_code),
+              }
+            : parentReply
+        ),
+      };
+    });
+  }
+
+  const setNewReply = (newReply: any) => {
+    setDetailData((prev) => {
+      if (!prev) return prev
       if (reReply_yn === null) {
         return {
           ...prev,
           replys: [
-            ...(prev.replies ?? []), // replys가 undefined일 경우 빈 배열로 처리
+            ...(prev.replies ?? []),
             newReply,
           ],
-        } as PostDetail; // 명시적 타입 지정
+        }
       }
-
-      // 대댓글 추가
       return {
         ...prev,
         replys: (prev.replies ?? []).map((parentReply) => {
@@ -164,57 +198,16 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
             return {
               ...parentReply,
               reReply: [
-                ...(parentReply.replies ?? []), // reReply가 undefined일 경우 빈 배열로 처리
+                ...(parentReply.replies ?? []),
                 newReply,
               ],
             };
           }
           return parentReply;
         }),
-      } as PostDetail; // 명시적 타입 지정
+      }
     });
-
-    try {
-      // 서버 API 요청 (댓글 등록)
-      console.log(reReply_yn);
-      await CreateReply({
-        postCode: postCode,
-        content: content,
-        parentReplyCode: reReply_yn
-      }); //타입에서 파라미터를 넘기지 않을 시 undifined
-      await loadDetailData(); // 서버 데이터로 새로고침 (정상 등록 확인)
-    } catch (error) {
-      console.error("댓글 등록 중 오류 발생:", error);
-
-      // 실패 시 댓글 롤백 (UI에서 제거)
-      setDetailData((prev) => {
-        if (!prev) return prev;
-
-        // 부모 댓글 롤백
-        if (reReply_yn === null) {
-          return {
-            ...prev,
-            replies: prev.replies?.filter((reply) => reply.reply_code !== newReply.reply_code),
-          };
-        }
-        
-        // 대댓글 롤백
-        return {
-          ...prev,
-          replies: prev.replies?.map((parentReply) =>
-            parentReply.reply_code === reReply_yn
-              ? {
-                  ...parentReply,
-                  reReply: parentReply.replies?.filter((reReply) => reReply.reply_code !== newReply.reply_code),
-                }
-              : parentReply
-          ),
-        };
-      });
-    } finally {
-      setReReply_yn(null); // 항상 초기화
-    }
-  };
+  }
 
   // 답글 클릭 로직 수정 (부모 댓글 / 대댓글 공통)
   const handleReplyClick = (replyCode: string) => {

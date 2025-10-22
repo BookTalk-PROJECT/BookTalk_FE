@@ -1,3 +1,4 @@
+
 import { Login } from "../type/type";
 import axios from "axios";
 
@@ -22,7 +23,6 @@ export const fetchLogin = async (loginData: Login) => {
 
         // 3. 기본 Authorization 헤더 설정 (axios 공통 헤더)
         //axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-        window.location.href = "/dashboard";
       } else {
         console.error("로그인 실패", response.status);
         alert("아이디 또는 비밀번호가 올바르지 않습니다.");
