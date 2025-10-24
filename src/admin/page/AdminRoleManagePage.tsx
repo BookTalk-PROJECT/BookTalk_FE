@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useRef  } from "react";
 import Pagenation from "../../common/component/Pagination";
 import MyPageSideBar from "../../mypage/component/MyPageSideBar";
 import MyPageTable from "../../mypage/component/MyPageTable";
@@ -12,6 +12,8 @@ const AdminRoleManage: React.FC = () => {
 
   const [memberList, setMemberList] = useState<Memberboard[]>([]);
 
+  const manageButtonRef = useRef(null);
+
   useEffect(() => {
     getAllMember().then((res) =>{
       setMemberList(res.data)
@@ -23,6 +25,7 @@ const AdminRoleManage: React.FC = () => {
     { label: "아이디", key: "email" },
     { label: "이름", key: "name" },
     { label: "가입 일자", key: "joinDate" },
+    { label: "권한 상태", key: "authority" },
     { label: "관리", key: "manage" },
   ];
 
@@ -31,6 +34,10 @@ const AdminRoleManage: React.FC = () => {
   const initialFilter: { label: string; key: string }[] = [row[1]];
 
   const postKeys = memberList.length > 0 ? Object.keys(memberList[0]) : [];
+
+  const clickManageButton = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    console.log(event.currentTarget.name);
+  };
 
   return (
     <div className="flex h-screen">
@@ -51,8 +58,7 @@ const AdminRoleManage: React.FC = () => {
               manageOption={
                 <MyPageManageRowButton
                   actions={[
-                    { label: "수정", color: "green", onClick: () => alert("수정") },
-                    { label: "삭제", color: "red", onClick: () => alert("삭제") },
+                    { label: "수정", color: "green", onClick: clickManageButton },
                   ]}
                 />
               }
