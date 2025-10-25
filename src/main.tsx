@@ -32,6 +32,7 @@ import BoardDetail from "./community/board/pages/BoardDetail";
 import GatheringJoin from "./gathering/pages/GatheringJoinPage";
 import "./common/auth/config/tokenInterceptor"
 import BoardEdit from "./community/board/pages/BoardEdit";
+import AdminRoleManage from "./admin/page/AdminRoleManagePage";
 
 const AppContent = () => {
   const location = useLocation();
@@ -94,6 +95,7 @@ const AppContent = () => {
               <Route path="/admin/board" element={<AdminPageBoard />} /> {/* 최형석 관리자 게시물 관리 페이지 */}
               <Route path="/admin/comment" element={<AdminPageComment />} /> {/* 최형석 관리자 댓글 관리 페이지 */}
               <Route path="/admin/category" element={<AdminCategory />} /> {/* 최형석 관리자 카테고리 페이지 */}
+              <Route path="/admin/role" element={<AdminRoleManage />} /> {/* 최형석 관리자 권한관리 페이지 */}
             </Route>
           </Routes>
         </main>

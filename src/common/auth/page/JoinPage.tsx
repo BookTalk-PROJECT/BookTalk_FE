@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { fetchJoin, fetchValidationEmail } from "../api/Join.mock";
-import { Join } from "../type/type";
+import { createMember, validationEmail } from "../api/Join.mock";
+import { Member } from "../type/type";
 
 
 const JoinPage: React.FC = () => {
@@ -60,7 +60,7 @@ const JoinPage: React.FC = () => {
       const emailJson = {
         email,
       }
-      const isExistMember = await fetchValidationEmail(emailJson);
+      const isExistMember = await validationEmail(emailJson);
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -124,7 +124,7 @@ const JoinPage: React.FC = () => {
 
     if (Object.keys(newErrors).length === 0) {
 
-      const address = `${normalAddress} ${detailAddress}`;
+      const address = `${normalAddress},${detailAddress}`;
       const phoneNumber = `${p_phoneNumber}-${b_phoneNumber}`;
 
       const joinData = {
@@ -137,7 +137,7 @@ const JoinPage: React.FC = () => {
         gender,
         authType,
       }
-      fetchJoin(joinData);
+      createMember(joinData);
 
       alert("회원가입 성공!");
       navigate("/login");

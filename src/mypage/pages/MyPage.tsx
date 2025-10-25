@@ -1,16 +1,23 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import React, { useEffect, useRef, useState } from "react";
 import MyPageSideBar from "../component/MyPageSideBar";
+import { getMyInformation, modifyMember } from "../api/MyPage";
+import { MyPageModifyMemberDataType } from "../type/MyPageBoardTable";
 
 const MyPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showSavedAlert, setShowSavedAlert] = useState(false);
+  const [name, setName] = useState("이름 없음");
+  const [email, setEmail] = useState("이메일 없음");
+  const [phonePrefix, setPhonePrefix] = useState("010");
+  const [phoneNumberAfter, setPhoneNumberAfter] = useState("");
+  const [normalAddress, setNormalAddress] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [gender, setGender] = useState("");
+  const [authType, setAuthType] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [passwordMatchMessage, setPasswordMatchMessage] = useState("");
-  const [phonePrefix, setPhonePrefix] = useState("010");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [address, setAddress] = useState("");
   const [detailAddress, setDetailAddress] = useState("");
   const [isActivityExpanded, setIsActivityExpanded] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -21,6 +28,22 @@ const MyPage: React.FC = () => {
     script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
     script.async = true;
     document.body.appendChild(script);
+
+    const fetchMemberData = async () => {
+      const getData = await getMyInformation();
+      const memberData = getData.data;
+      const splitPhoneNumber = memberData?.phoneNumber.split("-");
+      const splitAddress = memberData?.address.split(",");
+      setName(memberData?.name);
+      setEmail(memberData?.email);
+      setPhonePrefix(splitPhoneNumber[0]);
+      setPhoneNumberAfter(splitPhoneNumber[1]);
+      setNormalAddress(splitAddress[0]);
+      setDetailAddress(splitAddress[1]);
+      setBirthday(memberData.birth)
+      setGender(memberData.gender);
+    };
+    fetchMemberData();
   }, []);
 
   useEffect(() => {
@@ -48,20 +71,29 @@ const MyPage: React.FC = () => {
     if (password !== passwordConfirm) {
       newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
     }
-    if (!phoneNumber) {
+    if (!phoneNumberAfter) {
       newErrors.phoneNumber = "연락처를 입력하세요.";
     }
-    if (!address) {
+    if (!normalAddress || !detailAddress) {
       newErrors.address = "주소를 입력하세요.";
     }
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
+
+      const phoneNumber = phonePrefix+"-"+phoneNumberAfter;
+      const address = normalAddress+","+detailAddress;
+      const modifyData: MyPageModifyMemberDataType = {
+        phoneNumber,
+        password,
+        address
+      }
       setErrors({});
       setPasswordMatchMessage("");
       setIsEditing(false);
       setShowSavedAlert(true);
+      modifyMember(modifyData);
       setTimeout(() => {
         setShowSavedAlert(false);
       }, 3000);
@@ -78,7 +110,7 @@ const MyPage: React.FC = () => {
   const handleAddressSearch = () => {
     new (window as any).daum.Postcode({
       oncomplete: function (data: any) {
-        setAddress(data.address);
+        setNormalAddress(data.address);
       },
     }).open();
   };
@@ -124,13 +156,15 @@ const MyPage: React.FC = () => {
               />
             </div>
             <div className="text-center">
-              <h2 className="text-2xl font-bold">최형석 님</h2>
+              <h2 className="text-2xl font-bold">{name} 님</h2>
               <button onClick={handleWithdraw} className="bg-red-500 text-white px-4 py-1 rounded-md text-sm mt-2">
                 회원 탈퇴
               </button>
-              <p className="text-sm text-gray-700 mt-2">생년월일: 1997-02-20</p>
-              <p className="text-sm text-gray-700">이메일: gofftlqkf@naver.com</p>
-              <p className="text-sm text-gray-700">연락처: 010-xxxx-xxxx</p>
+              <p className="text-sm text-gray-700 mt-2">생년월일: {birthday}</p>
+              <p className="text-sm text-gray-700">이메일: {email}</p>
+              <p className="text-sm text-gray-700">
+                연락처: {phonePrefix}-{phoneNumberAfter}
+              </p>
             </div>
           </div>
         </section>
@@ -141,7 +175,7 @@ const MyPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block font-medium mb-1">이메일</label>
-              <input type="email" className="w-full border p-2 rounded-md" value="gower@dodo.com" readOnly />
+              <input type="email" className="w-full border p-2 rounded-md" value={email} readOnly />
             </div>
             <div>
               <label className="block font-medium mb-1">비밀번호</label>
@@ -172,14 +206,14 @@ const MyPage: React.FC = () => {
             </div>
             <div>
               <label className="block font-medium mb-1">이름</label>
-              <input type="text" className="w-full border p-2 rounded-md" value="최형석" readOnly />
+              <input type="text" className="w-full border p-2 rounded-md" value={name} readOnly />
             </div>
             <div className="md:col-span-2">
               <label className="block font-medium mb-1">주소</label>
               <input
                 type="text"
                 className="w-full border p-2 rounded-md mb-2 cursor-pointer"
-                value={address}
+                value={normalAddress}
                 placeholder="주소 검색 클릭"
                 onClick={isEditing ? handleAddressSearch : undefined}
                 readOnly
@@ -196,7 +230,7 @@ const MyPage: React.FC = () => {
             </div>
             <div>
               <label className="block font-medium mb-1">생년월일</label>
-              <input type="date" className="w-full border p-2 rounded-md" value="1997-02-20" readOnly />
+              <input type="date" className="w-full border p-2 rounded-md" value={birthday} readOnly />
             </div>
             <div>
               <label className="block font-medium mb-1">연락처</label>
@@ -216,8 +250,8 @@ const MyPage: React.FC = () => {
                 <input
                   type="text"
                   className="flex-1 border p-2 rounded-md"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  value={phoneNumberAfter}
+                  onChange={(e) => setPhoneNumberAfter(e.target.value)}
                   placeholder="번호 입력"
                   readOnly={!isEditing}
                 />
