@@ -1,11 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import CustomButton from "./CustomButton";
+import { useAuthStore } from "../../store";
 
 const Header = () => {
+  const {logout} = useAuthStore();
   const navigate = useNavigate();
   const logoutHandler = () => {
-    console.log("찍")
     localStorage.removeItem("accessToken");
+    logout();
     navigate("/");
   }
 

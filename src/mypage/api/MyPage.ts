@@ -81,7 +81,15 @@ export async function getMyPageCommunityComment(userId: string) {
     })();
   });
 }
+export const getMyBoardAll = async (pageNum: number): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
+  const posts = await axios.get<ApiResponse<PageResponse<PostSimpleInfo>>>(`${BASE_URL}/community/board/mylist?pageNum=${pageNum}`);
+  return posts.data;
+}
 
+export const getMyCommentAll = async (pageNum: number): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
+  const posts = await axios.get<ApiResponse<PageResponse<ReplySimpleInfo>>>(`${BASE_URL}/reply/mylist?pageNum=${pageNum}`);
+  return posts.data;
+}
 
 export const getBoardAdminAll = async (pageNum: number): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
   const posts = await axios.get<ApiResponse<PageResponse<PostSimpleInfo>>>(`${BASE_URL}/community/board/admin/all?pageNum=${pageNum}`);

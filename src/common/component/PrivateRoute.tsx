@@ -1,13 +1,16 @@
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store";
+import { JSX } from "react";
 
-const PrivateRoute = () => {
-  // const isAuthenticated = checkLogin(); // 인증 상태를 확인하는 함수
 
-  // if (!isAuthenticated) {
-  //   return <Navigate to="/login" replace />;
-  // }
+type PrivateRouteProps = {
+  children: JSX.Element;
+}
 
-  return <Outlet />;
-};
+function PrivateRoute({children}: PrivateRouteProps) {
+  const {isAuthenticated} = useAuthStore();
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />
+}
 
 export default PrivateRoute;

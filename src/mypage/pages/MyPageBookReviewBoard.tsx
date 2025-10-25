@@ -9,7 +9,7 @@ import { MyPageBoardType } from "../type/MyPageBoardTable";
 
 const MyPageBookReviewBoard: React.FC = () => {
   const row: { label: string; key: keyof MyPageBoardType }[] = [
-    { label: "게시물 번호", key: "id" },
+    { label: "게시물 번호", key: "board_code" },
     { label: "제목", key: "title" },
     { label: "분류", key: "category" },
     { label: "날짜", key: "date" },

@@ -5,7 +5,7 @@ import MyPageTable from "../component/MyPageTable";
 import MyPageBreadCrumb from "../component/MyPageBreadCrumb";
 import { MyPageBoardType } from "../type/MyPageBoardTable";
 import { PostSimpleInfo } from "../../common/component/Board/type/BoardDetail.types";
-import { getBoardAdminAll, recoverBoard, restrictBoard } from "../api/MyPage";
+import { getBoardAdminAll, getMyBoardAll, recoverBoard, restrictBoard } from "../api/MyPage";
 import DeleteModal from "../component/DeleteModal";
 import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
 import { Link } from "react-router-dom";
@@ -16,7 +16,7 @@ const MyPageCommunityBoard: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number>(0);
 
   const loadBoards = (pageNum: number) => {
-    getBoardAdminAll(pageNum).then((res) => {
+    getMyBoardAll(pageNum).then((res) => {
       setPosts(res.data.content);
       setTotalPages(res.data.totalPages);
       setPostKeys(posts.length > 0 ? Object.keys(posts[0]) : []);
@@ -55,9 +55,7 @@ const MyPageCommunityBoard: React.FC = () => {
     { label: "게시물 번호", key: "board_code" },
     { label: "제목", key: "title" },
     { label: "분류", key: "category" },
-    { label: "날짜", key: "date" },
-    { label: "관리", key: "manage" },
-    { label: "사유", key: "deleteReason" },
+    { label: "날짜", key: "date" }
   ];
 
   const filterOption: { label: string; key: string }[] = [row[0], row[1], row[2], row[3]];
@@ -70,13 +68,13 @@ const MyPageCommunityBoard: React.FC = () => {
         {row.map(({ key }) => {
           if (key === "board_code") {
             return (
-              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <td key={key} className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                 {post[key]}
               </td>
             );
           } else if(key === "title") {
             return (
-              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <td key={key} className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                 <Link to={`/boardDetail/${post["board_code"]}`}>
                   {post[key]}
                 </Link>
@@ -103,7 +101,7 @@ const MyPageCommunityBoard: React.FC = () => {
           } else if (key === "deleteReason") {
             return (
               post[key] && 
-              (<td key={key} className="relative group overflow-visible flex items-center justify-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              (<td key={key} className="relative group overflow-visible flex items-center justify-center px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                 <div className="w-4 h-4 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xl font-bold">
                   i
                 </div>
@@ -114,7 +112,7 @@ const MyPageCommunityBoard: React.FC = () => {
             );
           } else {
             return (
-              <td key={key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td key={key} className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                 {post[key]}
               </td>
             );

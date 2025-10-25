@@ -49,13 +49,12 @@ const AppContent = () => {
           className={`grid-in-main ${location.pathname !== "/login" || !location.pathname.includes("/mypage") ? "my-3 px-[24px]" : ""}`}>
           <Routes>
             {/* <Route path="/login" element={<LoginPage />} /> */}
-            <Route element={<PrivateRoute />}>
               <Route path="" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<DashBoardPage />} />
               {/* Board */}
               <Route path="/boardList" element={<BoardList />} />
-              <Route path="/boardCreate" element={<BoardCreate />} />
-              <Route path="/boardEdit" element={< BoardEdit/>} />
+              <Route path="/boardCreate" element={<PrivateRoute><BoardCreate /></PrivateRoute>} />
+              <Route path="/boardEdit" element={<PrivateRoute>< BoardEdit/></PrivateRoute>} />
               <Route path="/boardDetail/:postId" element={<BoardDetail />} />
               {/* Gathering */}
               <Route path="/gathering">
@@ -76,26 +75,26 @@ const AppContent = () => {
               <Route path="/join" element={<JoinPage />} /> {/* 최형석 회원 가입 페이지 */}
               <Route path="/login" element={<LoginPage />} /> {/* 최형석 로그인 페이지 */}
               {/* MyPage */}
-              <Route path="/mypage" element={<MyPage />} /> {/* 최형석 마이 페이지 */}
-              <Route path="/mypage/bookreview/board" element={<MyPageBookReviewBoard />} />{" "}
+              <Route path="/mypage" element={<PrivateRoute><MyPage /></PrivateRoute>} /> {/* 최형석 마이 페이지 */}
+              <Route path="/mypage/bookreview/board" element={<PrivateRoute><MyPageBookReviewBoard /></PrivateRoute>} />{" "}
               {/* 최형석 마이 페이지 북리뷰 게시판  */}
-              <Route path="mypage/bookreview/comment" element={<MyPageBookReviewComment />} />{" "}
+              <Route path="mypage/bookreview/comment" element={<PrivateRoute><MyPageBookReviewComment /></PrivateRoute>} />{" "}
               {/* 최형석 마이 페이지 북리뷰 댓글  */}
-              <Route path="/mypage/community/board" element={<MyPageCommunityBoard />} />{" "}
+              <Route path="/mypage/community/board" element={<PrivateRoute><MyPageCommunityBoard /></PrivateRoute>} />{" "}
               {/* 최형석 마이 페이지 커뮤니티 게시판  */}
-              <Route path="/mypage/community/comment" element={<MyPageCommunityComment />} /> {/* MyPage_Gathering */}
-              <Route path="/mypage/gathering" element={<MyPageMyGatherings />} /> {/* 최형석 내 모임 */}
-              <Route path="/mypage/gathering/board" element={<MyPageGatheringBoard />} /> {/* 최형석 모임 게시판  */}
-              <Route path="/mypage/gathering/comment" element={<MyPageGatheringComment />} /> {/* 최형석 모임 댓글  */}
-              <Route path="/mypage/gathering/manage/request" element={<MyPageGatheringRequestManage />} />
+              <Route path="/mypage/community/comment" element={<PrivateRoute><MyPageCommunityComment /></PrivateRoute>} /> {/* MyPage_Gathering */}
+              <Route path="/mypage/gathering" element={<PrivateRoute><MyPageMyGatherings /></PrivateRoute>} /> {/* 최형석 내 모임 */}
+              <Route path="/mypage/gathering/board" element={<PrivateRoute><MyPageGatheringBoard /></PrivateRoute>} /> {/* 최형석 모임 게시판  */}
+              <Route path="/mypage/gathering/comment" element={<PrivateRoute><MyPageGatheringComment /></PrivateRoute>} /> {/* 최형석 모임 댓글  */}
+              <Route path="/mypage/gathering/manage/request" element={<PrivateRoute><MyPageGatheringRequestManage /></PrivateRoute>} />
               {/* 최형석 모임 신청 관리  */}
-              <Route path="/mypage/gathering/manage/approval" element={<MyPageGatheringApprovalManage />} />{" "}
+              <Route path="/mypage/gathering/manage/approval" element={<PrivateRoute><MyPageGatheringApprovalManage /></PrivateRoute>} />{" "}
               {/* 최형석 모임 승인 관리  */}
               {/* AdminPage */}
-              <Route path="/admin/board" element={<AdminPageBoard />} /> {/* 최형석 관리자 게시물 관리 페이지 */}
-              <Route path="/admin/comment" element={<AdminPageComment />} /> {/* 최형석 관리자 댓글 관리 페이지 */}
-              <Route path="/admin/category" element={<AdminCategory />} /> {/* 최형석 관리자 카테고리 페이지 */}
-              <Route path="/admin/role" element={<AdminRoleManage />} /> {/* 최형석 관리자 권한관리 페이지 */}
+              <Route path="/admin/board" element={<PrivateRoute><AdminPageBoard /></PrivateRoute>} /> {/* 최형석 관리자 게시물 관리 페이지 */}
+              <Route path="/admin/comment" element={<PrivateRoute><AdminPageComment /></PrivateRoute>} /> {/* 최형석 관리자 댓글 관리 페이지 */}
+              <Route path="/admin/category" element={<PrivateRoute><AdminCategory /></PrivateRoute>} /> {/* 최형석 관리자 카테고리 페이지 */}
+              <Route path="/admin/role" element={<PrivateRoute><AdminRoleManage /></PrivateRoute>} /> {/* 최형석 관리자 권한관리 페이지 */}
             </Route>
           </Routes>
         </main>
