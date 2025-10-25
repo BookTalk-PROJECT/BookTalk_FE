@@ -16,7 +16,6 @@ import { createGathering, mockBooks, mockQuestions, mockSearchResults } from "..
 
 // ★ 국립중앙도서관 OpenAPI (프론트 하드코딩 - 개발용)
 const NLK_API_BASE = "https://www.nl.go.kr/NL/search/openApi/search.do";
-const NLK_API_KEY  = import.meta.env.ISBN_API_KEY;
 
 // 목록 페이지 크기
 const PAGE_SIZE_DEFAULT = 20;
@@ -165,7 +164,7 @@ const GatheringCreatePage: React.FC = () => {
     try {
       const url =
         `${NLK_API_BASE}` +
-        `?key=${encodeURIComponent(NLK_API_KEY)}` +
+        `?key=${encodeURIComponent('5703ff0e81c46e44a276655ac78421a5b94bd4d7e3cb5ddf07db4db6d6509803')}` +
         `&apiType=json` +
         `&srchTarget=title` +
         `&kwd=${encodeURIComponent(kwd)}` +

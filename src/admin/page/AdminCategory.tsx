@@ -113,7 +113,8 @@ const AdminCategory: React.FC = () => {
     for (let i = 0; i < newCategories.length; i++) {
       if (newCategories[i].categoryId === categoryId) {
         let category = { ...newCategories[i] };
-        if(category.isEditing) {
+        if(categoryId > 0 && category.isEditing) {
+          console.log(categoryId)
           await editCategory(category.categoryId, category.value, category.isActive);
         }
         if(categoryId <= 0) {

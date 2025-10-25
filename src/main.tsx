@@ -38,6 +38,7 @@ const AppContent = () => {
   const location = useLocation();
 
   return (
+    <>
     <div>
       <Header />
       <div>
@@ -95,13 +96,14 @@ const AppContent = () => {
               <Route path="/admin/comment" element={<PrivateRoute><AdminPageComment /></PrivateRoute>} /> {/* 최형석 관리자 댓글 관리 페이지 */}
               <Route path="/admin/category" element={<PrivateRoute><AdminCategory /></PrivateRoute>} /> {/* 최형석 관리자 카테고리 페이지 */}
               <Route path="/admin/role" element={<PrivateRoute><AdminRoleManage /></PrivateRoute>} /> {/* 최형석 관리자 권한관리 페이지 */}
-            </Route>
           </Routes>
         </main>
         {/* {location.pathname !== "/login" && <NavBar />} */}
       </div>
       <Footer />
     </div>
+    </>
+    
   );
 };
 
