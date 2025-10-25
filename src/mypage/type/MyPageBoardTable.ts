@@ -62,3 +62,19 @@ export interface AdminCommentType extends MyPageBookCommentType {
   deleteReason: string;
   category: string;
 }
+
+export interface MyPageMemberDataType {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  birth: string;
+  gender: string;
+  authType: string;
+}
+
+export interface MyPageModifyMemberDataType {
+  phoneNumber: string;
+  password: string;
+  address: string;
+}

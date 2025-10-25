@@ -57,10 +57,10 @@ const GatheringDetailPage: React.FC = () => {
                 </CustomButton>
               </div>
               <div className="overflow-hidden rounded-lg border">
-                <BoardTable posts={paginatedPosts} requestUrl={`gatheringlist/${gatheringId}/gatheringboard`} />
+                {/* <BoardTable posts={paginatedPosts} requestUrl={`gatheringlist/${gatheringId}/gatheringboard`} /> */}
               </div>
 
-              <Pagenation totalPages={totalPages} loadPageByPageNum={loadPageByPageNum} />
+              {/* <Pagenation totalPages={totalPages} loadPageByPageNum={loadPageByPageNum} /> */}
             </div>
           </div>
         </div>
