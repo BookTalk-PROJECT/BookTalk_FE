@@ -21,29 +21,39 @@ export const sampleQuestions: RecruitQuestion[] = [
   },
 ];
 
-// 모임 질문 정보보 API 요청 함수
 export const GetRecruitQuestion = async (gatheringId: string): Promise<RecruitQuestion[]> => {
-  console.log("모임 " + gatheringId + "번 질문목록 가져온데이? ");
+  console.log(`모임 ${gatheringId}번 질문목록 가져온데이?`);
 
-  const response = await axios.get(`/api/gathering/${gatheringId}/recruitquestions`);
+  // (선택) 인증이 필요한 경우 토큰 헤더 첨부
+  const token = localStorage.getItem("accessToken");
+  const config = token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
 
-  const serverQuestions = response.data.map((q: any, index: number) => ({
-    id: q.id || index + 1,
-    question: q.content || q.question,
-    required: true,
-    maxLength: 300,
+  const res = await axios.get(`${API_BASE_URL}/gathering/${gatheringId}/recruitQuestions`, config);
+
+  // 백엔드가 배열을 그대로 주는 경우와 ResponseDto로 감싼 경우 모두 처리
+  const payload = Array.isArray(res.data) ? res.data : res.data?.data ?? [];
+
+  // 프론트에서 사용하기 위한 표준화 (required/maxLength는 기본값 유지)
+  const serverQuestions: RecruitQuestion[] = payload.map((q: any, index: number) => ({
+    id: q.id ?? q.recruit_question ?? index + 1,
+    question: q.content ?? q.question ?? "",
+    required: q.required ?? true,
+    maxLength: q.maxLength ?? 300,
   }));
-  return serverQuestions.data;
+
+  return serverQuestions;
 };
 
 // POST: 모임 가입 신청 API
 export const GatheringJoinRequest = async (gatheringId: string, answers: JoinAnswer[]) => {
-  console.log("제출할 답변 목록 보낸다이? :", answers); // 콘솔 출력
+  const token = localStorage.getItem("accessToken");
+  const config = token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
 
-  // 실제 요청
-  const res = await axios.post(`/api/gathering/${gatheringId}/recruitrequest`, {
-    answers: answers,
-  });
-
-  return res.data;
+  return (
+    await axios.post(
+      `${API_BASE_URL}/gathering/${gatheringId}/recruitRequest`,
+      { answers }, // { answers: [{questionId, answer}, ...] }
+      config
+    )
+  ).data;
 };

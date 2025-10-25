@@ -29,6 +29,7 @@ import MyPageMyGatherings from "./mypage/pages/MyPageMyGatherings";
 import GatheringDetailPage from "./gathering/pages/GatheringDetailPage";
 import BoardCreate from "./community/board/pages/BoardCreate";
 import BoardDetail from "./community/board/pages/BoardDetail";
+import GatheringJoin from "./gathering/pages/GatheringJoinPage";
 import "./common/auth/config/tokenInterceptor"
 import BoardEdit from "./community/board/pages/BoardEdit";
 
@@ -61,7 +62,8 @@ const AppContent = () => {
                 {/* 모임 관련 */}
                 <Route index element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
                 <Route path="create" element={<GatheringCreatePage />} /> {/* 이성종 모임 상세 */}
-                <Route path=":gatheringId" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
+                <Route path="detail/:gatheringId" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
+                <Route path=":gatheringId/join" element={<GatheringJoin />} />{/* 이성종 모임 참여 신청 */}
                 <Route path=":gatheringId/gatheringboard">
                   {" "}
                   {/* 모임 게시판 관련 */}
