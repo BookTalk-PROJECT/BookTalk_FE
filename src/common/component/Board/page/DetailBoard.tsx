@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import CustomButton from "../../CustomButton";
-import { GetBoardDetailRequest } from "../type/BoardDetail.types";
-import { exampleData } from "../api/DetailBoardRequest";
-import { ReplyRequest } from "../../../../community/board/type/reply";
+import { ReplyRequest } from "../../../../community/reply/type/reply";
+import { deleteReply, editReply } from "../../../../community/reply/api/replyApi";
+import { PostDetail } from "../type/BoardDetail.types";
+import { ApiResponse } from "../../../type/ApiResponse";
 
 interface DetailBoardProps {
   postCode: string;
-  //모임 조회 props
-  GetBoardDetail: (postId: string) => Promise<GetBoardDetailRequest>;
+  GetBoardDetail: (postId: string) => Promise<ApiResponse<PostDetail>>;
   DeleteBoard: (postId: string) => void;
   //게시글 좋아요 props arg1 : 게시글 아이디, arg2: 모임 여부
   ToggleLikePost: (postId: string) => void;
@@ -17,12 +17,19 @@ interface DetailBoardProps {
 
 //postId는 커뮤Id or 모임Id
 const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, DeleteBoard, ToggleLikePost, CreateReply }) => {
-  //상세 조회 상태 관리
-  const [detailData, setDetailData] = useState<GetBoardDetailRequest>();
-  // 댓글 상태 관리
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [detailData, setDetailData] = useState<PostDetail>();
   const [parentCommentContent, setParentCommentContent] = useState<string>(""); // 부모 댓글 입력
   const [replyContent, setReplyContent] = useState<string>(""); // 댓글/대댓글 공통 입력
   const [reReply_yn, setReReply_yn] = useState<string | null>(null); // 부모 댓글 여부(대댓글 or 댓글 판단)
+  const [editingReplyId, setEditingReplyId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState<string>(""); // 수정 중인 글 내용
+
+  const handleEditOn = (replyCode: string, currentContent: string) => {
+    setEditingReplyId(replyCode);
+    setEditContent(currentContent);
+  };
 
   // 댓글 데이터 불러오기
   useEffect(() => {
@@ -40,9 +47,15 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
       setDetailData(data.data);
     } catch (error) {
       console.error("API 요청 오류:", error);
-      setDetailData(exampleData);
     }
   };
+
+  const handleDeleteBoard = async (postId: string) => {
+    if(confirm("게시글을 삭제하시겠습니까?")) {
+      await DeleteBoard(postId);
+      navigate(`/boardList?categoryId=${searchParams.get('categoryId')}`)
+    }
+  }
 
   // 좋아요 토글 상태관리 (Optimistic UI)
   const handleLikeToggle = async () => {
@@ -85,6 +98,18 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
     }
   };
 
+  const handleEditReply = async (replyCode: string, content: string) => {
+    // editReply(replyCode, content);
+    await handleEditOn(replyCode, content);
+  }
+
+  const handleDeleteReply = async (replyCode: string) => {
+    if(confirm("댓글을 삭제하시겠습니까?")) {
+      await deleteReply(replyCode);
+      loadDetailData();
+    }
+  }
+
   // 댓글 등록 로직 (간결한 구조)
   const handleReplySubmit = async () => {
     if (!postCode) {
@@ -118,7 +143,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
 
     // 댓글 추가 (Optimistic UI) - 안전한 타입 처리
     setDetailData((prev) => {
-      if (!prev) return prev as unknown as GetBoardDetailRequest; // prev가 undefined일 경우 안전하게 반환
+      if (!prev) return prev as unknown as PostDetail; // prev가 undefined일 경우 안전하게 반환
 
       // 부모 댓글 추가
       if (reReply_yn === null) {
@@ -128,7 +153,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
             ...(prev.replies ?? []), // replys가 undefined일 경우 빈 배열로 처리
             newReply,
           ],
-        } as GetBoardDetailRequest; // 명시적 타입 지정
+        } as PostDetail; // 명시적 타입 지정
       }
 
       // 대댓글 추가
@@ -139,14 +164,14 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
             return {
               ...parentReply,
               reReply: [
-                ...(parentReply.reReply ?? []), // reReply가 undefined일 경우 빈 배열로 처리
+                ...(parentReply.replies ?? []), // reReply가 undefined일 경우 빈 배열로 처리
                 newReply,
               ],
             };
           }
           return parentReply;
         }),
-      } as GetBoardDetailRequest; // 명시적 타입 지정
+      } as PostDetail; // 명시적 타입 지정
     });
 
     try {
@@ -172,7 +197,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
             replies: prev.replies?.filter((reply) => reply.reply_code !== newReply.reply_code),
           };
         }
-
+        
         // 대댓글 롤백
         return {
           ...prev,
@@ -180,7 +205,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
             parentReply.reply_code === reReply_yn
               ? {
                   ...parentReply,
-                  reReply: parentReply.reReply?.filter((reReply) => reReply.reply_code !== newReply.reply_code),
+                  reReply: parentReply.replies?.filter((reReply) => reReply.reply_code !== newReply.reply_code),
                 }
               : parentReply
           ),
@@ -205,8 +230,9 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
   };
 
   if (!postCode) {
-    return <div>잘못된 접근입니다.</div>; // 또는 LoadingBar 반환
+    return <div>잘못된 접근입니다.</div>;
   }
+
   return (
     <div>
       <div className="p-6 border-t">
@@ -214,12 +240,12 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold">{detailData?.post.title}</h1>
             <div className="flex items-center space-x-4">
-              <CustomButton onClick={() => alert("모임 게시글 상세 수정 버튼 클릭릭")} color="white">
+              <CustomButton onClick={() => navigate(`/boardEdit?postCode=${postCode}&categoryId=${searchParams.get('categoryId')}`)} color="white">
                 <>
                   <i className="fas fa-edit mr-2"></i>수정
                 </>
               </CustomButton>
-              <CustomButton onClick={() => DeleteBoard(postCode)} color="red">
+              <CustomButton onClick={() => handleDeleteBoard(postCode)} color="red">
                 <>
                   <i className="fas fa-trash-alt mr-2"></i>삭제
                 </>
@@ -246,14 +272,10 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
             </span>
           </div>
         </div>
-      </div>
-
-      <div className="mb-8">
-        {/* <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden mb-6">
-          <img src={detailData?.post.imageUrl} alt="독서모임 사진" className="w-full h-full object-cover" />
-        </div> */}
-        <div className="prose max-w-none">
-          <p className="text-gray-800 leading-relaxed">{detailData?.post.content}</p>
+        <div className="mb-8">
+          <div className="prose max-w-none">
+            <p className="text-gray-800 leading-relaxed">{detailData?.post.content}</p>
+          </div>
         </div>
       </div>
 
@@ -270,7 +292,19 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
       <div className="border-t pt-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-bold">
-            댓글 <span className="text-gray-500">{detailData?.replies?.length}</span>
+            댓글 
+            <span className="text-gray-500">{
+              (function countReplies(replies = []) {
+                let count = 0;
+                for (const reply of replies) {
+                  count += 1;
+                  if (Array.isArray(reply.replies) && reply.replies.length > 0) {
+                    count += countReplies(reply.replies);
+                  }
+                }
+                return count;
+              })(detailData?.replies)}
+            </span>
           </h3>
         </div>
         <div className="mb-6">
@@ -313,9 +347,44 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
                   <CustomButton onClick={() => handleReplyClick(parentReply.reply_code)} color="none">
                     <i className="fas fa-reply mr-1"></i>답글
                   </CustomButton>
+                  <CustomButton onClick={() => handleEditReply(parentReply.reply_code, parentReply.content)} color="none">
+                    <i className="fas fa-pencil"></i>수정
+                  </CustomButton>
+                  <CustomButton onClick={() => handleDeleteReply(parentReply.reply_code)} color="none">
+                    <i className="fas fa-trash mr-1"></i>삭제
+                  </CustomButton>
                 </div>
               </div>
-              <p className="text-gray-800">{parentReply.content}</p>
+              {editingReplyId === parentReply.reply_code ? (
+                <textarea
+                  className="w-full p-2 border rounded"
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  rows={4}
+                />
+              ) : (
+                <p className="text-gray-800">{parentReply.content}</p>
+              )}
+              {editingReplyId === parentReply.reply_code && (
+                <div className="mt-2 space-x-2 flex justify-end">
+                  <button
+                    onClick={ async () => {
+                      await editReply(editingReplyId!, editContent);
+                      loadDetailData();
+                      setEditingReplyId(null);
+                    }}
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow transition"
+                  >
+                    저장
+                  </button>
+                  <button
+                    onClick={() => setEditingReplyId(null)}
+                    className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition"
+                  >
+                    취소
+                  </button>
+                </div>
+              )}
 
               {/* 대댓글 렌더링 (있는 경우만) */}
               {parentReply.replies && parentReply.replies.length > 0 && (
@@ -335,9 +404,44 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
                             <i className="fas fa-heart mr-1 text-red-500"></i>
                             {reReply.likes}
                           </CustomButton>
+                          <CustomButton onClick={() => handleEditReply(reReply.reply_code, reReply.content)} color="none">
+                            <i className="fas fa-pencil"></i>수정
+                          </CustomButton>
+                          <CustomButton onClick={() => handleDeleteReply(reReply.reply_code)} color="none">
+                            <i className="fas fa-trash mr-1"></i>삭제
+                          </CustomButton>
                         </div>
                       </div>
-                      <p className="text-gray-800">{reReply.content}</p>
+                      {editingReplyId === reReply.reply_code ? (
+                        <textarea
+                          className="w-full p-2 border rounded"
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                          rows={4}
+                        />
+                      ) : (
+                        <p className="text-gray-800">{reReply.content}</p>
+                      )}
+                      {editingReplyId === reReply.reply_code && (
+                        <div className="mt-2 space-x-2 flex justify-end">
+                          <button
+                            onClick={ async () => {
+                              await editReply(editingReplyId!, editContent);
+                              loadDetailData();
+                              setEditingReplyId(null);
+                            }}
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow transition"
+                          >
+                            저장
+                          </button>
+                          <button
+                            onClick={() => setEditingReplyId(null)}
+                            className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition"
+                          >
+                            취소
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -367,7 +471,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
               <i className="fas fa-arrow-left mr-2"></i>이전 글
             </>
           </CustomButton>
-          <CustomButton onClick={() => alert("다음 게시글 버튼 클릭함")} color="black" customClassName="px-4 py-2">
+          <CustomButton onClick={() => navigate(`/boardList?categoryId=${searchParams.get("categoryId")}`)} color="black" customClassName="px-4 py-2">
             <>
               <i className="fas fa-list mr-2"></i>목록
             </>

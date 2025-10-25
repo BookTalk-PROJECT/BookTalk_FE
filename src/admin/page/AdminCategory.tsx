@@ -3,26 +3,29 @@ import React, { useEffect, useState } from "react";
 import Pagenation from "../../common/component/Pagination";
 import MyPageSideBar from "../../mypage/component/MyPageSideBar";
 import MyPageManageButton from "../../mypage/component/MyPageManageButton";
-import { AdminCategoryT, AdminSubCategoryT } from "../../community/category/type/category";
-import { createCategory, getCategories } from "../../community/category/api/category";
+import { createCategory, deleteCategory, editCategory, getAdminCategories, getCategories } from "../../community/category/api/categoryApi";
+import { AdminCategoryT } from "../../community/category/type/category";
 
 const AdminCategory: React.FC = () => {
   const [categories, setCategories] = useState<AdminCategoryT[]>([]);
-
-  useEffect(() => {
-    //카테고리 조회 API 호출
-    getCategories().then((res) => {
+  const [nextId, setNextId] = useState(-1);
+  const [sortConfig, setSortConfig] = useState({ field: "", direction: "asc" });
+  const [totalPages, setTotalPages] = useState(0);
+  
+  const loadCategories = (pageNum: number) => {
+    getAdminCategories().then((res) => {
       //categories State Update
       if(res.data) {
         setCategories(res.data);
       }
     });
-  }, [])
+  }
 
-  const [nextId, setNextId] = useState(-1);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
-  const [sortConfig, setSortConfig] = useState({ field: "", direction: "asc" });
+  useEffect(() => {
+    //카테고리 조회 API 호출
+    loadCategories(1);
+  }, [])
+  
   const handleSort = (field: string) => {
     setSortConfig((prev) => ({
       field,
@@ -41,10 +44,6 @@ const AdminCategory: React.FC = () => {
         return 0;
     }
   });
-  const totalPages = Math.ceil(categories?.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedCategories.slice(indexOfFirstItem, indexOfLastItem);
 
   const addCategory = () => {
     const newCategory: AdminCategoryT = {
@@ -114,10 +113,11 @@ const AdminCategory: React.FC = () => {
     for (let i = 0; i < newCategories.length; i++) {
       if (newCategories[i].categoryId === categoryId) {
         let category = { ...newCategories[i] };
-        if(categoryId > 0) {
-          // 메인 카테고리 데이터 수정 API 호출
-        } else {
-          const savedMainCategoryId = (await createCategory(category.value)).data;
+        if(category.isEditing) {
+          await editCategory(category.categoryId, category.value, category.isActive);
+        }
+        if(categoryId <= 0) {
+          const savedMainCategoryId = (await createCategory(category.value, category.isActive)).data;
           category.categoryId = savedMainCategoryId;
         }
         category.isEditing = !category.isEditing;
@@ -141,19 +141,19 @@ const AdminCategory: React.FC = () => {
           let subCategory = { ...newSubCategories[j] };
 
           if (categoryId > 0) {
-            if (subCategoryId > 0) {
-              // 수정 API 호출 예: await updateSubCategory(...)
-              // 필요 시 상태 업데이트 추가
-            } else {
-              const savedSubCategoryId = (await createCategory(subCategory.value, categoryId)).data;
+            if(subCategory.categoryId > 0 && subCategory.isEditing) {
+              await editCategory(subCategory.categoryId, subCategory.value, subCategory.isActive);
+            }
+            if(subCategory.categoryId <= 0) {
+              const savedSubCategoryId = (await createCategory(subCategory.value, subCategory.isActive, categoryId)).data;
               subCategory.categoryId = savedSubCategoryId;
             }
           } else {
-            const savedMainCategoryId = (await createCategory(category.value)).data;
+            const savedMainCategoryId = (await createCategory(category.value, category.isActive )).data;
             category.categoryId = savedMainCategoryId;
             category.isEditing = !category.isEditing;
 
-            const savedSubCategoryId = (await createCategory(subCategory.value, savedMainCategoryId)).data;
+            const savedSubCategoryId = (await createCategory(subCategory.value, subCategory.isActive, savedMainCategoryId)).data;
             subCategory.categoryId = savedSubCategoryId;
           }
 
@@ -169,23 +169,27 @@ const AdminCategory: React.FC = () => {
 
   setCategories(newCategories);
 };
-  const deleteCategory = (categoryId: number) => {
-    // 카테고리 삭제 API 호출
-    setCategories(categories.filter((category) => category.categoryId !== categoryId));
+  const handleDeleteCategory = (categoryId: number) => {
+    if(confirm("카테고리를 삭제하시겠습니까?")) {
+      deleteCategory(categoryId);
+      setCategories(categories.filter((category) => category.categoryId !== categoryId));
+    }
   };
-  const deleteSubCategory = (categoryId: number, subCategoryId: number) => {
-    // 카테고리 삭제 API 호출
-    setCategories(
-      categories.map((category) => {
-        if (category.categoryId === categoryId) {
-          return {
-            ...category,
-            subCategories: category.subCategories.filter((sub) => sub.categoryId !== subCategoryId),
-          };
-        }
-        return category;
-      })
-    );
+  const handleDeleteSubCategory = (categoryId: number, subCategoryId: number) => {
+    if(confirm("카테고리를 삭제하시겠습니까?"))  {
+      deleteCategory(subCategoryId)
+      setCategories(
+        categories.map((category) => {
+          if (category.categoryId === categoryId) {
+            return {
+              ...category,
+              subCategories: category.subCategories.filter((sub) => sub.categoryId !== subCategoryId),
+            };
+          }
+          return category;
+        })
+      );
+    }
   };
   const toggleActive = (categoryId: number, isMain: boolean, subCategoryId?: number) => {
     setCategories(
@@ -247,7 +251,7 @@ const AdminCategory: React.FC = () => {
           </div>
         </div>
         <div className="p-6">
-          {currentItems.map((category) => (
+          {categories.map((category) => (
             <div key={category.categoryId} className="mb-4">
               <div className="grid grid-cols-5 gap-4 items-center bg-white p-4 border-b rounded">
                 {/* [1] 분류코드 + 확장 버튼 */}
@@ -294,7 +298,7 @@ const AdminCategory: React.FC = () => {
                     {
                       label: "삭제",
                       color: "red",
-                      onClick: () => deleteCategory(category.categoryId),
+                      onClick: () => handleDeleteCategory(category.categoryId),
                     },
                   ]}
                 />
@@ -338,7 +342,7 @@ const AdminCategory: React.FC = () => {
                           {
                             label: "삭제",
                             color: "red",
-                            onClick: () => deleteSubCategory(category.categoryId, subCategory.categoryId),
+                            onClick: () => handleDeleteSubCategory(category.categoryId, subCategory.categoryId),
                           },
                         ]}
                       />
@@ -349,7 +353,6 @@ const AdminCategory: React.FC = () => {
             </div>
           ))}
         </div>
-        <Pagenation totalPages={12} loadPageByPageNum={(num) => {}} />
       </div>
     </div>
   );

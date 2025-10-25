@@ -9,7 +9,7 @@ import { MyPageBookCommentType } from "../type/MyPageBoardTable";
 
 const MyPageBookReviewComment: React.FC = () => {
   const row: { label: string; key: keyof MyPageBookCommentType }[] = [
-    { label: "번호", key: "id" },
+    { label: "번호", key: "board_code" },
     { label: "글 제목", key: "title" },
     { label: "작성자", key: "author" },
     { label: "내용", key: "content" },

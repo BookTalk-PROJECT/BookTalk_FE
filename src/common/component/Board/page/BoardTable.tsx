@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Post } from "../../../type/BoardTable";
-import { PostInfo } from "../type/BoardDetail.types";
+import { PostSimpleInfo } from "../type/BoardDetail.types";
 
 interface BoadTableProps {
-  posts: PostInfo[];
+  posts: PostSimpleInfo[];
+  categoryId: string;
   requestUrl: string;
 }
 
-const BoardTable: React.FC<BoadTableProps> = ({ posts, requestUrl }) => {
+const BoardTable: React.FC<BoadTableProps> = ({ posts, categoryId, requestUrl }) => {
   const [sortField, setSortField] = useState("date");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
@@ -94,7 +94,7 @@ const BoardTable: React.FC<BoadTableProps> = ({ posts, requestUrl }) => {
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.board_code}</td>
             <td className="px-6 py-4 text-sm">
               {/* 커뮤니티 또는 모임으로 분기 존재함 requestPosition에 url 받아옴 */}
-              <a href={`/${requestUrl}/${post.board_code}`} className="text-gray-900 hover:text-blue-600">
+              <a href={`/${requestUrl}/${post.board_code}?categoryId=${categoryId}`} className="text-gray-900 hover:text-blue-600">
                 {post.title}
               </a>
             </td>
