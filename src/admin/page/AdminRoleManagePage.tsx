@@ -4,9 +4,9 @@ import MyPageSideBar from "../../mypage/component/MyPageSideBar";
 import MyPageTable from "../../mypage/component/MyPageTable";
 import MyPageBreadCrumb from "../../mypage/component/MyPageBreadCrumb";
 import MyPageManageRowButton from "../../mypage/component/button/MyPageManageRowButton";
-import { MyPageBoardType } from "../../mypage/type/MyPageBoardTable";
 import { getAllMember } from "../api/role";
 import { Memberboard } from "../type/role";
+import Button from "../../common/component/Button";
 
 const AdminRoleManage: React.FC = () => {
 
@@ -35,8 +35,8 @@ const AdminRoleManage: React.FC = () => {
 
   const postKeys = memberList.length > 0 ? Object.keys(memberList[0]) : [];
 
-  const clickManageButton = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    console.log(event.currentTarget.name);
+  const handleClick = () => {
+    console.log('Button clicked!');
   };
 
   return (
@@ -58,7 +58,7 @@ const AdminRoleManage: React.FC = () => {
               manageOption={
                 <MyPageManageRowButton
                   actions={[
-                    { label: "수정", color: "green", onClick: clickManageButton },
+                    { label: "수정", color: "green", onClick: handleClick},
                   ]}
                 />
               }
