@@ -8,6 +8,11 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const {login} = useAuthStore();
   const navigatge = useNavigate();
+  const NAVER_CLIENT_ID = import.meta.env.VITE_NAVER_CLIENT_ID;
+  const NAVER_STATE = import.meta.env.VITE_NAVER_STATE;
+  const NAVER_CALLBACK_URL = import.meta.env.VITE_NAVER_CALLBACK_URL;
+  const KAKAO_RESTAPI_KEY = import.meta.env.VITE_KAKAO_RESTAPI_KEY;
+  const KAKAO_CALLBACK_URL = import.meta.env.VITE_KAKAO_CALLBACK_URL;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 폼 전송 기본 동작 막기
@@ -86,13 +91,13 @@ const LoginPage: React.FC = () => {
 
             <div className="mt-6 space-y-3">
               <button
-                onClick={() => (window.location.href = "https://kauth.kakao.com/oauth/authorize")}
+                onClick={() => (window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_RESTAPI_KEY}&redirect_uri=${KAKAO_CALLBACK_URL}`)}
                 className="w-full flex items-center justify-center bg-[#FEE500] text-[#000000] py-3 text-sm font-medium rounded">
                 <i className="fa-solid fa-comment text-[#000000] mr-2"></i>
                 카카오로 로그인하기
               </button>
               <button
-                onClick={() => (window.location.href = "https://nid.naver.com/oauth2.0/authorize")}
+                onClick={() => (window.location.href = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${NAVER_STATE}&redirect_uri=${NAVER_CALLBACK_URL}`)}
                 className="w-full flex items-center justify-center bg-[#03C75A] text-white py-3 text-sm font-medium rounded">
                 <i className="fa-solid fa-n text-white mr-2"></i>
                 네이버로 로그인하기

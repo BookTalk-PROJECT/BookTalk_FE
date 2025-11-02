@@ -33,6 +33,8 @@ import GatheringJoin from "./gathering/pages/GatheringJoinPage";
 import "./common/auth/config/tokenInterceptor"
 import BoardEdit from "./community/board/pages/BoardEdit";
 import AdminRoleManage from "./admin/page/AdminRoleManagePage";
+import NaverRedirectPage from "./common/auth/page/NaverRedirecPage";
+import KakaoRedirectPage from "./common/auth/page/KakaoRedirecPage";
 
 const AppContent = () => {
   const location = useLocation();
@@ -96,6 +98,9 @@ const AppContent = () => {
               <Route path="/admin/comment" element={<PrivateRoute><AdminPageComment /></PrivateRoute>} /> {/* 최형석 관리자 댓글 관리 페이지 */}
               <Route path="/admin/category" element={<PrivateRoute><AdminCategory /></PrivateRoute>} /> {/* 최형석 관리자 카테고리 페이지 */}
               <Route path="/admin/role" element={<PrivateRoute><AdminRoleManage /></PrivateRoute>} /> {/* 최형석 관리자 권한관리 페이지 */}
+              {/* 최형석 소셜 로그인 리다이렉트 */}
+              <Route path="/oauth/callback/naver" element={<NaverRedirectPage />} /> {/* 최형석 네이버 리다이렉트 페이지 */}
+              <Route path="/oauth/callback/kakao" element={<KakaoRedirectPage />} /> {/* 최형석 카카오 리다이렉트 페이지 */}
           </Routes>
         </main>
         {/* {location.pathname !== "/login" && <NavBar />} */}
