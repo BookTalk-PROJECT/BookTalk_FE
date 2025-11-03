@@ -91,7 +91,7 @@ const LoginPage: React.FC = () => {
 
             <div className="mt-6 space-y-3">
               <button
-                onClick={() => (window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_RESTAPI_KEY}&redirect_uri=${KAKAO_CALLBACK_URL}`)}
+                onClick={() => (window.location.href = "http://localhost:8080/oauth2/authorization/kakao")}
                 className="w-full flex items-center justify-center bg-[#FEE500] text-[#000000] py-3 text-sm font-medium rounded">
                 <i className="fa-solid fa-comment text-[#000000] mr-2"></i>
                 카카오로 로그인하기

@@ -31,3 +31,16 @@ export const fetchLogin = async (loginData: Login) => {
       console.error("서버 오류:", error);
     }
 }
+
+export const fetchKakaoLogin = async (code: string) => {
+  try{
+    const response = await axios.post(`${baseURL}/auth/kakao?code=${code}`);
+
+    if (response.status === 200 ) {
+      console.log("로그인 성공");
+
+    }
+  } catch (error) {
+    console.error("서버 오류:", error);
+  }
+}
