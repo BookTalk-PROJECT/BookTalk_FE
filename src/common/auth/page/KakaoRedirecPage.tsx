@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { fetchKakaoLogin, fetchLogin } from "../api/login.mock";
-import { useAuthStore } from "../../../store";
+import { Cookies, useCookies } from "react-cookie";
 import { useNavigate } from "react-router";
+import { useAuthStore } from "../../../store";
 
 const KakaoRedirectPage: React.FC = () => {
+  
+  const cookies = new Cookies();
+
+  const accessToken = cookies.get("access_token")
 
   const [message,setMessage] = useState<string>("카카오 로그인중.....")
 
   const navigate = useNavigate();
 
+  const {login} = useAuthStore();
+
   useEffect(() => {
-    const params = new URL(window.location.href).searchParams;
-    const code = params.get("code");
-
-    if(!code) return;
-
-    fetchKakaoLogin(code).then((data) =>{
-      console.log(data);
-    });
-
-
+    localStorage.setItem("accessToken", accessToken);
+    setMessage("카카오 로그인 성공");
+    navigate("/dashboard");
+    login();
   }, []);
   
   return (
