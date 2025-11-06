@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// 요청 인터셉터
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
   // 내 서버 주소일 때만 헤더 붙임
@@ -14,3 +15,44 @@ axios.interceptors.request.use((config) => {
 
   return config;
 });
+
+// 응답 인터셉터
+axios.interceptors.response.use(
+  (response) => {
+    // 2xx 범위에 있는 상태 코드는 이 함수를 트리거합니다.
+    // 응답 데이터가 있는 작업 수행
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+
+    // 401 에러이고, 재시도한 요청이 아닐 경우
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true; // 재시도 플래그 설정
+
+      try {
+        // 가상 토큰 재발급 엔드포인트
+        const { data } = await axios.post('/api/auth/refresh'); 
+        
+        const newAccessToken = data.accessToken; // 새 엑세스 토큰
+        localStorage.setItem('accessToken', newAccessToken);
+        
+        // 기본 헤더 및 원래 요청 헤더 업데이트
+        axios.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        
+        // 원래 요청을 다시 실행
+        return axios(originalRequest);
+      } catch (refreshError) {
+        // 토큰 재발급 실패 시 (예: 리프레시 토큰 만료)
+        console.error("Unable to refresh token:", refreshError);
+        // 로그인 페이지로 리디렉션 또는 다른 오류 처리
+        // window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
+    }
+
+    // 401 에러가 아니거나 재시도 요청인 경우
+    return Promise.reject(error);
+  }
+);
