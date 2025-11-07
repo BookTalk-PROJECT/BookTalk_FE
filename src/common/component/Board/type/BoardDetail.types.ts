@@ -59,9 +59,9 @@ export interface Reply {
 export interface ReplySimpleInfo {
   reply_code: string;
   post_code: string;
-  post_title: string;
   member_id: number;
   content: string;
+  manage: string;
   delete_reason: string;
   date: string;
 }

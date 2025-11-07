@@ -14,3 +14,26 @@ axios.interceptors.request.use((config) => {
 
   return config;
 });
+
+axios.interceptors.response.use(
+  response => {
+    // 정상 응답일 경우 그대로 반환
+    return response;
+  },
+  error => {
+    // 에러 응답 처리
+    if (error.response) {
+      const status = error.response.status;
+      // 401 Unauthorized(토큰 만료 또는 인증 실패) 체크
+      if (status === 401) {
+        // 로그인 페이지로 이동 (SPA 환경 기준)
+        alert("인증 정보가 만료되었습니다.\n로그인페이지로 돌아갑니다.")
+        localStorage.clear();
+        window.location.href = "/login";
+        // 또는 React Router를 쓴다면 useNavigate()를 사용 가능
+      }
+    }
+    // 다른 에러는 그대로 reject
+    return Promise.reject(error);
+  }
+)

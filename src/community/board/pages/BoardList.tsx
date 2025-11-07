@@ -3,10 +3,10 @@ import Pagenation from "../../../common/component/Pagination";
 import ButtonWrapper from "../../../common/component/Button";
 import BoardTable from "../../../common/component/Board/page/BoardTable";
 import { useNavigate, useSearchParams } from "react-router";
-import { Category, SubCategory } from "../type/board";
+import { Category, SearchType, SubCategory } from "../type/board";
 import { PostSimpleInfo } from "../../../common/component/Board/type/BoardDetail.types";
 import { getCategories } from "../../category/api/categoryApi";
-import { getBoards } from "../api/boardApi";
+import { getBoards, searchBoards } from "../api/boardApi";
 const BoardList: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -22,12 +22,42 @@ const BoardList: React.FC = () => {
   const [activeSubCategory, setActiveSubCategory] = useState<SubCategory>();
   // search
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchField, setSearchField] = useState("title");
+  const [searchField, setSearchField] = useState<SearchType>("title");
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
+  const [isSearching, setIsSearching] = useState(false);
   // data
   const [categories, setCategories] = useState<Category[]>([]);
   const [posts, setPosts] = useState<PostSimpleInfo[]>([]);
   const [totalPages, setTotalPages] = useState(0);
+
+  const handleSearchPosts = async () => {
+    setIsLoading(true);
+    setIsSearching(true);
+    getSearchBoards(1);
+    setIsLoading(false);
+  }
+
+  const getSearchBoards = (pageNum: number) => {
+    if(activeSubCategory) {
+      searchBoards({
+        keywordType: searchField,
+        keyword: searchTerm,
+        startDate: dateRange.start,
+        endDate: dateRange.end
+      }, activeSubCategory.categoryId, pageNum).then((res) => {
+        setPosts(res.data.content);
+        setTotalPages(res.data.totalPages);
+      });
+    }
+  }
+
+  const resetSearch = () => {
+    setSearchTerm("");
+    setSearchField("title");
+    setDateRange({ start: "", end: "" });
+    setIsSearching(false);
+    loadBoards(1);
+  }
 
   const handleCategoryChange = async (catetory: Category) => {
     setIsLoading(true);
@@ -205,12 +235,12 @@ const BoardList: React.FC = () => {
               </ButtonWrapper>
             </div>
             {/* Search and filter section */}
-            <div className="bg-white p-4 border-b">
+            <div className="bg-gray-50 px-4 py-3 border-b flex items-center justify-between">
               <div className="flex flex-wrap gap-4 items-center">
                 <div className="flex items-center space-x-2">
                   <select
                     value={searchField}
-                    onChange={(e) => setSearchField(e.target.value)}
+                    onChange={(e) => setSearchField(e.target.value as SearchType)}
                     className="border rounded-button px-3 py-1.5 text-sm bg-white">
                     <option value="title">제목</option>
                     <option value="author">작성자</option>
@@ -244,6 +274,18 @@ const BoardList: React.FC = () => {
                   />
                 </div>
               </div>
+              <div>
+              <ButtonWrapper onClick={() => resetSearch()}>
+                <>
+                  초기화
+                </>
+              </ButtonWrapper>
+              <ButtonWrapper onClick={() => handleSearchPosts()}>
+                <>
+                  검색
+                </>
+              </ButtonWrapper>
+              </div>
             </div>
 
             {/* Posts table */}
@@ -271,7 +313,7 @@ const BoardList: React.FC = () => {
               />)}
             </div>
             {/* Pagination */}
-            <Pagenation totalPages={totalPages} loadPageByPageNum={(num) => loadBoards(num)} />
+            <Pagenation totalPages={totalPages} loadPageByPageNum={(num) => isSearching ? getSearchBoards(num) :  loadBoards(num)} />
           </div>
         </div>
       </main>

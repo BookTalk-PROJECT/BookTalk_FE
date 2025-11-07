@@ -8,6 +8,7 @@ import {
 import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
 import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetail.types";
 import { Member } from "../../common/auth/type/type";
+import { SearchCondition } from "../../community/board/type/board";
 
 //BASE URL import
 const BASE_URL = import.meta.env.VITE_API_URL;
@@ -52,71 +53,22 @@ export async function getMyPageBookReviewComment(userId: string) {
   });
 }
 
-//마이페이지 community board 요청 get 메서드
-export async function getMyPageCommunityBoard(userId: string) {
-  return new Promise<MyPageBoardType>((resolve, reject) => {
-    (async () => {
-      try {
-        const res = await axios.get<MyPageBoardType>(`/mypage/community/board/${userId}`);
-        resolve(res.data);
-      } catch (err) {
-        reject(err);
-        console.log("error occurs while to get MyPage Board Data :" + err);
-      }
-    })();
-  });
+export const getMyBoardAll = async (pageNum: number): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
+  const response = await axios.get<ApiResponse<PageResponse<PostSimpleInfo>>>(`${BASE_URL}/community/board/mylist?pageNum=${pageNum}`);
+  return response.data;
 }
 
-//마이페이지 community comment 요청 get 메서드
-export async function getMyPageCommunityComment(userId: string) {
-  return new Promise<MyPageBookCommentType>((resolve, reject) => {
-    (async () => {
-      try {
-        const res = await axios.get<MyPageBookCommentType>(`/mypage/community/comment/${userId}`);
-        resolve(res.data);
-      } catch (err) {
-        reject(err);
-        console.log("error occurs while to get MyPage Board Data :" + err);
-      }
-    })();
-  });
-}
-export const getMyBoardAll = async (pageNum: number): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
-  const posts = await axios.get<ApiResponse<PageResponse<PostSimpleInfo>>>(`${BASE_URL}/community/board/mylist?pageNum=${pageNum}`);
-  return posts.data;
+export const searchMyBoards = async (req: SearchCondition, pageNum: number): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
+  const response = await axios.post<ApiResponse<PageResponse<PostSimpleInfo>>>(`${BASE_URL}/community/board/mylist/search?pageNum=${pageNum}`, req);
+  return response.data;
 }
 
 export const getMyCommentAll = async (pageNum: number): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
-  const posts = await axios.get<ApiResponse<PageResponse<ReplySimpleInfo>>>(`${BASE_URL}/reply/mylist?pageNum=${pageNum}`);
-  return posts.data;
+  const response = await axios.get<ApiResponse<PageResponse<ReplySimpleInfo>>>(`${BASE_URL}/reply/mylist?pageNum=${pageNum}`);
+  return response.data;
 }
 
-export const getBoardAdminAll = async (pageNum: number): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
-  const posts = await axios.get<ApiResponse<PageResponse<PostSimpleInfo>>>(`${BASE_URL}/community/board/admin/all?pageNum=${pageNum}`);
-  return posts.data;
-}
-
-export const restrictBoard = async (boardCode: string, del_reason: string): Promise<ApiResponse<string>> => {
-  const posts = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/community/board/restrict`, {targetCode: boardCode, delReason: del_reason});
-  return posts.data;
-}
-
-export const recoverBoard = async (boardCode: string): Promise<ApiResponse<string>> => {
-  const posts = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/community/board/recover/${boardCode}`);
-  return posts.data;
-}
-
-export const getCommentAdminAll = async (pageNum: number): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
-  const posts = await axios.get<ApiResponse<PageResponse<ReplySimpleInfo>>>(`${BASE_URL}/reply/admin/all?pageNum=${pageNum}`);
-  return posts.data;
-}
-
-export const restrictComment = async (boardCode: string, del_reason: string): Promise<ApiResponse<string>> => {
-  const posts = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/reply/restrict`, {targetCode: boardCode, delReason: del_reason});
-  return posts.data;
-}
-
-export const recoverComment = async (boardCode: string): Promise<ApiResponse<string>> => {
-  const posts = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/reply/recover/${boardCode}`);
-  return posts.data;
+export const searchMyComments = async (req: SearchCondition, pageNum: number): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
+  const response = await axios.post<ApiResponse<PageResponse<ReplySimpleInfo>>>(`${BASE_URL}/reply/mylist/search?pageNum=${pageNum}`, req);
+  return response.data;
 }

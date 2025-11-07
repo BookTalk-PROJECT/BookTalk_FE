@@ -22,3 +22,12 @@ export interface CommuPostRequest {
   content: string;
   notification_yn?: boolean;
 }
+
+export type SearchType = "board_code" | "title" | "author" | "category";
+
+export interface SearchCondition {
+  keywordType: SearchType;
+  keyword: string;
+  startDate: string;
+  endDate: string;
+}
