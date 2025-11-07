@@ -32,6 +32,50 @@ export const fetchLogin = async (loginData: Login) => {
     }
 }
 
+export const fetchLogout = async () => {
+  try{
+    const response = await axios.post(`${baseURL}/logout`);
+
+    const isDeletedRT = response.data.data.isDeleted;
+
+    if (response.status === 200 && isDeletedRT) {
+      console.log("리프레시 토큰 삭제");
+      // 예: 토큰 저장 or 리다이렉트
+      // const data = await response.json();
+      // localStorage.setItem("accessToken", data.token);
+      // 1. accessToken파싱
+      const { accessToken } = response.data.data;
+
+    } else {
+      console.error("리프레시 토큰 삭제 실패", response.status);
+    }
+  } catch (error) {
+    console.error("서버 오류:", error);
+  }
+}
+
+export const fetchReissueToken = async () => {
+  try{
+    const response = await axios.post(`${baseURL}/refresh`);
+
+    const IsExistToken = response.data.data.accessToken !== undefined;
+
+    if (response.status === 200 && IsExistToken) {
+      console.log("엑세스 토큰 재발급");
+      const { accessToken } = response.data.data;
+      //  로컬스토리지에 저장
+      localStorage.setItem("accessToken", accessToken);
+
+      return accessToken;
+    } else {
+      console.error("엑세스 토큰 재발급 실패", response.status);
+    }
+  } catch (error) {
+    console.error("서버 오류:", error);
+  }
+}
+
+
 export const fetchKakaoLogin = async (code: string) => {
   try{
     const response = await axios.post(`${baseURL}/auth/kakao?code=${code}`);

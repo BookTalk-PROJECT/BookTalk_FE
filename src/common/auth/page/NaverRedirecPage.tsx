@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { fetchLogin } from "../api/login.mock";
+import { fetchLogin } from "../api/Auth";
 import { useAuthStore } from "../../../store";
 import { useNavigate } from "react-router";
 
