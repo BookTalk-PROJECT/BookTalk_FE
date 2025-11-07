@@ -1,17 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
 import CustomButton from "./CustomButton";
 import { useAuthStore } from "../../store";
-import { fetchLogout } from "../auth/api/login.mock";
 
 const Header = () => {
   const {logout} = useAuthStore();
   const navigate = useNavigate();
-  const logoutHandler = async () => {
-    await fetchLogout();
+  const logoutHandler = () => {
     localStorage.removeItem("accessToken");
     logout();
     navigate("/");
-  };
+  }
 
 
   return (
