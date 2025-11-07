@@ -33,6 +33,7 @@ import GatheringJoin from "./gathering/pages/GatheringJoinPage";
 import "./common/auth/config/tokenInterceptor"
 import BoardEdit from "./community/board/pages/BoardEdit";
 import AdminRoleManage from "./admin/page/AdminRoleManagePage";
+import GatheringEditPage from "./gathering/pages/GatheringEditPage";
 
 const AppContent = () => {
   const location = useLocation();
@@ -65,6 +66,7 @@ const AppContent = () => {
                 <Route path="create" element={<GatheringCreatePage />} /> {/* 이성종 모임 상세 */}
                 <Route path="detail/:gatheringId" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
                 <Route path=":gatheringId/join" element={<GatheringJoin />} />{/* 이성종 모임 참여 신청 */}
+                <Route path="/gathering/:gatheringId/edit" element={<GatheringEditPage />} />
                 <Route path=":gatheringId/gatheringboard">
                   {" "}
                   {/* 모임 게시판 관련 */}
