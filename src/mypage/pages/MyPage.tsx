@@ -32,8 +32,8 @@ const MyPage: React.FC = () => {
     const fetchMemberData = async () => {
       const getData = await getMyInformation();
       const memberData = getData.data;
-      const splitPhoneNumber = memberData?.phoneNumber.split("-");
-      const splitAddress = memberData?.address.split(",");
+      const splitPhoneNumber = memberData?.phoneNumber?.split("-");
+      const splitAddress = memberData?.address?.split(",");
       setName(memberData?.name);
       setEmail(memberData?.email);
       setPhonePrefix(splitPhoneNumber[0]);
