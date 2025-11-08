@@ -1,15 +1,10 @@
 import React from "react";
 
 export interface MyPageTableProps<T> {
-  posts: T[];
-  row: { label: string; key: string }[];
-  isExpandableRow?: boolean;
-  filterOptions: { label: string; key: string }[];
-  initialFilter: { label: string; key: string }[];
-  manageOption?: React.ReactNode;
-  postKeys: string[];
-  activeTab?: string;
-  renderRow?: (post: any) => React.JSX.Element;
+  rows: any[];
+  renderHeader: () => React.JSX.Element;
+  renderSearchBar?: () => React.JSX.Element;
+  renderRow: (row: any) => React.JSX.Element;
 }
 
 export interface MyPageTableCommonColType {
@@ -25,7 +20,7 @@ export interface MyPageBoardType extends MyPageTableCommonColType {
   author: string;
 }
 
-export interface MyPageBookCommentType extends MyPageTableCommonColType {
+export interface MyPageCommentType extends MyPageTableCommonColType {
   reply_code: string;
   post_code: string;
   title: string;
@@ -58,7 +53,7 @@ export interface AdminBoardType extends MyPageBoardType {
   author: string;
 }
 
-export interface AdminCommentType extends MyPageBookCommentType {
+export interface AdminCommentType extends MyPageCommentType {
   deleteReason: string;
   category: string;
 }
@@ -77,4 +72,11 @@ export interface MyPageModifyMemberDataType {
   phoneNumber: string;
   password: string;
   address: string;
+}
+
+export type RowDef<T> = {
+  label: string; 
+  key: keyof T, 
+  isSortable: boolean , 
+  isSearchType: boolean
 }

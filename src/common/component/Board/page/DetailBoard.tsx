@@ -6,6 +6,8 @@ import { deleteReply, editReply } from "../../../../community/reply/api/replyApi
 import { PostDetail } from "../type/BoardDetail.types";
 import { ApiResponse } from "../../../type/ApiResponse";
 import axios, { AxiosError } from "axios";
+import { getCategories } from "../../../../community/category/api/categoryApi";
+import { queryNextBoardCode, queryPrevBoardCode } from "../../../../community/board/api/boardApi";
 
 interface DetailBoardProps {
   postCode: string;
@@ -224,6 +226,26 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
 
   if (!postCode) {
     return <div>잘못된 접근입니다.</div>;
+  }
+
+  const navigateToPrevBoard = async () => {
+    const categoryId = parseInt(searchParams.get('categoryId')!);
+    const nextBoardCode = (await queryPrevBoardCode(postCode, categoryId)).data;
+    if(nextBoardCode===null) {
+      alert("마지막 게시글입니다.");
+      return;
+    }
+    navigate(`/boardDetail/${nextBoardCode}?categoryId=${categoryId}`)
+  }
+  
+  const navigateToNextBoard = async () => {
+    const categoryId = parseInt(searchParams.get('categoryId')!);
+    const nextBoardCode = (await queryNextBoardCode(postCode, categoryId)).data;
+    if(nextBoardCode===null) {
+      alert("마지막 게시글입니다.");
+      return;
+    }
+    navigate(`/boardDetail/${nextBoardCode}?categoryId=${categoryId}`)
   }
 
   return (
@@ -459,9 +481,9 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
         </div>{" "}
         {/* end reply rereply */}
         <div className="flex justify-between items-center mt-6">
-          <CustomButton onClick={() => alert("이전 게시글 버튼 클릭함")} color="white" customClassName="px-4 py-2">
+          <CustomButton onClick={() => navigateToNextBoard()} color="white" customClassName="px-4 py-2">
             <>
-              <i className="fas fa-arrow-left mr-2"></i>이전 글
+              <i className="fas fa-arrow-left mr-2"></i>다음 글
             </>
           </CustomButton>
           <CustomButton onClick={() => navigate(`/boardList?categoryId=${searchParams.get("categoryId")}`)} color="black" customClassName="px-4 py-2">
@@ -469,9 +491,9 @@ const DetailBaord: React.FC<DetailBoardProps> = ({ postCode, GetBoardDetail, Del
               <i className="fas fa-list mr-2"></i>목록
             </>
           </CustomButton>
-          <CustomButton onClick={() => alert("다음 게시글 버튼 클릭함")} color="white" customClassName="px-4 py-2">
+          <CustomButton onClick={() => navigateToPrevBoard()} color="white" customClassName="px-4 py-2">
             <>
-              다음 글<i className="fas fa-arrow-right ml-2"></i>
+              이전 글<i className="fas fa-arrow-right ml-2"></i>
             </>
           </CustomButton>
         </div>
