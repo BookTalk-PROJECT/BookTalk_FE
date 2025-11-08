@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { fetchReissueToken } from "../api/Auth";
 
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
@@ -16,24 +17,35 @@ axios.interceptors.request.use((config) => {
 });
 
 axios.interceptors.response.use(
-  response => {
-    // 정상 응답일 경우 그대로 반환
+  (response) => {
+    // 2xx 범위에 있는 상태 코드는 이 함수를 트리거합니다.
+    // 응답 데이터가 있는 작업 수행
     return response;
   },
-  error => {
-    // 에러 응답 처리
-    if (error.response) {
-      const status = error.response.status;
-      // 401 Unauthorized(토큰 만료 또는 인증 실패) 체크
-      if (status === 401) {
-        // 로그인 페이지로 이동 (SPA 환경 기준)
-        alert("인증 정보가 만료되었습니다.\n로그인페이지로 돌아갑니다.")
-        localStorage.clear();
-        window.location.href = "/login";
-        // 또는 React Router를 쓴다면 useNavigate()를 사용 가능
+  async (error) => {
+    const originalRequest = error.config;
+
+    // 401 에러이고, 재시도한 요청이 아닐 경우
+    if (error.response.status === 401 && !originalRequest._retry && error.response.data.errorCode == "ACCESS_TOKEN_EXPIRED") {
+      originalRequest._retry = true; // 재시도 플래그 설정
+      try {
+        // 가상 토큰 재발급 엔드포인트
+        fetchReissueToken().then((newAccessToken) =>{
+          // 기본 헤더 및 원래 요청 헤더 업데이트
+          axios.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+          return axios(originalRequest);
+        })
+
+      } catch (refreshError) {
+        // 토큰 재발급 실패 시 (예: 리프레시 토큰 만료)
+        console.error("Unable to refresh token:", refreshError);
+        // 로그인 페이지로 리디렉션 또는 다른 오류 처리
+        // window.location.href = '/login';
+        return Promise.reject(refreshError);
       }
     }
-    // 다른 에러는 그대로 reject
+    // 401 에러가 아니거나 재시도 요청인 경우
     return Promise.reject(error);
   }
-)
+);

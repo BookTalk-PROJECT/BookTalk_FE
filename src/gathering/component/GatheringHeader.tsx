@@ -1,5 +1,5 @@
 // src/features/gathering/components/GatheringHeader.tsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import CustomButton from "../../common/component/CustomButton";
 import { bookInfo as GatheringDetail, Books, GatheringDetailResponse } from "../type/GatheringHeader.types";
 import {
@@ -7,6 +7,7 @@ import {
   examplebooks,
   fetchGatheringBooks,
   fetchGatheringInfo,
+  deleteGathering, // ★ 추가: 삭제 API
 } from "../api/GatheringHeaderRequest";
 import { useNavigate } from "react-router";
 
@@ -31,6 +32,59 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
   const [books, setBooks] = useState<Books[]>([]);
   const [gatheringBookInfo, setGatheringBookInfo] = useState<GatheringDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // ★ 삭제 모달 상태
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [deleteReason, setDeleteReason] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const reasonMax = 200;
+
+  const openDeleteModal = () => {
+    setDeleteReason("");
+    setIsDeleteOpen(true);
+  };
+  const closeDeleteModal = () => {
+    if (deleteLoading) return;
+    setIsDeleteOpen(false);
+    setDeleteReason("");
+  };
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!gatheringId) return;
+    const reason = deleteReason.trim();
+    if (!reason) {
+      alert("삭제 사유를 입력하세요.");
+      return;
+    }
+    try {
+      setDeleteLoading(true);
+      await deleteGathering(gatheringId, reason);
+      alert("모임이 삭제되었습니다.");
+      navigate("/gathering");
+    } catch (err) {
+      console.error("모임 삭제 실패:", err);
+      alert("모임 삭제에 실패했습니다. 잠시 후 다시 시도하세요.");
+    } finally {
+      setDeleteLoading(false);
+      setIsDeleteOpen(false);
+    }
+  }, [deleteReason, gatheringId, navigate]);
+
+  // ESC 닫기, Ctrl/Cmd+Enter 확인
+  useEffect(() => {
+    if (!isDeleteOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeDeleteModal();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "enter") {
+        e.preventDefault();
+        if (!deleteLoading) handleConfirmDelete();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isDeleteOpen, deleteLoading, handleConfirmDelete]);
 
   const loadGatheringData = async () => {
     if (!gatheringId) {
@@ -82,13 +136,6 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
               >
                 {statusMeta.label}
               </span>
-
-              {/* 코드 칩 */}
-              {/* {gatheringBookInfo && (
-                <span className="inline-flex items-center rounded-md bg-gray-100 border border-gray-200 px-3 py-1.5 text-xs font-mono text-gray-800">
-                  {gatheringBookInfo.gatheringCode}
-                </span>
-              )} */}
             </div>
 
             {/* 요약문 */}
@@ -106,26 +153,28 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
                 <i className="fas fa-share-alt mr-2"></i>공유하기
               </>
             </CustomButton>
-              {/* masterYn === 1 → 모임 수정 / 그 외 → 가입하기 */}
-              {gatheringBookInfo?.masterYn === 1 ? (
-                <CustomButton
-                  onClick={() => navigate(`/gathering/${gatheringId}/edit`)} // 임시 URL
-                  color="black"
-                >
+
+            {/* masterYn === 1 → 모임 수정 / 그 외 → 가입하기 */}
+            {gatheringBookInfo?.masterYn === 1 ? (
+              <>
+                <CustomButton onClick={() => navigate(`/gathering/${gatheringId}/edit`)} color="black">
                   <>
                     <i className="fas fa-edit mr-2"></i>모임 수정
                   </>
                 </CustomButton>
-              ) : (
-                <CustomButton
-                  onClick={() => navigate(`/gathering/${gatheringId}/join`)}
-                  color="black"
-                >
+                <CustomButton onClick={openDeleteModal} color="red">
                   <>
-                    <i className="fas fa-user-plus mr-2"></i>가입하기
+                    <i className="fas fa-trash mr-2"></i>모임 삭제
                   </>
                 </CustomButton>
-              )}
+              </>
+            ) : (
+              <CustomButton onClick={() => navigate(`/gathering/${gatheringId}/join`)} color="black">
+                <>
+                  <i className="fas fa-user-plus mr-2"></i>가입하기
+                </>
+              </CustomButton>
+            )}
           </div>
         </div>
 
@@ -228,6 +277,64 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
           </div>
         </div>
       </div>
+
+      {/* ===== 삭제 미니 모달 ===== */}
+      {isDeleteOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          aria-modal="true"
+          role="dialog"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeDeleteModal(); // 오버레이 클릭 닫기
+          }}
+        >
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-black/40" />
+
+          {/* Modal */}
+          <div className="relative w-full max-w-md mx-4 rounded-xl bg-white shadow-2xl border border-gray-200">
+            <div className="px-5 py-4 border-b">
+              <h3 className="text-lg font-bold">모임 삭제</h3>
+              <p className="text-sm text-gray-500 mt-1">삭제 사유를 입력해 주세요. 이 작업은 되돌릴 수 없습니다.</p>
+            </div>
+
+            <div className="px-5 py-4">
+              <label htmlFor="delete-reason" className="block text-sm font-medium text-gray-700 mb-1">
+                삭제 사유
+              </label>
+              <textarea
+                id="delete-reason"
+                className="w-full min-h-[120px] rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+                placeholder="예) 활동 종료로 인해 모임을 닫습니다."
+                value={deleteReason}
+                maxLength={reasonMax}
+                onChange={(e) => setDeleteReason(e.target.value)}
+              />
+              <div className="mt-1 text-right text-xs text-gray-400">{deleteReason.length}/{reasonMax}</div>
+            </div>
+
+            <div className="px-5 py-3 border-t flex justify-end gap-2">
+              <button
+                type="button"
+                className="px-4 py-2 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50"
+                onClick={closeDeleteModal}
+                disabled={deleteLoading}
+              >
+                취소
+              </button>
+              <button
+                type="button"
+                className={`px-4 py-2 text-sm rounded-lg text-white ${deleteReason.trim() && !deleteLoading ? "bg-red-600 hover:bg-red-700" : "bg-red-300 cursor-not-allowed"}`}
+                onClick={handleConfirmDelete}
+                disabled={!deleteReason.trim() || deleteLoading}
+                title={!deleteReason.trim() ? "삭제 사유를 입력하세요" : "Ctrl/⌘ + Enter로도 확인할 수 있어요"}
+              >
+                {deleteLoading ? "삭제 중..." : "삭제하기"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

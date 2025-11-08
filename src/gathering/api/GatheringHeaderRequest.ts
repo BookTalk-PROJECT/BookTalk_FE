@@ -45,3 +45,12 @@ export const fetchGatheringInfo = async (gatheringId: string): Promise<Gathering
   );
   return res.data.data;
 };
+
+export const deleteGathering = async (code: string, reason: string) => {
+  const token = localStorage.getItem("accessToken");
+  await axios.post(
+    `${API_BASE_URL}/gathering/${code}/delete`,
+    { reason },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+};
