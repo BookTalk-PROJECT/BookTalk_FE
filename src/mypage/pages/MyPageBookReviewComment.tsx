@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import MyPageSideBar from "../component/MyPageSideBar";
 import Pagenation from "../../common/component/Pagination";
 import MyPageTable from "../../common/component/DataTableCustom";
-import MyPageBreadCrumb from "../component/MyPageBreadCrumb";
+import BreadCrumb from "../../common/component/BreadCrumb";
 import { myBookCommentMockData } from "../testdata/MyPageTestData";
 import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
 import { MyPageBookCommentType } from "../type/MyPageTable";
@@ -35,7 +35,7 @@ const MyPageBookReviewComment: React.FC = () => {
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             {/* 브레드크럼 */}
-            <MyPageBreadCrumb major="북리뷰" sub="댓글 관리" />
+            <BreadCrumb major="북리뷰" sub="댓글 관리" />
             {/* 테이블 */}
             <MyPageTable
               posts={myBookCommentMockData}

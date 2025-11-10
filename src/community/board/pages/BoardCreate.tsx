@@ -2,25 +2,30 @@ import { useEffect, useState } from "react";
 import CreateBoard from "../../../common/component/Board/page/CreateBoard";
 import { postBoard } from "../api/boardApi";
 import { useSearchParams } from "react-router";
-import { CommuPostRequest } from "../type/board";
+import { CommuPostRequest } from "../../../common/component/Board/type/BoardDetailTypes";
 
 const BoardCreate: React.FC = () => {
-  const [categoryId, setCategoryId] = useState<number>();
   const [searchParams] = useSearchParams();
+  const [categoryId, setCategoryId] = useState<string>("");
 
   useEffect(() => {
-    const param = searchParams.get('categoryId');
-    if(param != null) {
-      setCategoryId(parseInt(param));
-    }
+    setCategoryId(searchParams.get('categoryId') ?? "");
   }, [searchParams])
+
+  if(!categoryId) {
+    return null;
+  }
 
   return (
     <CreateBoard
-      categoryId={categoryId ?? 0}
-      createPost={ async (arg0:CommuPostRequest, categoryId:number) => {
-        await postBoard(arg0, categoryId);
+      categoryId={categoryId}
+      redirectUri={`/boardList?categoryId=${categoryId}`}
+      createPost={ async (arg0: CommuPostRequest, categoryId: string | undefined) => {
+        if(categoryId)
+          await postBoard(arg0, categoryId);
       }}
+      mainTopic="카테고리"
+      subTopic="글쓰기"
     />
   );
 };

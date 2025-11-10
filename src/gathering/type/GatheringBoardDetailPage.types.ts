@@ -1,4 +1,4 @@
-import { PostDetail } from "../../common/component/Board/type/BoardDetail.types";
+import { PostDetail } from "../../common/component/Board/type/BoardDetailTypes";
 
 export interface GatheringDetail extends PostDetail {
   gatheringId: string;

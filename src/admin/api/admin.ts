@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
-import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetail.types";
-import { SearchCondition } from "../../community/board/type/board";
+import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
+import { SearchCondition } from "../../common/type/common";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 

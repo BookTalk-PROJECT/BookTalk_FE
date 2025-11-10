@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { MyPageTableCommonColType, RowDef } from "../../mypage/type/MyPageTable";
-import { SearchType } from "../../community/board/type/board";
+import { RowDef } from "../type/common";
+import { AdminTableColType } from "../../admin/type/common";
+import { SearchType } from "../type/common";
 import Pagenation from "./Pagination";
 import { ApiResponse, PageResponse } from "../type/ApiResponse";
 
@@ -12,16 +13,18 @@ type MyPageTableProps<T, K> = {
   setRowData: (rowData: T[]) => void;
   loadRowData: (pageNum: number) => Promise<ApiResponse<PageResponse<T>>>;
   searchRowData?: (cond: any, pageNum: number) => Promise<ApiResponse<PageResponse<T>>>;
+  forceUpdate?: number;
 }
 
-const MyPageTable = <T, K extends MyPageTableCommonColType>({
+const MyPageTable = <T, K>({
   rows,
   rowDef,
   getRowKey,
   renderColumn,
   setRowData,
   loadRowData,
-  searchRowData
+  searchRowData,
+  forceUpdate
 }: MyPageTableProps<T, K>) => {
   
   {/* init */}
@@ -31,12 +34,13 @@ const MyPageTable = <T, K extends MyPageTableCommonColType>({
     loadRowData(pageNum).then((res) => {
       setRowData(res.data.content);
       setTotalPages(res.data.totalPages);
+      resetSearch();
     });
   }
 
   useEffect(() => {
     loadContents(1);
-  }, []);
+  }, [forceUpdate]);
 
   {/* header */}
   const [sortField, setSortField] = useState("date");
@@ -110,12 +114,13 @@ const MyPageTable = <T, K extends MyPageTableCommonColType>({
     setSearchTerm("");
     setDateRange({ start: "", end: "" });
     setIsSearching(false);
-    loadContents(1);
+    handleSearch(1);
   }
 
   const renderSearchBar = () => {
     return (
       <div className="flex justify-end items-center gap-5 mt-6 mb-6 pr-5">
+        <div style={{ display: "none" }}>{forceUpdate}</div>
         <div className="relative">
           <button
             onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}

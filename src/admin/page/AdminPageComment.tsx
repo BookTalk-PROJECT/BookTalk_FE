@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import MyPageSideBar from "../../mypage/component/MyPageSideBar";
-import MyPageBreadCrumb from "../../mypage/component/MyPageBreadCrumb";
+import BreadCrumb from "../../common/component/BreadCrumb";
 import MyPageTable from "../../common/component/DataTableCustom";
 import MyPageManageRowButton from "../../mypage/component/button/MyPageManageRowButton";
 import MyPageActiveTabButton from "../../mypage/component/button/MyPageActiveTabButton";
-import { ReplySimpleInfo } from "../../common/component/Board/type/BoardDetail.types";
-import { MyPageCommentType, RowDef } from "../../mypage/type/MyPageTable";
+import { ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
+import { RowDef } from "../../common/type/common";
+import { AdminCommentColType } from "../type/AdminCommunity";
 import { Link } from "react-router-dom";
 import DeleteModal from "../../mypage/component/DeleteModal";
 import { getCommentAdminAll, recoverComment, restrictComment, searchCommentAdminAll } from "../api/admin";
 
 const AdminPageComment: React.FC = () => {
-  const rowDef: RowDef<MyPageCommentType>[] = [
+  const rowDef: RowDef<AdminCommentColType>[] = [
     { label: "댓글 번호", key: "reply_code", isSortable: true, isSearchType: true },
     { label: "글 번호", key: "post_code", isSortable: true, isSearchType: true },
     { label: "댓글 내용", key: "content", isSortable: true, isSearchType: true },
@@ -61,7 +62,7 @@ const AdminPageComment: React.FC = () => {
     }
   }
 
-  const renderColumn = (row: any, key: Extract<keyof MyPageCommentType, string>) => {
+  const renderColumn = (row: any, key: Extract<keyof AdminCommentColType, string>) => {
     switch (key) {
       case "content":
       return <Link to={`/boardDetail/${row["post_code"]}`}>{row[key]}</Link>;
@@ -91,7 +92,7 @@ const AdminPageComment: React.FC = () => {
       <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
-            <MyPageBreadCrumb major="관리자" sub="댓글 관리" />
+            <BreadCrumb major="관리자" sub="댓글 관리" />
             <MyPageActiveTabButton
               actions={[
                 { label: "전체", color: "blue"},
@@ -101,7 +102,7 @@ const AdminPageComment: React.FC = () => {
               ]}
               setActiveTab={setActiveTab}
             />
-            <MyPageTable<ReplySimpleInfo, MyPageCommentType>
+            <MyPageTable<ReplySimpleInfo, AdminCommentColType>
               rows={comments}
               rowDef={rowDef}
               getRowKey={(reply) => reply.reply_code}

@@ -1,31 +1,11 @@
+import { AdminTableColType } from "../../admin/type/common";
 
-export interface MyPageTableCommonColType {
-  date: string;
-  manage: string;
-  deleteReason: string;
-}
-
-export interface MyPageBoardType extends MyPageTableCommonColType {
-  board_code: string;
-  title: string;
-  category: string;
-  author: string;
-}
-
-export interface MyPageCommentType extends MyPageTableCommonColType {
-  reply_code: string;
-  post_code: string;
-  title: string;
-  author: string;
-  content: string;
-}
-
-export interface MyPageGatheringBoardType extends MyPageTableCommonColType {
+export interface MyPageGatheringBoardType extends AdminTableColType {
   title: string;
   gathering: string;
 }
 
-export interface MyPageMyGatheringType extends MyPageTableCommonColType {
+export interface MyPageMyGatheringType extends AdminTableColType {
   category: string;
   status: string;
   gathering: string;
@@ -38,16 +18,6 @@ export interface MyPageGatheringRequestManageType extends MyPageMyGatheringType 
 export interface GatheringRequestQuestion {
   question: string;
   answer: string;
-}
-
-export interface AdminBoardType extends MyPageBoardType {
-  deleteReason: string;
-  author: string;
-}
-
-export interface AdminCommentType extends MyPageCommentType {
-  deleteReason: string;
-  category: string;
 }
 
 export interface MyPageMemberDataType {
@@ -66,9 +36,3 @@ export interface MyPageModifyMemberDataType {
   address: string;
 }
 
-export type RowDef<T> = {
-  label: string; 
-  key: Extract<keyof T, string>;
-  isSortable: boolean , 
-  isSearchType: boolean
-}

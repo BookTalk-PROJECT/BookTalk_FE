@@ -1,14 +1,16 @@
 import axios from "axios";
 import {
-  MyPageBoardType,
-  MyPageCommentType,
   MyPageMemberDataType,
   MyPageModifyMemberDataType,
 } from "../type/MyPageTable";
+import {
+    AdminBoardColType,
+    AdminCommentColType
+} from "../../admin/type/AdminCommunity";
 import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
-import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetail.types";
+import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
 import { Member } from "../../common/auth/type/type";
-import { SearchCondition } from "../../community/board/type/board";
+import { SearchCondition } from "../../common/type/common";
 
 //BASE URL import
 const BASE_URL = import.meta.env.VITE_API_URL;
@@ -25,10 +27,10 @@ export const modifyMember = async (memberData: MyPageModifyMemberDataType) => {
 
 //마이페이지 book review board 요청 get 메서드
 export async function getMyPageBookReviewBoard(userId: string) {
-  return new Promise<MyPageBoardType>((resolve, reject) => {
+  return new Promise<AdminBoardColType>((resolve, reject) => {
     (async () => {
       try {
-        const res = await axios.get<MyPageBoardType>(`/mypage/bookreview/board/${userId}`);
+        const res = await axios.get<AdminBoardColType>(`/mypage/bookreview/board/${userId}`);
         resolve(res.data);
       } catch (err) {
         reject(err);
@@ -40,10 +42,10 @@ export async function getMyPageBookReviewBoard(userId: string) {
 
 //마이페이지 book review board comment 요청 get 메서드
 export async function getMyPageBookReviewComment(userId: string) {
-  return new Promise<MyPageCommentType>((resolve, reject) => {
+  return new Promise<AdminCommentColType>((resolve, reject) => {
     (async () => {
       try {
-        const res = await axios.get<MyPageCommentType>(`/mypage/bookreview/comment/${userId}`);
+        const res = await axios.get<AdminCommentColType>(`/mypage/bookreview/comment/${userId}`);
         resolve(res.data);
       } catch (err) {
         reject(err);

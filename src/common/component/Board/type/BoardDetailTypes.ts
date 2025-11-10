@@ -1,14 +1,4 @@
-import { CommuDetail } from "../../../../community/board/type/board";
 import { GatheringDetail } from "../../../../gathering/type/GatheringBoardDetailPage.types";
-
-export interface YoutubeVideo {
-  // 유튜브 검색 api 타입
-  id: string;
-  title: string;
-  thumbnail: string;
-  channelTitle: string;
-  publishedAt: string;
-}
 
 export interface PostDetail {
   //게시글 조회 type
@@ -45,13 +35,13 @@ export interface PostDetailInfo {
 export interface Reply {
   //댓글조회 type
   reply_code: string; // 댓글 ID (PK)
-  member_id: number; // 댓글 작성자 (회원 ID)
-  code: string; // 게시글 ID (매핑)
+  member_name: string; // 댓글 작성자 (회원 ID)
+  post_code?: string; // 게시글 ID (매핑)
   content: string; // 댓글 내용
   p_reply_code?: number | null | undefined; // 부모 댓글 ID (대댓글일 경우)
-  del_yn: boolean; // 삭제 여부
+  del_yn?: boolean; // 삭제 여부
   del_reason?: string; // 삭제 사유
-  replies?: Reply[]; // 대댓글 리스트 (2차 댓글)
+  replies: Reply[]; // 대댓글 리스트 (2차 댓글)
   create_at: string; // 작성일
   likes: number; // 좋아요
 }
@@ -64,4 +54,12 @@ export interface ReplySimpleInfo {
   manage: string;
   delete_reason: string;
   date: string;
+}export interface CommuPostRequest {
+  title: string;
+  content: string;
+  notification_yn?: boolean;
 }
+export interface CommuDetail extends PostDetailInfo {
+  category_id: string;
+}
+

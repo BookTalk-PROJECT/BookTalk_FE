@@ -1,5 +1,4 @@
 import axios from "axios";
-import { GetBoardDetailRequest } from "../../common/component/Board/type/BoardDetail.types";
 
 // API 키 및 기본 URL 설정
 const baseURL = import.meta.env.VITE_API_URL;
@@ -15,8 +14,6 @@ export const fetchGatheringBoardDetail = async (postId: string): Promise<GetBoar
 
 // 댓글 등록 (부모 댓글 & 대댓글)
 export const createReply = async (postId: string, content: string, parentReplyCode?: number | null) => {
-  console.log(" 모임 게시글 번호 : " + postId + " 내용 : " + content + " 대댓글이니? : " + parentReplyCode);
-
   const response = await axios.post(`${baseURL}/gatheringboard/${postId}/createreply`, {
     content,
     p_reply_code: parentReplyCode ?? null, // 부모 댓글일 경우 null, 대댓글일 경우 부모 댓글 ID

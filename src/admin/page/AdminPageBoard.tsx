@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import MyPageSideBar from "../../mypage/component/MyPageSideBar";
-import MyPageBreadCrumb from "../../mypage/component/MyPageBreadCrumb";
+import BreadCrumb from "../../common/component/BreadCrumb";
 import MyPageTable from "../../common/component/DataTableCustom";
 import MyPageManageRowButton from "../../mypage/component/button/MyPageManageRowButton";
 import MyPageActiveTabButton from "../../mypage/component/button/MyPageActiveTabButton";
-import { MyPageBoardType, RowDef } from "../../mypage/type/MyPageTable";
-import { PostSimpleInfo } from "../../common/component/Board/type/BoardDetail.types";
+import { RowDef } from "../../common/type/common";
+import { AdminBoardColType } from "../type/AdminCommunity";
+import { PostSimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
 import { Link } from "react-router-dom";
 import DeleteModal from "../../mypage/component/DeleteModal";
 import { getBoardAdminAll, recoverBoard, restrictBoard, searchBoardAdminAll } from "../api/admin";
 
 const AdminPageBoard: React.FC = () => {
-  const rowDef: RowDef<MyPageBoardType>[] = [
+  const rowDef: RowDef<AdminBoardColType>[] = [
     { label: "게시물 번호", key: "board_code", isSortable: true, isSearchType: true },
     { label: "제목", key: "title", isSortable: true, isSearchType: true },
     { label: "분류", key: "category", isSortable: true, isSearchType: true },
@@ -59,7 +60,7 @@ const AdminPageBoard: React.FC = () => {
     setSelectedCode(null);
   };
 
-  const renderColumn = (row: any, key: Extract<keyof MyPageBoardType, string>) => {
+  const renderColumn = (row: any, key: Extract<keyof AdminBoardColType, string>) => {
     switch (key) {
       case "title":
       return <Link to={`/boardDetail/${row["board_code"]}`}>{row[key]}</Link>;
@@ -89,7 +90,7 @@ const AdminPageBoard: React.FC = () => {
       <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
-            <MyPageBreadCrumb major="관리자" sub="게시물 관리" />
+            <BreadCrumb major="관리자" sub="게시물 관리" />
             <MyPageActiveTabButton
               actions={[
                 { label: "전체", color: "blue"},
@@ -99,7 +100,7 @@ const AdminPageBoard: React.FC = () => {
               ]}
               setActiveTab={setActiveTab}
             />
-            <MyPageTable<PostSimpleInfo, MyPageBoardType>
+            <MyPageTable<PostSimpleInfo, AdminBoardColType>
               rows={posts}
               rowDef={rowDef}
               getRowKey={(post) => post.board_code}
