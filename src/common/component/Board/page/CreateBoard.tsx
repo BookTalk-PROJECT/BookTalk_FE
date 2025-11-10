@@ -3,34 +3,37 @@ import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import CustomInput from "../../CustomInput";
 import CustomButton from "../../CustomButton";
-import { YoutubeVideo } from "../type/BoardDetail.types";
-import { searchYoutubeVideos } from "../api/CreateBoardRequest";
-import { useNavigate, useSearchParams } from "react-router";
-import { CommuPostRequest } from "../../../../community/board/type/board";
-import YoutubeModal from "./YoutubeModal";
+import { redirect, useNavigate, useSearchParams } from "react-router";
+import { CommuPostRequest } from "../type/BoardDetailTypes";
+import BreadCrumb from "../../BreadCrumb";
 
-interface BoardProps {
-  categoryId: number;
-  createPost: (arg0: CommuPostRequest, categoryId: number) => void;
+interface BoardCreateProps {
+  categoryId?: string;
+  redirectUri: string;
+  createPost: (arg0: CommuPostRequest, categoryId?: string) => void;
+  mainTopic: string;
+  subTopic: string;
 }
 
-const CreateBoard: React.FC<BoardProps> = ({ categoryId, createPost }) => {
+const CreateBoard: React.FC<BoardCreateProps> = ({ 
+  categoryId,
+  redirectUri, 
+  createPost,
+  mainTopic,
+  subTopic
+}) => {
   const navigate = useNavigate();
   const editorRef = useRef<Editor>(null);
-  const [showYoutubeModal, setShowYoutubeModal] = useState(false);
   const [postData, setPostData] = useState<CommuPostRequest>({
     title: "",
     content: "",
     notification_yn: false,
   });
 
-  const handleSubmit = async () => { 
-    await createPost(postData, categoryId);
-    navigate(`/boardList?categoryId=${categoryId}`)
-  };
-
-  const handleYoutubeButtonClick = () => {
-    setShowYoutubeModal(true);
+  const handleSubmit = () => { 
+    if(categoryId)
+      createPost(postData, categoryId);
+    navigate(redirectUri);
   };
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -50,9 +53,9 @@ const CreateBoard: React.FC<BoardProps> = ({ categoryId, createPost }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <BreadCrumb major={mainTopic} sub={subTopic}/>
       <div className="max-w-6xl mx-auto px-8 py-12">
         <h1 className="text-3xl font-bold mb-10">글쓰기</h1>
-
         <div className="bg-white shadow-md rounded-2xl p-10 space-y-10">
           <div>
             <label className="block text-lg font-semibold mb-2 text-gray-700">제목</label>
@@ -67,14 +70,6 @@ const CreateBoard: React.FC<BoardProps> = ({ categoryId, createPost }) => {
           {/* 에디터 */}
           <div>
             <label className="block text-lg font-semibold mb-2 text-gray-700">본문</label>
-            {/* 툴바 영역 */}
-            <div className="flex items-center space-x-2 p-2 rounded-t-lg bg-gray-50 mb-0">
-              <CustomButton onClick={handleYoutubeButtonClick} color="white">
-                <>
-                  <i className="fab fa-youtube"> &nbsp;유튜브</i>
-                </>
-              </CustomButton>
-            </div>
             <Editor
               ref={editorRef}
               initialValue=""
@@ -128,14 +123,6 @@ const CreateBoard: React.FC<BoardProps> = ({ categoryId, createPost }) => {
           </div>
         </div>
       </div>
-
-      {showYoutubeModal && (
-        <YoutubeModal
-          editorRef={editorRef}
-          setShowYoutubeModal={setShowYoutubeModal}
-        />
-      )}
-      
     </div>
   );
 };

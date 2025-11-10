@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useMemo } from "react";
 import MyPageSideBar from "../component/MyPageSideBar";
 import Pagenation from "../../common/component/Pagination";
-import MyPageTable from "../component/MyPageTable";
-import MyPageBreadCrumb from "../component/MyPageBreadCrumb";
+import MyPageTable from "../../common/component/DataTableCustom";
+import BreadCrumb from "../../common/component/BreadCrumb";
 import { bookPostMockData } from "../testdata/MyPageTestData";
 import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
-import { MyPageBoardType } from "../type/MyPageBoardTable";
+import { AdminBoardColType } from "../../admin/type/AdminCommunity";
 
 const MyPageBookReviewBoard: React.FC = () => {
-  const row: { label: string; key: keyof MyPageBoardType }[] = [
+  const row: { label: string; key: keyof AdminBoardColType }[] = [
     { label: "게시물 번호", key: "board_code" },
     { label: "제목", key: "title" },
     { label: "분류", key: "category" },
@@ -34,7 +34,7 @@ const MyPageBookReviewBoard: React.FC = () => {
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             {/* 브레드크럼 */}
-            <MyPageBreadCrumb major="북리뷰" sub="게시글 관리" />
+            <BreadCrumb major="북리뷰" sub="게시글 관리" />
             {/* 테이블 */}
             <MyPageTable
               posts={bookPostMockData}

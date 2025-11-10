@@ -1,14 +1,14 @@
 import {
-  AdminBoardType,
   GatheringRequestQuestion,
-  MyPageBoardType,
   MyPageBookCommentType,
   MyPageGatheringBoardType,
   MyPageGatheringRequestManageType,
   MyPageMyGatheringType,
-} from "../type/MyPageBoardTable";
+} from "../type/MyPageTable";
+import { AdminBoardType } from "../type/MyPageCommunity";
+import { AdminBoardColType } from "../../admin/type/AdminCommunity";
 
-export const bookPostMockData: MyPageBoardType[] = [
+export const bookPostMockData: AdminBoardColType[] = [
   { id: 167, title: "하하웃어", category: "IT", date: "2025-03-27", manage: "수정" },
   { id: 35, title: "반갑습니다", category: "예술", date: "2025-03-26", manage: "수정" },
   { id: 7, title: "그런일은", category: "소설", date: "2025-03-24", manage: "수정" },

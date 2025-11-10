@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef  } from "react";
 import Pagenation from "../../common/component/Pagination";
 import MyPageSideBar from "../../mypage/component/MyPageSideBar";
-import MyPageTable from "../../mypage/component/MyPageTable";
-import MyPageBreadCrumb from "../../mypage/component/MyPageBreadCrumb";
+import MyPageTable from "../../common/component/DataTableCustom";
+import BreadCrumb from "../../common/component/BreadCrumb";
 import MyPageManageRowButton from "../../mypage/component/button/MyPageManageRowButton";
 import { getAllMember } from "../api/role";
 import { Memberboard } from "../type/role";
@@ -48,7 +48,7 @@ const AdminRoleManage: React.FC = () => {
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             {/* 브레드크럼 */}
-            <MyPageBreadCrumb major="관리자" sub="권한 관리" />
+            <BreadCrumb major="관리자" sub="권한 관리" />
             {/* 테이블 */}
             <MyPageTable
               posts={memberList}

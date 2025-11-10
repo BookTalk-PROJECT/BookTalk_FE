@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import MyPageSideBar from "../component/MyPageSideBar";
 import Pagenation from "../../common/component/Pagination";
-import MyPageTable from "../component/MyPageTable";
-import MyPageBreadCrumb from "../component/MyPageBreadCrumb";
+import MyPageTable from "../../common/component/DataTableCustom";
+import BreadCrumb from "../../common/component/BreadCrumb";
 import { myGatheringPostMockData } from "../testdata/MyPageTestData";
 import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
-import { MyPageMyGatheringType } from "../type/MyPageBoardTable";
+import { MyPageMyGatheringType } from "../type/MyPageTable";
 
 const MyPageGatheringBoard: React.FC = () => {
   const row: { label: string; key: keyof MyPageMyGatheringType }[] = [
@@ -35,7 +35,7 @@ const MyPageGatheringBoard: React.FC = () => {
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             {/* 브레드크럼 */}
-            <MyPageBreadCrumb major="모임" sub="모임 신청 관리" />
+            <BreadCrumb major="모임" sub="모임 신청 관리" />
             {/* 테이블 */}
             <MyPageTable
               posts={myGatheringPostMockData}

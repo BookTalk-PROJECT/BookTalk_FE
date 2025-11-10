@@ -6,6 +6,7 @@ export interface AdminCategoryT {
   isExpanded: boolean;
   subCategories: AdminSubCategoryT[];
 }
+
 export interface AdminSubCategoryT {
   categoryId: number;
   value: string;

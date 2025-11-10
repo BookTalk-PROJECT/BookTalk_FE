@@ -59,7 +59,7 @@ const AppContent = () => {
               <Route path="/boardList" element={<BoardList />} />
               <Route path="/boardCreate" element={<PrivateRoute><BoardCreate /></PrivateRoute>} />
               <Route path="/boardEdit" element={<PrivateRoute>< BoardEdit/></PrivateRoute>} />
-              <Route path="/boardDetail/:postId" element={<BoardDetail />} />
+              <Route path="/boardDetail/:postCode" element={<BoardDetail />} />
               {/* Gathering */}
               <Route path="/gathering">
                 {" "}

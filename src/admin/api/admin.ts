@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
-import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetail.types";
-import { SearchCondition } from "../../community/board/type/board";
+import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
+import { SearchCondition } from "../../common/type/common";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -35,12 +35,12 @@ export const searchCommentAdminAll = async (req: SearchCondition, pageNum: numbe
   return response.data;
 }
 
-export const restrictComment = async (boardCode: string, del_reason: string): Promise<ApiResponse<string>> => {
-  const response = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/reply/restrict`, {targetCode: boardCode, delReason: del_reason});
+export const restrictComment = async (replyCode: string, del_reason: string): Promise<ApiResponse<string>> => {
+  const response = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/reply/restrict`, {targetCode: replyCode, delReason: del_reason});
   return response.data;
 }
 
-export const recoverComment = async (boardCode: string): Promise<ApiResponse<string>> => {
-  const response = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/reply/recover/${boardCode}`);
+export const recoverComment = async (replyCode: string): Promise<ApiResponse<string>> => {
+  const response = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/reply/recover/${replyCode}`);
   return response.data;
 }

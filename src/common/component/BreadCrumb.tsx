@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
-
-interface MyPageBreadCrumbProps {
+interface BreadCrumbProps {
   major: string;
   sub: string;
 }
 
-const MyPageBreadCrumb = ({ major, sub }: MyPageBreadCrumbProps) => {
+const BreadCrumb = ({ major, sub }: BreadCrumbProps) => {
   return (
     <div className="p-6 border-b border-gray-200">
       <div className="text-lg font-medium text-gray-700">
@@ -15,4 +13,4 @@ const MyPageBreadCrumb = ({ major, sub }: MyPageBreadCrumbProps) => {
   );
 };
 
-export default MyPageBreadCrumb;
+export default BreadCrumb;
