@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import MyPageSideBar from "../component/MyPageSideBar";
 import { getMyInformation, modifyMember } from "../api/MyPage";
-import { MyPageModifyMemberDataType } from "../type/MyPageBoardTable";
+import { MyPageModifyMemberDataType } from "../type/MyPageTable";
 
 const MyPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);

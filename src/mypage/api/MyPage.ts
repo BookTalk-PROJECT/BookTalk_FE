@@ -1,10 +1,10 @@
 import axios from "axios";
 import {
   MyPageBoardType,
-  MyPageBookCommentType,
+  MyPageCommentType,
   MyPageMemberDataType,
   MyPageModifyMemberDataType,
-} from "../type/MyPageBoardTable";
+} from "../type/MyPageTable";
 import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
 import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetail.types";
 import { Member } from "../../common/auth/type/type";
@@ -40,10 +40,10 @@ export async function getMyPageBookReviewBoard(userId: string) {
 
 //마이페이지 book review board comment 요청 get 메서드
 export async function getMyPageBookReviewComment(userId: string) {
-  return new Promise<MyPageBookCommentType>((resolve, reject) => {
+  return new Promise<MyPageCommentType>((resolve, reject) => {
     (async () => {
       try {
-        const res = await axios.get<MyPageBookCommentType>(`/mypage/bookreview/comment/${userId}`);
+        const res = await axios.get<MyPageCommentType>(`/mypage/bookreview/comment/${userId}`);
         resolve(res.data);
       } catch (err) {
         reject(err);

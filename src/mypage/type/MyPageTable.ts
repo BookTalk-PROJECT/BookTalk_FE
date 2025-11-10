@@ -1,11 +1,3 @@
-import React from "react";
-
-export interface MyPageTableProps<T> {
-  rows: any[];
-  renderHeader: () => React.JSX.Element;
-  renderSearchBar?: () => React.JSX.Element;
-  renderRow: (row: any) => React.JSX.Element;
-}
 
 export interface MyPageTableCommonColType {
   date: string;
@@ -76,7 +68,7 @@ export interface MyPageModifyMemberDataType {
 
 export type RowDef<T> = {
   label: string; 
-  key: keyof T, 
+  key: Extract<keyof T, string>;
   isSortable: boolean , 
   isSearchType: boolean
 }

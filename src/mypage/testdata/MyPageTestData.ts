@@ -6,7 +6,7 @@ import {
   MyPageGatheringBoardType,
   MyPageGatheringRequestManageType,
   MyPageMyGatheringType,
-} from "../type/MyPageBoardTable";
+} from "../type/MyPageTable";
 
 export const bookPostMockData: MyPageBoardType[] = [
   { id: 167, title: "하하웃어", category: "IT", date: "2025-03-27", manage: "수정" },

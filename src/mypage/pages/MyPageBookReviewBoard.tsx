@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import MyPageSideBar from "../component/MyPageSideBar";
 import Pagenation from "../../common/component/Pagination";
-import MyPageTable from "../component/MyPageTable";
+import MyPageTable from "../../common/component/DataTableCustom";
 import MyPageBreadCrumb from "../component/MyPageBreadCrumb";
 import { bookPostMockData } from "../testdata/MyPageTestData";
 import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
-import { MyPageBoardType } from "../type/MyPageBoardTable";
+import { MyPageBoardType } from "../type/MyPageTable";
 
 const MyPageBookReviewBoard: React.FC = () => {
   const row: { label: string; key: keyof MyPageBoardType }[] = [

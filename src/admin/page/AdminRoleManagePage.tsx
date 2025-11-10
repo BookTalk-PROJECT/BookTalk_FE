@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef  } from "react";
 import Pagenation from "../../common/component/Pagination";
 import MyPageSideBar from "../../mypage/component/MyPageSideBar";
-import MyPageTable from "../../mypage/component/MyPageTable";
+import MyPageTable from "../../common/component/DataTableCustom";
 import MyPageBreadCrumb from "../../mypage/component/MyPageBreadCrumb";
 import MyPageManageRowButton from "../../mypage/component/button/MyPageManageRowButton";
 import { getAllMember } from "../api/role";
