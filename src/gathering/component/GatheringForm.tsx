@@ -49,8 +49,7 @@ const STATUS_OPTIONS: { value: Status; label: string }[] = [
 
 type Mode = "create" | "edit";
 
-export interface GatheringFormInitial
-  extends Partial<GatheringCreateRequest> {
+export interface GatheringFormInitial extends Partial<GatheringCreateRequest> {
   // edit 모드에서만 올 수 있는 확장 필드
   status?: Status;
   imageUrl?: string | null; // 서버의 기존 이미지
@@ -187,8 +186,8 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
         const url =
           `${NLK_API_BASE}` +
           `?key=${encodeURIComponent("5703ff0e81c46e44a276655ac78421a5b94bd4d7e3cb5ddf07db4db6d6509803")}` +
-          `&apiType=json` +
-          `&srchTarget=title` +
+          "&apiType=json" +
+          "&srchTarget=title" +
           `&kwd=${encodeURIComponent(kwd)}` +
           `&pageNum=${page}` +
           `&pageSize=${pageSize}`;
@@ -289,8 +288,7 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
               aria-label="선택한 책 제거"
               title="선택한 책 제거"
               className="absolute -right-2 -top-2 z-10 w-7 h-7 rounded-full bg-white border shadow hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition"
-              onClick={() => handleRemoveBook(String(book.isbn))}
-            >
+              onClick={() => handleRemoveBook(String(book.isbn))}>
               ×
             </button>
 
@@ -312,8 +310,7 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
                     WebkitBoxOrient: "vertical" as any,
                     overflow: "hidden",
                   }}
-                  title={book.name}
-                >
+                  title={book.name}>
                   {book.name}
                 </div>
                 <div className="text-xs text-gray-500 mt-1 truncate" title={String(book.isbn)}>
@@ -325,10 +322,9 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
                       book.complete_yn === 1
                         ? "bg-green-100 text-green-800"
                         : book.complete_yn === 0
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}
-                  >
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-gray-100 text-gray-800"
+                    }`}>
                     {book.complete_yn === 1 ? "완료" : book.complete_yn === 0 ? "진행중" : "예정"}
                   </span>
                 </div>
@@ -341,8 +337,7 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
         {canAddMoreBooks && (
           <button
             onClick={() => setIsSearchModalOpen(true)}
-            className="w-full h-[260px] bg-gray-100 rounded-xl flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
-          >
+            className="w-full h-[260px] bg-gray-100 rounded-xl flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors">
             <i className="fas fa-plus text-2xl text-gray-600"></i>
           </button>
         )}
@@ -371,8 +366,7 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
               <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
               <button
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-white bg-gray-800 px-3 py-1 rounded-md"
-                onClick={() => searchQuery.trim() && doSearch(searchQuery.trim(), 1)}
-              >
+                onClick={() => searchQuery.trim() && doSearch(searchQuery.trim(), 1)}>
                 검색
               </button>
             </div>
@@ -424,8 +418,7 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
                         setIsSearchModalOpen(false);
                       }}
                       disabled={disabled}
-                      title={result.title}
-                    >
+                      title={result.title}>
                       <div className="flex gap-3 items-start">
                         <img
                           src={cover}
@@ -443,8 +436,7 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
                               WebkitLineClamp: 2,
                               WebkitBoxOrient: "vertical" as any,
                               overflow: "hidden",
-                            }}
-                          >
+                            }}>
                             {result.title}
                           </div>
                           <div className="text-xs text-gray-500 mt-1 truncate">ISBN: {result.isbn || "-"}</div>
@@ -469,15 +461,13 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
                   <button
                     className="px-3 py-1 rounded border text-sm disabled:opacity-40"
                     disabled={pageNum <= 1 || isSearching}
-                    onClick={() => doSearch(searchQuery.trim(), pageNum - 1)}
-                  >
+                    onClick={() => doSearch(searchQuery.trim(), pageNum - 1)}>
                     이전
                   </button>
                   <button
                     className="px-3 py-1 rounded border text-sm disabled:opacity-40"
                     disabled={pageNum * pageSize >= total || isSearching}
-                    onClick={() => doSearch(searchQuery.trim(), pageNum + 1)}
-                  >
+                    onClick={() => doSearch(searchQuery.trim(), pageNum + 1)}>
                     다음
                   </button>
                 </div>
@@ -571,8 +561,7 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
               <select
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
                 value={status}
-                onChange={(e) => setStatus(e.target.value as Status)}
-              >
+                onChange={(e) => setStatus(e.target.value as Status)}>
                 {STATUS_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
                     {o.label}
@@ -590,13 +579,9 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
                 {hashtags.map((tag, index) => (
                   <span
                     key={index}
-                    className="flex items-center bg-purple-100 text-purple-700 text-sm px-2 py-1 rounded-full"
-                  >
+                    className="flex items-center bg-purple-100 text-purple-700 text-sm px-2 py-1 rounded-full">
                     #{tag}
-                    <button
-                      onClick={() => removeHashtag(tag)}
-                      className="ml-1 text-purple-500 hover:text-purple-800"
-                    >
+                    <button onClick={() => removeHashtag(tag)} className="ml-1 text-purple-500 hover:text-purple-800">
                       <i className="fas fa-times text-xs"></i>
                     </button>
                   </span>
@@ -618,8 +603,7 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
             <div className="flex items-center gap-4">
               <label
                 htmlFor="image-upload"
-                className="px-4 py-2 rounded-lg text-sm font-medium !rounded-button whitespace-nowrap cursor-pointer transition-all bg-gray-800 text-white hover:bg-gray-700"
-              >
+                className="px-4 py-2 rounded-lg text-sm font-medium !rounded-button whitespace-nowrap cursor-pointer transition-all bg-gray-800 text-white hover:bg-gray-700">
                 {isEdit ? "대표 이미지 변경" : "대표 이미지 추가"}
               </label>
               <input
@@ -641,7 +625,11 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
             {imageFile ? (
               <img src={URL.createObjectURL(imageFile)} alt="미리보기" className="mt-2 max-w-xs rounded border" />
             ) : isEdit && serverImageUrl ? (
-              <img src={API_BASE_URL+serverImageUrl} alt="기존 대표 이미지" className="mt-2 max-w-xs rounded border" />
+              <img
+                src={API_BASE_URL + serverImageUrl}
+                alt="기존 대표 이미지"
+                className="mt-2 max-w-xs rounded border"
+              />
             ) : null}
           </div>
         </div>
@@ -683,8 +671,7 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleRemoveQuestion(q.id)}
-                      className="bg-red-500 text-white w-6 h-6 flex items-center justify-center rounded !rounded-button whitespace-nowrap cursor-pointer"
-                    >
+                      className="bg-red-500 text-white w-6 h-6 flex items-center justify-center rounded !rounded-button whitespace-nowrap cursor-pointer">
                       <i className="fas fa-minus"></i>
                     </button>
                   </div>

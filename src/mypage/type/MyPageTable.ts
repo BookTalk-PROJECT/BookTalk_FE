@@ -35,4 +35,3 @@ export interface MyPageModifyMemberDataType {
   password: string;
   address: string;
 }
-

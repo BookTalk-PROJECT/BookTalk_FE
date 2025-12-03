@@ -16,6 +16,6 @@ export interface AdminSubCategoryT {
 }
 
 export interface CreateCategoryT {
-    pCategoryId?: number;
-    value: string;
+  pCategoryId?: number;
+  value: string;
 }

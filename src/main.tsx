@@ -30,36 +30,73 @@ import GatheringDetailPage from "./gathering/pages/GatheringDetailPage";
 import BoardCreate from "./community/board/pages/BoardCreate";
 import BoardDetail from "./community/board/pages/BoardDetail";
 import GatheringJoin from "./gathering/pages/GatheringJoinPage";
-import "./common/auth/config/tokenInterceptor"
+import "./common/auth/config/tokenInterceptor";
 import BoardEdit from "./community/board/pages/BoardEdit";
 import AdminRoleManage from "./admin/page/AdminRoleManagePage";
 import GatheringEditPage from "./gathering/pages/GatheringEditPage";
 import NaverRedirectPage from "./common/auth/page/NaverRedirecPage";
 import KakaoRedirectPage from "./common/auth/page/KakaoRedirecPage";
+import BookReviewList from "./bookReview/pages/BookReviewList";
+import BookReviewCreate from "./bookReview/pages/BookReviewCreate";
+import BookReviewDetail from "./bookReview/pages/BookReviewDetail";
+import BookReviewEdit from "./bookReview/pages/BookReviewEdit";
 
 const AppContent = () => {
   const location = useLocation();
 
   return (
     <>
-    <div>
-      <Header />
       <div>
-        {/* <div className="flex justify-center bg-gray-100 min-h-screen">
+        <Header />
+        <div>
+          {/* <div className="flex justify-center bg-gray-100 min-h-screen">
         {/* <div className="flex justify-center bg-gray-100 min-h-screen">
        <div className="grid grid-areas-layout grid-cols-layout grid-rows-layout gap-x-4 relative max-w-[390px] w-full bg-white shadow-md selection:bg-green-900 font-[pretendard]"> */}
-        {/* {location.pathname !== "/login" && <Header />} */}
-        <main
-          className={`grid-in-main ${location.pathname !== "/login" || !location.pathname.includes("/mypage") ? "my-3 px-[24px]" : ""}`}>
-          <Routes>
-            {/* <Route path="/login" element={<LoginPage />} /> */}
+          {/* {location.pathname !== "/login" && <Header />} */}
+          <main
+            className={`grid-in-main ${location.pathname !== "/login" || !location.pathname.includes("/mypage") ? "my-3 px-[24px]" : ""}`}>
+            <Routes>
+              {/* <Route path="/login" element={<LoginPage />} /> */}
               <Route path="" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<DashBoardPage />} />
               {/* Board */}
               <Route path="/boardList" element={<BoardList />} />
-              <Route path="/boardCreate" element={<PrivateRoute><BoardCreate /></PrivateRoute>} />
-              <Route path="/boardEdit" element={<PrivateRoute>< BoardEdit/></PrivateRoute>} />
+              <Route
+                path="/boardCreate"
+                element={
+                  <PrivateRoute>
+                    <BoardCreate />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/boardEdit"
+                element={
+                  <PrivateRoute>
+                    <BoardEdit />
+                  </PrivateRoute>
+                }
+              />
               <Route path="/boardDetail/:postCode" element={<BoardDetail />} />
+              {/* Book Review */}
+              <Route path="/book-review" element={<BookReviewList />} />
+              <Route
+                path="/book-review/create"
+                element={
+                  <PrivateRoute>
+                    <BookReviewCreate />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="/book-review/:id" element={<BookReviewDetail />} />
+              <Route
+                path="/book-review/edit/:id"
+                element={
+                  <PrivateRoute>
+                    <BookReviewEdit />
+                  </PrivateRoute>
+                }
+              />
               {/* Gathering */}
               <Route path="/gathering">
                 {" "}
@@ -67,7 +104,8 @@ const AppContent = () => {
                 <Route index element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
                 <Route path="create" element={<GatheringCreatePage />} /> {/* 이성종 모임 상세 */}
                 <Route path="detail/:gatheringId" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
-                <Route path=":gatheringId/join" element={<GatheringJoin />} />{/* 이성종 모임 참여 신청 */}
+                <Route path=":gatheringId/join" element={<GatheringJoin />} />
+                {/* 이성종 모임 참여 신청 */}
                 <Route path="/gathering/:gatheringId/edit" element={<GatheringEditPage />} />
                 <Route path=":gatheringId/gatheringboard">
                   {" "}
@@ -80,37 +118,145 @@ const AppContent = () => {
               <Route path="/join" element={<JoinPage />} /> {/* 최형석 회원 가입 페이지 */}
               <Route path="/login" element={<LoginPage />} /> {/* 최형석 로그인 페이지 */}
               {/* MyPage */}
-              <Route path="/mypage" element={<PrivateRoute><MyPage /></PrivateRoute>} /> {/* 최형석 마이 페이지 */}
-              <Route path="/mypage/bookreview/board" element={<PrivateRoute><MyPageBookReviewBoard /></PrivateRoute>} />{" "}
+              <Route
+                path="/mypage"
+                element={
+                  <PrivateRoute>
+                    <MyPage />
+                  </PrivateRoute>
+                }
+              />{" "}
+              {/* 최형석 마이 페이지 */}
+              <Route
+                path="/mypage/bookreview/board"
+                element={
+                  <PrivateRoute>
+                    <MyPageBookReviewBoard />
+                  </PrivateRoute>
+                }
+              />{" "}
               {/* 최형석 마이 페이지 북리뷰 게시판  */}
-              <Route path="mypage/bookreview/comment" element={<PrivateRoute><MyPageBookReviewComment /></PrivateRoute>} />{" "}
+              <Route
+                path="mypage/bookreview/comment"
+                element={
+                  <PrivateRoute>
+                    <MyPageBookReviewComment />
+                  </PrivateRoute>
+                }
+              />{" "}
               {/* 최형석 마이 페이지 북리뷰 댓글  */}
-              <Route path="/mypage/community/board" element={<PrivateRoute><MyPageCommunityBoard /></PrivateRoute>} />{" "}
+              <Route
+                path="/mypage/community/board"
+                element={
+                  <PrivateRoute>
+                    <MyPageCommunityBoard />
+                  </PrivateRoute>
+                }
+              />{" "}
               {/* 최형석 마이 페이지 커뮤니티 게시판  */}
-              <Route path="/mypage/community/comment" element={<PrivateRoute><MyPageCommunityComment /></PrivateRoute>} /> {/* MyPage_Gathering */}
-              <Route path="/mypage/gathering" element={<PrivateRoute><MyPageMyGatherings /></PrivateRoute>} /> {/* 최형석 내 모임 */}
-              <Route path="/mypage/gathering/board" element={<PrivateRoute><MyPageGatheringBoard /></PrivateRoute>} /> {/* 최형석 모임 게시판  */}
-              <Route path="/mypage/gathering/comment" element={<PrivateRoute><MyPageGatheringComment /></PrivateRoute>} /> {/* 최형석 모임 댓글  */}
-              <Route path="/mypage/gathering/manage/request" element={<PrivateRoute><MyPageGatheringRequestManage /></PrivateRoute>} />
+              <Route
+                path="/mypage/community/comment"
+                element={
+                  <PrivateRoute>
+                    <MyPageCommunityComment />
+                  </PrivateRoute>
+                }
+              />{" "}
+              {/* MyPage_Gathering */}
+              <Route
+                path="/mypage/gathering"
+                element={
+                  <PrivateRoute>
+                    <MyPageMyGatherings />
+                  </PrivateRoute>
+                }
+              />{" "}
+              {/* 최형석 내 모임 */}
+              <Route
+                path="/mypage/gathering/board"
+                element={
+                  <PrivateRoute>
+                    <MyPageGatheringBoard />
+                  </PrivateRoute>
+                }
+              />{" "}
+              {/* 최형석 모임 게시판  */}
+              <Route
+                path="/mypage/gathering/comment"
+                element={
+                  <PrivateRoute>
+                    <MyPageGatheringComment />
+                  </PrivateRoute>
+                }
+              />{" "}
+              {/* 최형석 모임 댓글  */}
+              <Route
+                path="/mypage/gathering/manage/request"
+                element={
+                  <PrivateRoute>
+                    <MyPageGatheringRequestManage />
+                  </PrivateRoute>
+                }
+              />
               {/* 최형석 모임 신청 관리  */}
-              <Route path="/mypage/gathering/manage/approval" element={<PrivateRoute><MyPageGatheringApprovalManage /></PrivateRoute>} />{" "}
+              <Route
+                path="/mypage/gathering/manage/approval"
+                element={
+                  <PrivateRoute>
+                    <MyPageGatheringApprovalManage />
+                  </PrivateRoute>
+                }
+              />{" "}
               {/* 최형석 모임 승인 관리  */}
               {/* AdminPage */}
-              <Route path="/admin/board" element={<PrivateRoute><AdminPageBoard /></PrivateRoute>} /> {/* 최형석 관리자 게시물 관리 페이지 */}
-              <Route path="/admin/comment" element={<PrivateRoute><AdminPageComment /></PrivateRoute>} /> {/* 최형석 관리자 댓글 관리 페이지 */}
-              <Route path="/admin/category" element={<PrivateRoute><AdminCategory /></PrivateRoute>} /> {/* 최형석 관리자 카테고리 페이지 */}
-              <Route path="/admin/role" element={<PrivateRoute><AdminRoleManage /></PrivateRoute>} /> {/* 최형석 관리자 권한관리 페이지 */}
+              <Route
+                path="/admin/board"
+                element={
+                  <PrivateRoute>
+                    <AdminPageBoard />
+                  </PrivateRoute>
+                }
+              />{" "}
+              {/* 최형석 관리자 게시물 관리 페이지 */}
+              <Route
+                path="/admin/comment"
+                element={
+                  <PrivateRoute>
+                    <AdminPageComment />
+                  </PrivateRoute>
+                }
+              />{" "}
+              {/* 최형석 관리자 댓글 관리 페이지 */}
+              <Route
+                path="/admin/category"
+                element={
+                  <PrivateRoute>
+                    <AdminCategory />
+                  </PrivateRoute>
+                }
+              />{" "}
+              {/* 최형석 관리자 카테고리 페이지 */}
+              <Route
+                path="/admin/role"
+                element={
+                  <PrivateRoute>
+                    <AdminRoleManage />
+                  </PrivateRoute>
+                }
+              />{" "}
+              {/* 최형석 관리자 권한관리 페이지 */}
               {/* 최형석 소셜 로그인 리다이렉트 */}
-              <Route path="/oauth/callback/naver" element={<NaverRedirectPage />} /> {/* 최형석 네이버 리다이렉트 페이지 */}
-              <Route path="/oauth/callback/kakao" element={<KakaoRedirectPage />} /> {/* 최형석 카카오 리다이렉트 페이지 */}
-          </Routes>
-        </main>
-        {/* {location.pathname !== "/login" && <NavBar />} */}
+              <Route path="/oauth/callback/naver" element={<NaverRedirectPage />} />{" "}
+              {/* 최형석 네이버 리다이렉트 페이지 */}
+              <Route path="/oauth/callback/kakao" element={<KakaoRedirectPage />} />{" "}
+              {/* 최형석 카카오 리다이렉트 페이지 */}
+            </Routes>
+          </main>
+          {/* {location.pathname !== "/login" && <NavBar />} */}
+        </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
     </>
-    
   );
 };
 

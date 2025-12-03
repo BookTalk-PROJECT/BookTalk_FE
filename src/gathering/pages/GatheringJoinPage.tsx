@@ -88,7 +88,7 @@ const GatheringJoin: React.FC = () => {
     try {
       await GatheringJoinRequest(gatheringId!, answerArray);
       alert("모임 가입 신청이 완료되었습니다.");
-      navigate(-1)
+      navigate(-1);
       localStorage.removeItem("groupJoinAnswers");
       setAnswers({});
     } catch (err) {

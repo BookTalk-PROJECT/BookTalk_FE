@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef  } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Pagenation from "../../common/component/Pagination";
 import MyPageSideBar from "../../mypage/component/MyPageSideBar";
 import MyPageTable from "../../common/component/DataTableCustom";
@@ -9,15 +9,14 @@ import { Memberboard } from "../type/role";
 import Button from "../../common/component/Button";
 
 const AdminRoleManage: React.FC = () => {
-
   const [memberList, setMemberList] = useState<Memberboard[]>([]);
 
   const manageButtonRef = useRef(null);
 
   useEffect(() => {
-    getAllMember().then((res) =>{
-      setMemberList(res.data)
-    })
+    getAllMember().then((res) => {
+      setMemberList(res.data);
+    });
   }, []);
 
   const row: { label: string; key: keyof Memberboard }[] = [
@@ -36,7 +35,7 @@ const AdminRoleManage: React.FC = () => {
   const postKeys = memberList.length > 0 ? Object.keys(memberList[0]) : [];
 
   const handleClick = () => {
-    console.log('Button clicked!');
+    console.log("Button clicked!");
   };
 
   return (
@@ -56,11 +55,7 @@ const AdminRoleManage: React.FC = () => {
               initialFilter={initialFilter}
               filterOptions={filterOption}
               manageOption={
-                <MyPageManageRowButton
-                  actions={[
-                    { label: "수정", color: "green", onClick: handleClick},
-                  ]}
-                />
+                <MyPageManageRowButton actions={[{ label: "수정", color: "green", onClick: handleClick }]} />
               }
               postKeys={postKeys}
             />

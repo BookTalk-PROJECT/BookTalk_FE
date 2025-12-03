@@ -10,8 +10,6 @@ interface GatheringCardProps {
   lastRef?: React.Ref<HTMLDivElement>;
 }
 
-
-
 const GatheringCard: React.FC<GatheringCardProps> = ({ gathering, lastRef }) => {
   const navigate = useNavigate();
 
@@ -25,7 +23,11 @@ const GatheringCard: React.FC<GatheringCardProps> = ({ gathering, lastRef }) => 
       ref={lastRef || null}
       className="cursor-pointer bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-gray-100">
       <div className="relative">
-        <img src={`${API_BASE_URL}${gathering.imageUrl}`} alt="사진이 없습니다" className="w-full h-48 object-cover object-top" />
+        <img
+          src={`${API_BASE_URL}${gathering.imageUrl}`}
+          alt="사진이 없습니다"
+          className="w-full h-48 object-cover object-top"
+        />
       </div>
       <div className="p-4">
         <h3 className="font-semibold text-lg mb-2 text-gray-800">{gathering.title}</h3>
@@ -49,17 +51,17 @@ const GatheringCard: React.FC<GatheringCardProps> = ({ gathering, lastRef }) => 
                 </span>
               ))}
             </div>
-              <span
-                className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap
+            <span
+              className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap
                   ${
                     statusType === "INTENDED"
                       ? "bg-green-100 text-green-600"
                       : statusType === "PROGRESS"
-                      ? "bg-yellow-100 text-yellow-600"
-                      : "bg-gray-200 text-gray-600"
+                        ? "bg-yellow-100 text-yellow-600"
+                        : "bg-gray-200 text-gray-600"
                   }`}>
-                {statusName}
-              </span>
+              {statusName}
+            </span>
           </div>
         </div>
       </div>
