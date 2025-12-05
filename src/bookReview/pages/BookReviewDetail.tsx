@@ -102,7 +102,7 @@ const BookReviewDetail: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-8 mb-8">
             <div className="md:w-1/3 flex-shrink-0">
               <img
-                src={review.thumbnail_url}
+                src={review.thumbnail}
                 alt={review.book_title}
                 className="w-full h-auto object-cover rounded-lg shadow-md"
               />

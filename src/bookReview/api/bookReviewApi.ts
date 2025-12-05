@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BookReview, BookReviewCreate, BookReviewDetail, BookReviewUpdate } from "../types/bookReview";
+import { BookReview, BookReviewCreate, BookReviewDetail } from "../types/bookReview";
 import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
 import { SearchCondition } from "../../common/type/common"; // Import SearchCondition
 
@@ -34,7 +34,7 @@ export const getBookReview = async (code: string): Promise<ApiResponse<BookRevie
   return response.data;
 };
 
-export const updateBookReview = async (code: string, req: BookReviewUpdate): Promise<ApiResponse<void>> => {
+export const updateBookReview = async (code: string, req: BookReviewCreate): Promise<ApiResponse<void>> => {
   const response = await axios.put<ApiResponse<void>>(`${BASE_URL}/book-reviews/${code}`, req);
   return response.data;
 };

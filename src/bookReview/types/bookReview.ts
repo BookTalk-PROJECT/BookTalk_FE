@@ -18,11 +18,11 @@ export interface BookReviewDetail extends BookReview {
   likes_cnt: number;
   member_id: number;
   isLiked: boolean;
-  notification_yn: boolean;
   del_yn: boolean;
   del_reason: string | null;
   reg_date: string;
   update_date: string;
+  thumbnail: string;
 }
 
 export interface BookReviewCreate {
@@ -30,14 +30,7 @@ export interface BookReviewCreate {
   authors: string;
   publisher: string;
   isbn: string;
-  thumbnail: string;
-  title: string;
-  content: string;
-  rating: number;
-  notification_yn: boolean;
-}
-
-export interface BookReviewUpdate {
+  thumbnail_url: string;
   title: string;
   content: string;
   rating: number;

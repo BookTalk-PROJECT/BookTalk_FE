@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBookReview, updateBookReview } from "../api/bookReviewApi";
-import { BookReviewDetail, BookReviewUpdate } from "../types/bookReview";
+import { BookReviewDetail, BookReviewCreate } from "../types/bookReview";
 import BookReviewForm from "../components/BookReviewForm";
 import LoadingBar from "../../common/component/Loading";
 
@@ -30,7 +30,7 @@ const BookReviewEdit: React.FC = () => {
     }
   }, [id, navigate]);
 
-  const handleUpdateReview = async (formData: BookReviewUpdate) => {
+  const handleUpdateReview = async (formData: BookReviewCreate) => {
     if (!id) return;
     try {
       await updateBookReview(id, formData);
@@ -48,7 +48,7 @@ const BookReviewEdit: React.FC = () => {
     return <div>리뷰를 불러오지 못했습니다.</div>;
   }
 
-  return <BookReviewForm initialData={initialData} onSubmit={handleUpdateReview} isEditMode={true} />;
+  return <BookReviewForm initialData={initialData} onSubmit={handleUpdateReview} />;
 };
 
 export default BookReviewEdit;
