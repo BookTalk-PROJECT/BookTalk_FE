@@ -5,32 +5,19 @@ import axios from "axios";
 const baseURL = import.meta.env.VITE_API_URL;
 
 export const fetchLogin = async (loginData: Login) => {
-    try{
-      const response = await axios.post(`${baseURL}/login`,loginData);
+  const response = await axios.post(`${baseURL}/login`, loginData);
 
-      const IsExistToken = response.data.data.accessToken !== undefined;
+  const IsExistToken = response.data?.data?.accessToken !== undefined;
+  if (!IsExistToken) {
+    throw new Error("No access token in response");
+  }
 
-      if (response.status === 200 && IsExistToken) {
-        console.log("로그인 성공");
-        // 예: 토큰 저장 or 리다이렉트
-        // const data = await response.json();
-        // localStorage.setItem("accessToken", data.token);
-        // 1. accessToken파싱
-        const { accessToken } = response.data.data;
+  const { accessToken } = response.data.data;
+  // 토큰 저장까지 여기서 할지, 위로 올릴지는 팀 스타일에 따라
+  localStorage.setItem("accessToken", accessToken);
 
-        // 2. 로컬스토리지에 저장
-        localStorage.setItem("accessToken", accessToken);
-
-        // 3. 기본 Authorization 헤더 설정 (axios 공통 헤더)
-        //axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-      } else {
-        console.error("로그인 실패", response.status);
-        alert("아이디 또는 비밀번호가 올바르지 않습니다.");
-      }
-    } catch (error) {
-      console.error("서버 오류:", error);
-    }
-}
+  return response.data; // 필요한 데이터 리턴
+};
 
 export const fetchLogout = async () => {
   try{
