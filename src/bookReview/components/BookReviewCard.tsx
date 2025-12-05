@@ -40,14 +40,6 @@ const BookReviewCard: React.FC<BookReviewCardProps> = ({ review, onDelete }) => 
           <div className="text-xs text-gray-500">
             <span>{review.author}</span> | <span>{review.publication_date}</span>
           </div>
-          <div className="flex space-x-2">
-            <CustomButton onClick={handleEdit} color="white" customClassName="px-3 py-1 text-xs">
-              수정
-            </CustomButton>
-            <CustomButton onClick={handleDelete} color="red" customClassName="px-3 py-1 text-xs">
-              삭제
-            </CustomButton>
-          </div>
         </div>
       </div>
     </div>

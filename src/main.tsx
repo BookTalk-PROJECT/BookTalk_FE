@@ -38,8 +38,8 @@ import NaverRedirectPage from "./common/auth/page/NaverRedirecPage";
 import KakaoRedirectPage from "./common/auth/page/KakaoRedirecPage";
 import BookReviewList from "./bookReview/pages/BookReviewList";
 import BookReviewCreate from "./bookReview/pages/BookReviewCreate";
-import BookReviewDetail from "./bookReview/pages/BookReviewDetail";
 import BookReviewEdit from "./bookReview/pages/BookReviewEdit";
+import BookReviewDetail from "./bookReview/pages/BookReviewDetail";
 
 const AppContent = () => {
   const location = useLocation();
@@ -88,7 +88,14 @@ const AppContent = () => {
                   </PrivateRoute>
                 }
               />
-              <Route path="/book-review/:id" element={<BookReviewDetail />} />
+              <Route
+                path="/book-review/:id"
+                element={
+                  <PrivateRoute>
+                    <BookReviewDetail />
+                  </PrivateRoute>
+                }
+              />
               <Route
                 path="/book-review/edit/:id"
                 element={

@@ -39,6 +39,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
 
   // 댓글 데이터 불러오기
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     loadDetailData();
   }, [postCode]);
 

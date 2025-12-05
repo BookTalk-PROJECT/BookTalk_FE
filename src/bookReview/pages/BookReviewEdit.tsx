@@ -1,60 +1,54 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBookReview, updateBookReview } from "../api/bookReviewApi";
-import EditBoard from "../../common/component/Board/page/EditBoard";
-import { CommuPostRequest } from "../../common/component/Board/type/BoardDetailTypes";
+import { BookReviewDetail, BookReviewUpdate } from "../types/bookReview";
+import BookReviewForm from "../components/BookReviewForm";
 import LoadingBar from "../../common/component/Loading";
 
 const BookReviewEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [initialData, setInitialData] = useState<CommuPostRequest | null>(null);
+  const [initialData, setInitialData] = useState<BookReviewDetail | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
+      setIsLoading(true);
       getBookReview(id)
-        .then((response) => {
-          const { title, content } = response.data;
-          setInitialData({ title, content });
+        .then(response => {
+          setInitialData(response.data.post);
         })
-        .catch((error) => {
+        .catch(error => {
           console.error("Failed to fetch book review for editing:", error);
           navigate("/book-review");
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
+    } else {
+      navigate("/book-review");
     }
   }, [id, navigate]);
 
-  const handleEditReview = async (postData: CommuPostRequest, postCode: string) => {
+  const handleUpdateReview = async (formData: BookReviewUpdate) => {
+    if (!id) return;
     try {
-      const reviewId = postCode;
-      await updateBookReview(reviewId, postData);
-      navigate(`/book-review/${reviewId}`); // Navigate to the detail page after editing
+      await updateBookReview(id, formData);
+      navigate(`/book-review/${id}`); // Navigate to the detail page after editing
     } catch (error) {
       console.error("Failed to update book review:", error);
     }
   };
 
-  if (!id) {
-    navigate("/book-review");
-    return null;
-  }
-
-  // Render loading bar until initial data is fetched
-  if (!initialData) {
+  if (isLoading) {
     return <LoadingBar />;
   }
 
-  // EditBoard's initialValue is not updating correctly on its own, so we control its render.
-  // By only rendering EditBoard once initialData is set, we ensure it gets the correct data.
-  return (
-    <EditBoard
-      postCode={id}
-      editPost={handleEditReview}
-      redirectUri={`/book-review/${id}`}
-      mainTopic="책리뷰"
-      subTopic="리뷰 수정"
-    />
-  );
+  if (!initialData) {
+    return <div>리뷰를 불러오지 못했습니다.</div>;
+  }
+
+  return <BookReviewForm initialData={initialData} onSubmit={handleUpdateReview} isEditMode={true} />;
 };
 
 export default BookReviewEdit;

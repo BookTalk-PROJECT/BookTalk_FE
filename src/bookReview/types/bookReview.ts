@@ -9,23 +9,24 @@ export interface BookReview {
 }
 
 export interface BookReviewDetail extends BookReview {
+  title: string;
   content: string;
   isbn: string;
   publisher: string;
   authors: string;
   views: number;
-  likesCnt: number;
-  memberId: number;
+  likes_cnt: number;
+  member_id: number;
   isLiked: boolean;
-  notificationYn: boolean;
-  delYn: boolean;
-  delReason: string | null;
-  regDate: string;
-  updateDate: string;
+  notification_yn: boolean;
+  del_yn: boolean;
+  del_reason: string | null;
+  reg_date: string;
+  update_date: string;
 }
 
 export interface BookReviewCreate {
-  bookTitle: string;
+  book_title: string;
   authors: string;
   publisher: string;
   isbn: string;
@@ -33,7 +34,7 @@ export interface BookReviewCreate {
   title: string;
   content: string;
   rating: number;
-  notificationYn: boolean;
+  notification_yn: boolean;
 }
 
 export interface BookReviewUpdate {

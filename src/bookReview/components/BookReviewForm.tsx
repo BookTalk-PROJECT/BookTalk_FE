@@ -14,7 +14,7 @@ const BookReviewForm: React.FC<BookReviewFormProps> = ({ initialData, onSubmit, 
   const [formData, setFormData] = useState<BookReviewCreate | BookReviewUpdate>(
     initialData
       ? {
-          title: initialData.reviewTitle,
+          title: initialData.title,
           content: initialData.content,
           rating: initialData.rating,
         }
@@ -33,8 +33,9 @@ const BookReviewForm: React.FC<BookReviewFormProps> = ({ initialData, onSubmit, 
 
   useEffect(() => {
     if (initialData && isEditMode) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData({
-        title: initialData.reviewTitle,
+        title: initialData.title,
         content: initialData.content,
         rating: initialData.rating,
       });
@@ -63,7 +64,7 @@ const BookReviewForm: React.FC<BookReviewFormProps> = ({ initialData, onSubmit, 
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-md max-w-4xl mx-auto my-10">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">{isEditMode ? "서평 수정" : "서평 작성"}</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">{isEditMode ? "리뷰 수정" : "리뷰 작성"}</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {!isEditMode && (
           <>
@@ -115,12 +116,12 @@ const BookReviewForm: React.FC<BookReviewFormProps> = ({ initialData, onSubmit, 
         )}
 
         <CustomInput
-          label="서평 제목"
+          label="제목"
           type="text"
           name="title"
           value={formData.title}
           onChange={handleChange}
-          placeholder="서평 제목을 입력하세요"
+          placeholder="제목을 입력하세요"
           required
         />
         <div>
@@ -134,7 +135,7 @@ const BookReviewForm: React.FC<BookReviewFormProps> = ({ initialData, onSubmit, 
             value={formData.content}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="서평 내용을 입력하세요"
+            placeholder="내용을 입력하세요"
             required></textarea>
         </div>
 
@@ -170,13 +171,9 @@ const BookReviewForm: React.FC<BookReviewFormProps> = ({ initialData, onSubmit, 
         )}
 
         <div className="flex justify-end space-x-3">
-          <CustomButton type="submit" color="blue">
-            {isEditMode ? "수정하기" : "작성하기"}
-          </CustomButton>
+          <CustomButton color="blue">{isEditMode ? "수정하기" : "작성하기"}</CustomButton>
           <Link to="/book-review">
-            <CustomButton type="button" color="gray">
-              취소
-            </CustomButton>
+            <CustomButton color="none">취소</CustomButton>
           </Link>
         </div>
       </form>
