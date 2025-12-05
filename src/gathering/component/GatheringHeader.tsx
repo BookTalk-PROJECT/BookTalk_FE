@@ -257,7 +257,7 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
                           book.status === 1 ? "bg-blue-500 text-white" : "bg-yellow-500 text-white"
                         }`}
                       >
-                        {book.status === 1 ? "다 읽음" : "진행중"}
+                        {book.status === 1 ? "완료" : "진행중"}
                       </span>
                     </div>
                     <div className="flex items-center text-sm text-gray-500">
