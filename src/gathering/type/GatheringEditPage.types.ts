@@ -15,7 +15,7 @@ export interface GatheringDetailResponse {
     isbn: string;
     name: string;
     order: number;
-    completeYn: boolean | number;
+    completeYn: number;
     startDate: string;
     endDate?: string | null;
   }[];

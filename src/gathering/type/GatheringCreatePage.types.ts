@@ -1,8 +1,8 @@
 export interface Books {
   isbn: string | number; //책 ISBN
   name: string; // 책 이름
-  order: number;
-  complete_yn: number; // 모임 내부 독서 상태(예정, 진행중, 완료)
+  order : number;
+  complete_yn: number;
   startDate: string; // 시작 날짜
 }
 

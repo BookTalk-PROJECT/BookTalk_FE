@@ -6,7 +6,6 @@ import { Books, GatheringCreateRequest, Question, SearchResult } from "../type/G
 
 // NLK(Open API)
 const API_BASE_URL = import.meta.env.VITE_API_URL;
-const NLK_API_BASE = "https://www.nl.go.kr/NL/search/openApi/search.do";
 const PAGE_SIZE_DEFAULT = 20;
 
 // ---------- 유틸 ----------
@@ -21,15 +20,6 @@ const PLACEHOLDER_COVER =
         font-family='Arial, sans-serif' font-size='12' fill='#9ca3af'>NO COVER</text>
     </svg>`
   );
-
-const normalizeCover = (raw?: string, isbn?: string) => {
-  const s = (raw || "").trim().toLowerCase();
-  const looksLikeImage = (u: string) =>
-    u.startsWith("http") && (u.endsWith(".jpg") || u.endsWith(".jpeg") || u.endsWith(".png"));
-  if (looksLikeImage(s)) return raw as string;
-  if (isbn && isbn.length >= 10) return `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`;
-  return PLACEHOLDER_COVER;
-};
 
 const toYMD = (d?: Date | null) => {
   if (!d) return "";
@@ -176,71 +166,57 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
   const [total, setTotal] = useState(0);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const doSearch = useCallback(
-    async (kwd: string, page = 1) => {
-      if (!kwd.trim()) return;
-      setIsSearching(true);
-      setErrorMsg(null);
+const doSearch = useCallback(
+  async (kwd: string, page = 1) => {
+    if (!kwd.trim()) return;
 
-      try {
-        const url =
-          `${NLK_API_BASE}` +
-          `?key=${encodeURIComponent("5703ff0e81c46e44a276655ac78421a5b94bd4d7e3cb5ddf07db4db6d6509803")}` +
-          "&apiType=json" +
-          "&srchTarget=title" +
-          `&kwd=${encodeURIComponent(kwd)}` +
-          `&pageNum=${page}` +
-          `&pageSize=${pageSize}`;
+    setIsSearching(true);
+    setErrorMsg(null);
 
-        const res = await fetch(url, { method: "GET" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+    try {
+      const params = new URLSearchParams({
+        kwd: kwd.trim(),
+        pageNum: String(page),
+        pageSize: String(pageSize),
+      });
 
-        const items: any[] =
-          (Array.isArray(data?.result?.items) && data.result.items) ||
-          (Array.isArray(data?.items) && data.items) ||
-          (Array.isArray(data?.docs) && data.docs) ||
-          (Array.isArray(data?.result) && data.result) ||
-          (Array.isArray(data?.channel?.item) && data.channel.item) ||
-          [];
+      // 백엔드 프록시 호출
+      const url = `${API_BASE_URL}/nlk/search?${params.toString()}`;
 
-        const mapped: SearchResult[] = items
-          .map((it: any) => {
-            const rawTitle = it.title_info || it.title || it.TITLE || it.titleInfo || "";
-            const title = stripHtml(rawTitle);
-
-            const rawIsbn = (it.isbn || it.ISBN || "").toString();
-            const isbn = rawIsbn.replace(/[^0-9Xx]/g, "");
-
-            const author = stripHtml(it.author_info || it.author || it.AUTHOR || "");
-            const year = stripHtml(it.pub_year_info || it.pub_year || it.PUB_YEAR || "");
-            const cover = normalizeCover(it.image_url || it.IMAGE_URL, isbn);
-
-            return {
-              id: isbn || it.id || it.control_no || crypto.randomUUID(),
-              title,
-              isbn,
-              cover,
-              _author: author,
-              _year: year,
-            } as any as SearchResult;
-          })
-          .filter((x) => x.title);
-
-        setSearchResults(mapped);
-        setTotal(parseInt(data?.result?.total || data?.total || `${mapped.length}`, 10) || mapped.length);
-        setPageNum(page);
-      } catch (err: any) {
-        console.error(err);
-        setErrorMsg("도서 검색 중 오류가 발생했습니다. (CORS 또는 키/파라미터 문제일 수 있어요)");
-        setSearchResults([]);
-        setTotal(0);
-      } finally {
-        setIsSearching(false);
+      const res = await fetch(url, { method: "GET" });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
       }
-    },
-    [pageSize]
-  );
+
+      const data = await res.json();
+
+      // 백엔드에서 NlkSearchResponse 형태로 내려온다고 가정:
+      // { total, pageNum, pageSize, items: [{ id, title, isbn, author, year, cover }] }
+      setSearchResults(
+        (data.items ?? []).map((it: any) => ({
+          id: it.id,
+          title: it.title,
+          isbn: it.isbn,
+          cover: it.cover,
+          _author: it.author,
+          _year: it.year,
+        }))
+      );
+
+      setTotal(data.total ?? 0);
+      setPageNum(data.pageNum ?? page);
+    } catch (err) {
+      console.error("도서 검색 실패:", err);
+      setErrorMsg("도서 검색 중 오류가 발생했습니다. (서버 또는 네트워크 문제일 수 있어요)");
+      setSearchResults([]);
+      setTotal(0);
+    } finally {
+      setIsSearching(false);
+    }
+  },
+  [pageSize]
+);
+
 
   const onSearchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -249,6 +225,15 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
     }
   };
 
+  const handleBookStatusChange = (isbn: string | number, nextStatus: number) => {
+    setBooks((prev) =>
+      prev.map((book) =>
+        String(book.isbn) === String(isbn)
+          ? { ...book, complete_yn: nextStatus }
+          : book
+      )
+    );
+  };
   // 모달 닫힐 때 초기화
   useEffect(() => {
     if (!isSearchModalOpen) {
@@ -316,17 +301,29 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
                 <div className="text-xs text-gray-500 mt-1 truncate" title={String(book.isbn)}>
                   ISBN: {book.isbn}
                 </div>
-                <div className="mt-auto flex justify-end">
-                  <span
-                    className={`text-[10px] px-2 py-0.5 rounded ${
-                      book.complete_yn === 1
-                        ? "bg-green-100 text-green-800"
-                        : book.complete_yn === 0
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-gray-100 text-gray-800"
-                    }`}>
-                    {book.complete_yn === 1 ? "완료" : book.complete_yn === 0 ? "진행중" : "예정"}
-                  </span>
+                  <div className="mt-auto flex items-center justify-between gap-2">
+                    <span className="text-[11px] text-gray-500"></span>
+                    <div className="flex items-center gap-2">
+                      {/* 상태 배지 (현재 상태 표시) */}
+                        <span
+                          className={`px-2.5 py-1 text-xs rounded ${
+                            book.complete_yn === 1 ? "bg-blue-500 text-white" : "bg-yellow-500 text-white"
+                          }`}
+                        >
+                          {book.complete_yn === 1 ? "완료" : "진행중"}
+                        </span>
+                        {/* 실제 선택 컨트롤 */}
+                        <select
+                          className="text-[10px] border border-gray-300 rounded px-1.5 py-0.5 bg-white focus:outline-none focus:ring-1 focus:ring-purple-400"
+                          value={book.complete_yn}
+                          onChange={(e) =>
+                            handleBookStatusChange(book.isbn, Number(e.target.value))
+                          }
+                        >
+                        <option value={0}>진행중</option>
+                        <option value={1}>완료</option>
+                      </select>
+                    </div>
                 </div>
               </div>
             </div>
