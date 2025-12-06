@@ -3,7 +3,13 @@ import React, { useEffect, useState } from "react";
 import Pagenation from "../../common/component/Pagination";
 import MyPageSideBar from "../../mypage/component/MyPageSideBar";
 import MyPageManageButton from "../../mypage/component/MyPageManageButton";
-import { createCategory, deleteCategory, editCategory, getAdminCategories, getCategories } from "../../community/category/api/categoryApi";
+import {
+  createCategory,
+  deleteCategory,
+  editCategory,
+  getAdminCategories,
+  getCategories,
+} from "../../community/category/api/categoryApi";
 import { AdminCategoryT } from "../../community/category/type/category";
 
 const AdminCategory: React.FC = () => {
@@ -11,21 +17,21 @@ const AdminCategory: React.FC = () => {
   const [nextId, setNextId] = useState(-1);
   const [sortConfig, setSortConfig] = useState({ field: "", direction: "asc" });
   const [totalPages, setTotalPages] = useState(0);
-  
+
   const loadCategories = (pageNum: number) => {
     getAdminCategories().then((res) => {
       //categories State Update
-      if(res.data) {
+      if (res.data) {
         setCategories(res.data);
       }
     });
-  }
+  };
 
   useEffect(() => {
     //카테고리 조회 API 호출
     loadCategories(1);
-  }, [])
-  
+  }, []);
+
   const handleSort = (field: string) => {
     setSortConfig((prev) => ({
       field,
@@ -55,7 +61,7 @@ const AdminCategory: React.FC = () => {
       subCategories: [],
     };
     setCategories([newCategory, ...categories]);
-    setNextId(nextId-1);
+    setNextId(nextId - 1);
   };
 
   const addSubCategory = (categoryId: number) => {
@@ -72,7 +78,7 @@ const AdminCategory: React.FC = () => {
                 value: "",
                 isActive: true,
                 isEditing: true,
-                isExpanded: true
+                isExpanded: true,
               },
             ],
           };
@@ -80,7 +86,7 @@ const AdminCategory: React.FC = () => {
         return category;
       })
     );
-    setNextId(nextId-1);
+    setNextId(nextId - 1);
   };
   const toggleExpand = (categoryId: number) => {
     setCategories(
@@ -90,7 +96,9 @@ const AdminCategory: React.FC = () => {
     );
   };
   const handleCategoryChange = (categoryId: number, value: string) => {
-    setCategories(categories.map((category) => (category.categoryId === categoryId ? { ...category, value: value } : category)));
+    setCategories(
+      categories.map((category) => (category.categoryId === categoryId ? { ...category, value: value } : category))
+    );
   };
   const handleSubCategoryChange = (categoryId: number, subCategoryId: number, value: string) => {
     setCategories(
@@ -108,16 +116,16 @@ const AdminCategory: React.FC = () => {
     );
   };
   const toggleMainEdit = async (categoryId: number) => {
-    let newCategories = [...categories]; // 기존 상태 복사
+    const newCategories = [...categories]; // 기존 상태 복사
 
     for (let i = 0; i < newCategories.length; i++) {
       if (newCategories[i].categoryId === categoryId) {
-        let category = { ...newCategories[i] };
-        if(categoryId > 0 && category.isEditing) {
-          console.log(categoryId)
+        const category = { ...newCategories[i] };
+        if (categoryId > 0 && category.isEditing) {
+          console.log(categoryId);
           await editCategory(category.categoryId, category.value, category.isActive);
         }
-        if(categoryId <= 0) {
+        if (categoryId <= 0) {
           const savedMainCategoryId = (await createCategory(category.value, category.isActive)).data;
           category.categoryId = savedMainCategoryId;
         }
@@ -130,55 +138,58 @@ const AdminCategory: React.FC = () => {
   };
 
   const toggleSubEdit = async (categoryId: number, subCategoryId: number) => {
-  let newCategories = [...categories]; // 기존 상태 복사
+    const newCategories = [...categories]; // 기존 상태 복사
 
-  for (let i = 0; i < newCategories.length; i++) {
-    if (newCategories[i].categoryId === categoryId) {
-      let category = { ...newCategories[i] };
-      let newSubCategories = [...category.subCategories];
+    for (let i = 0; i < newCategories.length; i++) {
+      if (newCategories[i].categoryId === categoryId) {
+        const category = { ...newCategories[i] };
+        const newSubCategories = [...category.subCategories];
 
-      for (let j = 0; j < newSubCategories.length; j++) {
-        if (newSubCategories[j].categoryId === subCategoryId) {
-          let subCategory = { ...newSubCategories[j] };
+        for (let j = 0; j < newSubCategories.length; j++) {
+          if (newSubCategories[j].categoryId === subCategoryId) {
+            const subCategory = { ...newSubCategories[j] };
 
-          if (categoryId > 0) {
-            if(subCategory.categoryId > 0 && subCategory.isEditing) {
-              await editCategory(subCategory.categoryId, subCategory.value, subCategory.isActive);
-            }
-            if(subCategory.categoryId <= 0) {
-              const savedSubCategoryId = (await createCategory(subCategory.value, subCategory.isActive, categoryId)).data;
+            if (categoryId > 0) {
+              if (subCategory.categoryId > 0 && subCategory.isEditing) {
+                await editCategory(subCategory.categoryId, subCategory.value, subCategory.isActive);
+              }
+              if (subCategory.categoryId <= 0) {
+                const savedSubCategoryId = (await createCategory(subCategory.value, subCategory.isActive, categoryId))
+                  .data;
+                subCategory.categoryId = savedSubCategoryId;
+              }
+            } else {
+              const savedMainCategoryId = (await createCategory(category.value, category.isActive)).data;
+              category.categoryId = savedMainCategoryId;
+              category.isEditing = !category.isEditing;
+
+              const savedSubCategoryId = (
+                await createCategory(subCategory.value, subCategory.isActive, savedMainCategoryId)
+              ).data;
               subCategory.categoryId = savedSubCategoryId;
             }
-          } else {
-            const savedMainCategoryId = (await createCategory(category.value, category.isActive )).data;
-            category.categoryId = savedMainCategoryId;
-            category.isEditing = !category.isEditing;
 
-            const savedSubCategoryId = (await createCategory(subCategory.value, subCategory.isActive, savedMainCategoryId)).data;
-            subCategory.categoryId = savedSubCategoryId;
+            subCategory.isEditing = !subCategory.isEditing;
+            newSubCategories[j] = subCategory;
           }
-
-          subCategory.isEditing = !subCategory.isEditing;
-          newSubCategories[j] = subCategory;
         }
+
+        category.subCategories = newSubCategories;
+        newCategories[i] = category;
       }
-
-      category.subCategories = newSubCategories;
-      newCategories[i] = category;
     }
-  }
 
-  setCategories(newCategories);
-};
+    setCategories(newCategories);
+  };
   const handleDeleteCategory = (categoryId: number) => {
-    if(confirm("카테고리를 삭제하시겠습니까?")) {
+    if (confirm("카테고리를 삭제하시겠습니까?")) {
       deleteCategory(categoryId);
       setCategories(categories.filter((category) => category.categoryId !== categoryId));
     }
   };
   const handleDeleteSubCategory = (categoryId: number, subCategoryId: number) => {
-    if(confirm("카테고리를 삭제하시겠습니까?"))  {
-      deleteCategory(subCategoryId)
+    if (confirm("카테고리를 삭제하시겠습니까?")) {
+      deleteCategory(subCategoryId);
       setCategories(
         categories.map((category) => {
           if (category.categoryId === categoryId) {
@@ -203,7 +214,9 @@ const AdminCategory: React.FC = () => {
             return {
               ...category,
               subCategories: category.subCategories.map((subCategory) =>
-                subCategory.categoryId === subCategoryId ? { ...subCategory, isActive: !subCategory.isActive } : subCategory
+                subCategory.categoryId === subCategoryId
+                  ? { ...subCategory, isActive: !subCategory.isActive }
+                  : subCategory
               ),
             };
           }
@@ -319,7 +332,9 @@ const AdminCategory: React.FC = () => {
                         <input
                           type="text"
                           value={subCategory.value}
-                          onChange={(e) => handleSubCategoryChange(category.categoryId, subCategory.categoryId, e.target.value)}
+                          onChange={(e) =>
+                            handleSubCategoryChange(category.categoryId, subCategory.categoryId, e.target.value)
+                          }
                           className="flex-1 px-3 py-2 border rounded text-sm"
                           placeholder="소분류명 입력"
                           autoFocus

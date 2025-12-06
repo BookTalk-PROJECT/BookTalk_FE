@@ -5,8 +5,32 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: ["prettier", "plugin:prettier/recommended", "plugin:react/recommended"],
-  plugins: ["prettier"],
+  // Add @typescript-eslint/recommended and configure parser
+  extends: [
+    "eslint:recommended", // ESLint's recommended rules
+    "plugin:react/recommended", // React recommended rules
+    "plugin:@typescript-eslint/recommended", // TypeScript recommended rules
+    "plugin:react-hooks/recommended", // Add React Hooks recommended rules
+    "prettier", // Prettier configuration (must be last)
+    "plugin:prettier/recommended", // Prettier plugin for ESLint (must be last)
+  ],
+  parser: "@typescript-eslint/parser", // Specify the ESLint parser for TypeScript
+  parserOptions: {
+    ecmaVersion: "latest",
+    sourceType: "module",
+    // Configuration for React JSX transform
+    ecmaFeatures: {
+      jsx: true,
+    },
+    // Project for TypeScript files (if using parserOptions.project)
+    // project: './tsconfig.json', // Uncomment if you want type-aware linting
+  },
+  settings: {
+    react: {
+      version: "detect", // Automatically detect the React version
+    },
+  },
+  plugins: ["react", "@typescript-eslint", "prettier", "react-hooks"], // Add React and TypeScript plugins
   overrides: [
     {
       env: {
@@ -18,25 +42,30 @@ module.exports = {
       },
     },
   ],
-  parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
-  },
   rules: {
-    strict: ["error", "global"], // "use strict"
-    camelcase: "off", // camelCase 사용
-    "no-var": "error", // var is not allowed
-    // indent: ["error", 2], // 2 spaces
-    "linebreak-style": ["error", "unix"], // LF
-    quotes: ["error", "double"], // use double quotes
-    semi: ["error", "always"], // always use semicolon
-    eqeqeq: ["error", "always"], // always use ===
-    "prettier/prettier": "error", // Prettier
-    "prefer-const": "error", // use const
-    "func-style": ["error", "expression"], // 함수 표현식 스타일 권장
-    "prefer-rest-params": "error", // Rest 파라미터 사용 권장
-    "prefer-spread": "error", // spread 연산자 사용 권장
-    "react/prop-types": "off",
+    // Disable rules handled by Prettier
+    "prettier/prettier": "error",
+    "linebreak-style": ["error", "unix"],
+    quotes: ["error", "double"],
+    semi: ["error", "always"],
+
+    // General ESLint rules
+    strict: ["error", "global"],
+    camelcase: "off", // You might want to enable this, but keeping it off as per original
+    "no-var": "error",
+    eqeqeq: ["error", "always"],
+    "prefer-const": "error",
+    "func-style": ["error", "expression"],
+    "prefer-rest-params": "error",
+    "prefer-spread": "error",
+
+    // React specific rules
+    "react/prop-types": "off", // Often turned off when using TypeScript for prop validation
     "react/display-name": "off",
+    "react/react-in-jsx-scope": "off", // Disable for new JSX transform (React 17+)
+
+    // TypeScript specific rules
+    "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }], // Warn for unused vars
+    "@typescript-eslint/explicit-module-boundary-types": "off", // Adjust as needed
   },
 };

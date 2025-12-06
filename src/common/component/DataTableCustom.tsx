@@ -14,7 +14,7 @@ type MyPageTableProps<T, K> = {
   loadRowData: (pageNum: number) => Promise<ApiResponse<PageResponse<T>>>;
   searchRowData?: (cond: any, pageNum: number) => Promise<ApiResponse<PageResponse<T>>>;
   forceUpdate?: number;
-}
+};
 
 const MyPageTable = <T, K>({
   rows,
@@ -24,10 +24,11 @@ const MyPageTable = <T, K>({
   setRowData,
   loadRowData,
   searchRowData,
-  forceUpdate
+  forceUpdate,
 }: MyPageTableProps<T, K>) => {
-  
-  {/* init */}
+  {
+    /* init */
+  }
   const [totalPages, setTotalPages] = useState<number>(0);
 
   const loadContents = (pageNum: number) => {
@@ -36,13 +37,15 @@ const MyPageTable = <T, K>({
       setTotalPages(res.data.totalPages);
       resetSearch();
     });
-  }
+  };
 
   useEffect(() => {
     loadContents(1);
   }, [forceUpdate]);
 
-  {/* header */}
+  {
+    /* header */
+  }
   const [sortField, setSortField] = useState("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -78,17 +81,18 @@ const MyPageTable = <T, K>({
               </span>
             </th>
           ) : (
-            <th
-              className="px-4 py-2 text-left text-sm font-medium text-gray-700 whitespace-nowrap cursor-pointer">
+            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 whitespace-nowrap cursor-pointer">
               <span>{label}</span>
             </th>
           );
         })}
       </tr>
-    )
-  }
+    );
+  };
 
-  {/* searchBar */}
+  {
+    /* searchBar */
+  }
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
   const [selectedFilter, setSelectedFilter] = useState(rowDef[0]);
@@ -96,26 +100,29 @@ const MyPageTable = <T, K>({
   const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = (pageNum: number) => {
-    if(searchRowData) {
-      searchRowData({
+    if (searchRowData) {
+      searchRowData(
+        {
           keywordType: selectedFilter.key as SearchType,
           keyword: searchTerm,
           startDate: dateRange.start,
-          endDate: dateRange.end
-        }, pageNum).then((res) => {
+          endDate: dateRange.end,
+        },
+        pageNum
+      ).then((res) => {
         setRowData(res.data.content);
         setTotalPages(res.data.totalPages);
         setIsSearching(true);
       });
     }
-  }
+  };
 
   const resetSearch = () => {
     setSearchTerm("");
     setDateRange({ start: "", end: "" });
     setIsSearching(false);
     handleSearch(1);
-  }
+  };
 
   const renderSearchBar = () => {
     return (
@@ -131,18 +138,20 @@ const MyPageTable = <T, K>({
           {isFilterDropdownOpen && (
             <div className="absolute top-full left-0 mt-1 w-40 bg-white rounded-md shadow-lg z-50">
               <ul className="py-1">
-                {rowDef.map((def) => (
-                  def.isSearchType && (
-                  <li
-                    key={def.key}
-                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      setSelectedFilter(def);
-                      setIsFilterDropdownOpen(false);
-                    }}>
-                    {def.label}
-                  </li>)
-                ))}
+                {rowDef.map(
+                  (def) =>
+                    def.isSearchType && (
+                      <li
+                        key={def.key}
+                        className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => {
+                          setSelectedFilter(def);
+                          setIsFilterDropdownOpen(false);
+                        }}>
+                        {def.label}
+                      </li>
+                    )
+                )}
               </ul>
             </div>
           )}
@@ -185,39 +194,36 @@ const MyPageTable = <T, K>({
           </button>
         </>
       </div>
-    )
-  }
+    );
+  };
 
   const renderRow = (row: T) => (
     <React.Fragment key={getRowKey(row)}>
       <tr className="hover:bg-gray-50 border-b">
-        {rowDef.map(({ key }) => 
-          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-            {renderColumn(row, key)}
-          </td>
-        )}
+        {rowDef.map(({ key }) => (
+          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{renderColumn(row, key)}</td>
+        ))}
       </tr>
     </React.Fragment>
   );
 
   return (
     <>
-    <div>
-      {searchRowData && renderSearchBar()}
-      {/* 테이블 구조 */}
-      <div className="bg-white rounded-lg shadow-sm ">
-        <table className="min-w-full w-full table-auto text-sm ">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            {renderHeader()}
-          </thead>
-          <tbody>
-            {rows.map((row) => renderRow(row))}
-          </tbody>
-        </table>
+      <div>
+        {searchRowData && renderSearchBar()}
+        {/* 테이블 구조 */}
+        <div className="bg-white rounded-lg shadow-sm ">
+          <table className="min-w-full w-full table-auto text-sm ">
+            <thead className="bg-gray-50 border-b border-gray-200">{renderHeader()}</thead>
+            <tbody>{rows.map((row) => renderRow(row))}</tbody>
+          </table>
+        </div>
       </div>
-    </div>
-    {/* 페이지네이션 */}
-    <Pagenation totalPages={totalPages} loadPageByPageNum={(pageNum) => isSearching ? handleSearch(pageNum) : loadContents(pageNum)} />
+      {/* 페이지네이션 */}
+      <Pagenation
+        totalPages={totalPages}
+        loadPageByPageNum={(pageNum) => (isSearching ? handleSearch(pageNum) : loadContents(pageNum))}
+      />
     </>
   );
 };

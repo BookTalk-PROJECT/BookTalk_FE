@@ -1,4 +1,3 @@
-
 import { Login } from "../type/type";
 import axios from "axios";
 
@@ -20,7 +19,7 @@ export const fetchLogin = async (loginData: Login) => {
 };
 
 export const fetchLogout = async () => {
-  try{
+  try {
     const response = await axios.post(`${baseURL}/logout`);
 
     const isDeletedRT = response.data.data.isDeleted;
@@ -32,17 +31,16 @@ export const fetchLogout = async () => {
       // localStorage.setItem("accessToken", data.token);
       // 1. accessToken파싱
       const { accessToken } = response.data.data;
-
     } else {
       console.error("리프레시 토큰 삭제 실패", response.status);
     }
   } catch (error) {
     console.error("서버 오류:", error);
   }
-}
+};
 
 export const fetchReissueToken = async () => {
-  try{
+  try {
     const response = await axios.post(`${baseURL}/refresh`);
 
     const IsExistToken = response.data.data.accessToken !== undefined;
@@ -60,18 +58,16 @@ export const fetchReissueToken = async () => {
   } catch (error) {
     console.error("서버 오류:", error);
   }
-}
-
+};
 
 export const fetchKakaoLogin = async (code: string) => {
-  try{
+  try {
     const response = await axios.post(`${baseURL}/auth/kakao?code=${code}`);
 
-    if (response.status === 200 ) {
+    if (response.status === 200) {
       console.log("로그인 성공");
-
     }
   } catch (error) {
     console.error("서버 오류:", error);
   }
-}
+};

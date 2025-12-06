@@ -12,19 +12,12 @@ interface BoardEditProps {
   categoryId?: string;
   redirectUri: string;
   postCode: string;
-  editPost: (arg0:CommuPostRequest, postCode: string) => void;
+  editPost: (arg0: CommuPostRequest, postCode: string) => void;
   mainTopic: string;
   subTopic: string;
 }
 
-const EditBoard: React.FC<BoardEditProps> = ({ 
-  categoryId,
-  redirectUri,
-  postCode, 
-  editPost,
-  mainTopic,
-  subTopic
-}) => {
+const EditBoard: React.FC<BoardEditProps> = ({ categoryId, redirectUri, postCode, editPost, mainTopic, subTopic }) => {
   const navigate = useNavigate();
   const editorRef = useRef<Editor>(null);
   const [postData, setPostData] = useState<CommuPostRequest>({
@@ -33,7 +26,7 @@ const EditBoard: React.FC<BoardEditProps> = ({
     notification_yn: false,
   });
 
-  const handleSubmit = () => { 
+  const handleSubmit = () => {
     editPost(postData, postCode);
     navigate(redirectUri);
   };
@@ -56,9 +49,9 @@ const EditBoard: React.FC<BoardEditProps> = ({
   const loadDetailData = async () => {
     const res = await getBoardDetail(postCode);
     setPostData({
-        title: res.data.post.title,
-        content: res.data.post.content,
-        notification_yn: res.data.post.notification_yn
+      title: res.data.post.title,
+      content: res.data.post.content,
+      notification_yn: res.data.post.notification_yn,
     });
   };
 
@@ -69,13 +62,13 @@ const EditBoard: React.FC<BoardEditProps> = ({
   useEffect(() => {
     // postData.content 변경될 때마다 반영
     if (editorRef.current) {
-        editorRef.current.getInstance().setMarkdown(postData.content || "");
+      editorRef.current.getInstance().setMarkdown(postData.content || "");
     }
   }, [postData.content]);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <BreadCrumb major={mainTopic} sub={subTopic}/>
+      <BreadCrumb major={mainTopic} sub={subTopic} />
       <div className="max-w-6xl mx-auto px-8 py-12">
         <h1 className="text-3xl font-bold mb-10">글수정</h1>
         <div className="bg-white shadow-md rounded-2xl p-10 space-y-10">
@@ -113,7 +106,7 @@ const EditBoard: React.FC<BoardEditProps> = ({
                     tooltip: "되돌리기",
                     el: (() => {
                       const button = document.createElement("button");
-                      button.innerHTML = `<i class="fas fa-undo"></i>`;
+                      button.innerHTML = '<i class="fas fa-undo"></i>';
                       button.addEventListener("click", () => {
                         editorRef.current?.getInstance().exec("undo");
                       });
@@ -125,7 +118,7 @@ const EditBoard: React.FC<BoardEditProps> = ({
                     tooltip: "다시하기",
                     el: (() => {
                       const button = document.createElement("button");
-                      button.innerHTML = `<i class="fas fa-redo"></i>`;
+                      button.innerHTML = '<i class="fas fa-redo"></i>';
                       button.addEventListener("click", () => {
                         editorRef.current?.getInstance().exec("redo");
                       });

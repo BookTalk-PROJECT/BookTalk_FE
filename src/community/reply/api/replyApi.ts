@@ -16,7 +16,10 @@ export const postReply = async (req: ReplyRequest): Promise<ApiResponse<string>>
 };
 
 export const editReply = async (replyCode: string, content: string): Promise<ApiResponse<string>> => {
-  const response = await axios.patch<ApiResponse<string>>(`${BASE_URL}/reply/modify`, {replyCode: replyCode, content: content});
+  const response = await axios.patch<ApiResponse<string>>(`${BASE_URL}/reply/modify`, {
+    replyCode: replyCode,
+    content: content,
+  });
   return response.data;
 };
 

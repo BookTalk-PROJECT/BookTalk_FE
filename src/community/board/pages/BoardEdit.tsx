@@ -11,11 +11,11 @@ const BoardEdit: React.FC = () => {
   const [postCode, setPostCode] = useState<string>("");
 
   useEffect(() => {
-    setCategoryId(searchParams.get('categoryId') ?? "");
+    setCategoryId(searchParams.get("categoryId") ?? "");
     setPostCode(searchParams.get("postCode") ?? "");
-  }, [searchParams])
+  }, [searchParams]);
 
-  if(!categoryId || !postCode) {
+  if (!categoryId || !postCode) {
     return null;
   }
 
@@ -24,7 +24,7 @@ const BoardEdit: React.FC = () => {
       categoryId={categoryId}
       redirectUri={`/boardDetail/${postCode}?categoryId=${categoryId}`}
       postCode={postCode}
-      editPost={(arg0:CommuPostRequest, postCode: string) => {
+      editPost={(arg0: CommuPostRequest, postCode: string) => {
         editBoard(arg0, postCode);
       }}
       mainTopic="카테고리"

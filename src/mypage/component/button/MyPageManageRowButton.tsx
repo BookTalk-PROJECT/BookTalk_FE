@@ -22,20 +22,20 @@ const MyPageManageRowButton = ({ actions }: MyPageManageButtonProps) => {
 
   return (
     <>
-    {actions.map((action, index) => (
-      <span key={index} className="inline-flex items-center">
-        <ButtonWrapper
-          onClick={
-            action.onClick ||
-            (() => {
-              console.log("온 클릭 이벤트 없음");
-            })
-          }>
-          <span className={`${colorMap[action.color]} font-medium`}>{action.label}</span>
-        </ButtonWrapper>
-        {index < actions.length - 1 && <span className="text-gray-400 mx-2">┆</span>}
-      </span>
-    ))}
+      {actions.map((action, index) => (
+        <span key={index} className="inline-flex items-center">
+          <ButtonWrapper
+            onClick={
+              action.onClick ||
+              (() => {
+                console.log("온 클릭 이벤트 없음");
+              })
+            }>
+            <span className={`${colorMap[action.color]} font-medium`}>{action.label}</span>
+          </ButtonWrapper>
+          {index < actions.length - 1 && <span className="text-gray-400 mx-2">┆</span>}
+        </span>
+      ))}
     </>
   );
 };

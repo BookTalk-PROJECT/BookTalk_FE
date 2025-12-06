@@ -18,7 +18,8 @@ const mapDetailToInitial = (d: GatheringDetailResponse): GatheringFormInitial =>
       isbn: b.isbn,
       name: b.name,
       order: Number(b.order ?? 0),
-      complete_yn: typeof b.completeYn === "boolean" ? (b.completeYn ? 1 : 0) : Number(b.completeYn ?? 0),
+      complete_yn: Number(b.completeYn ?? 0),
+      // complete_yn: typeof b.completeYn === "boolean" ? (b.completeYn ? 1 : 0) : Number(b.completeYn ?? 0),
       startDate: b.startDate ?? "",
     })),
     questions: (d.questions || []).map((q) => ({ id: q.id, question: q.question })),
@@ -60,7 +61,7 @@ const GatheringEditPage: React.FC = () => {
     try {
       await updateGathering(gatheringId, fd);
       alert("모임 정보가 수정되었습니다.");
-      navigate(`/gathering/${gatheringId}`);
+      navigate(`/gathering/detail/${gatheringId}`);
     } catch (e) {
       console.error(e);
       alert("모임 정보 수정에 실패했습니다. 다시 시도해 주세요.");

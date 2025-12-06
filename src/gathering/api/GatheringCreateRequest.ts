@@ -10,7 +10,6 @@ export const mockQuestions: Question[] = [
   { id: 3, question: "특별히 좋아하는 책이 있으신가요?" },
 ];
 
-
 export const createGathering = async (formData: FormData) => {
   const token = localStorage.getItem("accessToken");
   try {

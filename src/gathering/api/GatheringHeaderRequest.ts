@@ -6,9 +6,9 @@ import { ResponseDto } from "../../common/auth/type/ResponseDto";
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export const examplebooks: Books[] = [
-  { id: 1, title: "책이름1",  status: 1, startDate: "2023-02-24", endDate: "2023-03-01" },
-  { id: 2, title: "책이름2",  status: 0, startDate: "2023-03-15", endDate: "2023-03-22" },
-  { id: 3, title: "책이름3",  status: 1, startDate: "2023-04-01" },
+  { id: 1, title: "책이름1", status: 1, startDate: "2023-02-24", endDate: "2023-03-01" },
+  { id: 2, title: "책이름2", status: 0, startDate: "2023-03-15", endDate: "2023-03-22" },
+  { id: 3, title: "책이름3", status: 1, startDate: "2023-04-01" },
 ];
 
 export const exampleBookInfo: GatheringDetailResponse = {
@@ -28,20 +28,15 @@ export const exampleBookInfo: GatheringDetailResponse = {
 
 // 책 목록
 export const fetchGatheringBooks = async (gatheringId: string): Promise<Books[]> => {
-  const res = await axios.get<ResponseDto<Books[]>>(
-    `${API_BASE_URL}/gathering/${gatheringId}/books`
-  );
+  const res = await axios.get<ResponseDto<Books[]>>(`${API_BASE_URL}/gathering/${gatheringId}/books`);
   return res.data.data;
 };
-
 
 export const fetchGatheringInfo = async (gatheringId: string): Promise<GatheringDetailResponse> => {
   const token = localStorage.getItem("accessToken"); // 로그인 시 저장된 JWT
   const res = await axios.get<ResponseDto<GatheringDetailResponse>>(
     `${API_BASE_URL}/gathering/detail/${gatheringId}`,
-    token
-      ? { headers: { Authorization: `Bearer ${token}` } }
-      : undefined // 비로그인 접근 허용이면 헤더 없이도 호출 가능
+    token ? { headers: { Authorization: `Bearer ${token}` } } : undefined // 비로그인 접근 허용이면 헤더 없이도 호출 가능
   );
   return res.data.data;
 };

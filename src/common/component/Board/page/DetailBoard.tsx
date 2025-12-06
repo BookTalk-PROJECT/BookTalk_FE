@@ -22,24 +22,24 @@ interface DetailBoardProps {
 }
 
 //postId는 커뮤Id or 모임Id
-const DetailBaord: React.FC<DetailBoardProps> = ({ 
+const DetailBaord: React.FC<DetailBoardProps> = ({
   mainTopic,
   subTopic,
-  postCode, 
+  postCode,
   editPageUri,
   listPageUri,
-  GetBoardDetail, 
-  DeleteBoard, 
+  GetBoardDetail,
+  DeleteBoard,
   ToggleLikePost,
   NavigateToNextPost,
-  NavigateToPrevPost
+  NavigateToPrevPost,
 }) => {
   const navigate = useNavigate();
   const [detailData, setDetailData] = useState<PostDetail>();
 
-
   // 댓글 데이터 불러오기
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     loadDetailData();
   }, [postCode]);
 
@@ -49,11 +49,11 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
   };
 
   const handleDeleteBoard = () => {
-    if(confirm("게시글을 삭제하시겠습니까?")) {
+    if (confirm("게시글을 삭제하시겠습니까?")) {
       DeleteBoard(postCode);
-      navigate(listPageUri)
+      navigate(listPageUri);
     }
-  }
+  };
 
   const PostDetails = () => {
     return (
@@ -100,8 +100,8 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const LikeButton = () => {
     // 좋아요 토글 상태관리 (Optimistic UI)
@@ -124,8 +124,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
       });
 
       try {
-        if(ToggleLikePost)
-          ToggleLikePost(postCode);
+        if (ToggleLikePost) ToggleLikePost(postCode);
       } catch (error) {
         console.error("좋아요 토글 중 오류:", error);
         // 오류 발생 시 UI 롤백
@@ -145,39 +144,41 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
     return (
       <button
         onClick={handleLikeToggle}
-        className={`px-6 py-3 bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200 flex items-center`}>
+        className={
+          "px-6 py-3 bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200 flex items-center"
+        }>
         <i className={`fas fa-heart mr-2 ${detailData?.post.is_liked ? "text-red-500" : "text-gray-500"}`}></i>
         <span>좋아요</span>
         <span className="ml-2 text-gray-600">{detailData?.post.likes_cnt}</span>
       </button>
-    )
-  }
+    );
+  };
 
   const PostNavigateBar = () => {
     return (
       <div className="flex justify-between items-center mt-6">
-        {NavigateToNextPost &&
+        {NavigateToNextPost && (
           <CustomButton onClick={() => NavigateToNextPost()} color="white" customClassName="px-4 py-2">
             <>
               <i className="fas fa-arrow-left mr-2"></i>다음 글
             </>
           </CustomButton>
-        }
+        )}
         <CustomButton onClick={() => navigate(listPageUri)} color="black" customClassName="px-4 py-2">
           <>
             <i className="fas fa-list mr-2"></i>목록
           </>
         </CustomButton>
-        {NavigateToPrevPost &&
+        {NavigateToPrevPost && (
           <CustomButton onClick={() => NavigateToPrevPost()} color="white" customClassName="px-4 py-2">
             <>
               이전 글<i className="fas fa-arrow-right ml-2"></i>
             </>
           </CustomButton>
-        }
+        )}
       </div>
-    )
-  }
+    );
+  };
 
   if (!postCode) {
     return <div>잘못된 접근입니다.</div>;
@@ -185,14 +186,10 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
 
   return (
     <div>
-      <BreadCrumb major={mainTopic} sub={subTopic}/>
+      <BreadCrumb major={mainTopic} sub={subTopic} />
       {PostDetails()}
-      <div className="flex items-center justify-center space-x-2 mb-8">
-        {ToggleLikePost && LikeButton()}
-      </div>
-      <ReplyList
-      postCode={postCode}
-      />
+      <div className="flex items-center justify-center space-x-2 mb-8">{ToggleLikePost && LikeButton()}</div>
+      <ReplyList postCode={postCode} />
       {PostNavigateBar()}
     </div>
   );

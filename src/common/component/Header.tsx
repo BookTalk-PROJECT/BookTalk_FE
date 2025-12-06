@@ -11,8 +11,7 @@ const Header = () => {
     localStorage.removeItem("accessToken");
     logout();
     navigate("/");
-  }
-
+  };
 
   return (
     <header className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
@@ -28,7 +27,7 @@ const Header = () => {
             <Link to="/gathering" className="text-gray-700 hover:text-red-500">
               모임
             </Link>
-            <Link to="#" className="text-gray-700 hover:text-red-500">
+            <Link to="/book-review" className="text-gray-700 hover:text-red-500">
               책리뷰
             </Link>
             <Link to="/mypage" className="text-gray-700 hover:text-red-500">
@@ -40,7 +39,8 @@ const Header = () => {
           {isAuthenticated ?
             <CustomButton color="white" onClick={logoutHandler}>
               <i className="fas fa-key"> &nbsp;로그아웃</i>
-            </CustomButton>:
+            </CustomButton>
+          ) : (
             <CustomButton color="white" onClick={() => navigate("/login")}>
               <i className="fas fa-key"> &nbsp;로그인</i>
             </CustomButton>

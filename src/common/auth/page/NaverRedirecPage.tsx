@@ -4,8 +4,6 @@ import { useAuthStore } from "../../../store";
 import { useNavigate } from "react-router";
 
 const NaverRedirectPage: React.FC = () => {
-
-  
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 overflow-x-hidden">
       {/*  본문 */}

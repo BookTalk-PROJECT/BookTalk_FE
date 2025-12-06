@@ -1,12 +1,6 @@
 import axios from "axios";
-import {
-  MyPageMemberDataType,
-  MyPageModifyMemberDataType,
-} from "../type/MyPageTable";
-import {
-    AdminBoardColType,
-    AdminCommentColType
-} from "../../admin/type/AdminCommunity";
+import { MyPageMemberDataType, MyPageModifyMemberDataType } from "../type/MyPageTable";
+import { AdminBoardColType, AdminCommentColType } from "../../admin/type/AdminCommunity";
 import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
 import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
 import { Member } from "../../common/auth/type/type";
@@ -18,7 +12,7 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 export const getMyInformation = async (): Promise<ApiResponse<MyPageMemberDataType>> => {
   const member = await axios.get<ApiResponse<MyPageMemberDataType>>(`${BASE_URL}/member/authentication`);
   return member.data;
-}
+};
 
 export const modifyMember = async (memberData: MyPageModifyMemberDataType) => {
   const member = await axios.patch<ApiResponse<MyPageModifyMemberDataType>>(`${BASE_URL}/member/modify`, memberData);
@@ -56,21 +50,37 @@ export async function getMyPageBookReviewComment(userId: string) {
 }
 
 export const getMyBoardAll = async (pageNum: number): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
-  const response = await axios.get<ApiResponse<PageResponse<PostSimpleInfo>>>(`${BASE_URL}/community/board/mylist?pageNum=${pageNum}`);
+  const response = await axios.get<ApiResponse<PageResponse<PostSimpleInfo>>>(
+    `${BASE_URL}/community/board/mylist?pageNum=${pageNum}`
+  );
   return response.data;
-}
+};
 
-export const searchMyBoards = async (req: SearchCondition, pageNum: number): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
-  const response = await axios.post<ApiResponse<PageResponse<PostSimpleInfo>>>(`${BASE_URL}/community/board/mylist/search?pageNum=${pageNum}`, req);
+export const searchMyBoards = async (
+  req: SearchCondition,
+  pageNum: number
+): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
+  const response = await axios.post<ApiResponse<PageResponse<PostSimpleInfo>>>(
+    `${BASE_URL}/community/board/mylist/search?pageNum=${pageNum}`,
+    req
+  );
   return response.data;
-}
+};
 
 export const getMyCommentAll = async (pageNum: number): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
-  const response = await axios.get<ApiResponse<PageResponse<ReplySimpleInfo>>>(`${BASE_URL}/reply/mylist?pageNum=${pageNum}`);
+  const response = await axios.get<ApiResponse<PageResponse<ReplySimpleInfo>>>(
+    `${BASE_URL}/reply/mylist?pageNum=${pageNum}`
+  );
   return response.data;
-}
+};
 
-export const searchMyComments = async (req: SearchCondition, pageNum: number): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
-  const response = await axios.post<ApiResponse<PageResponse<ReplySimpleInfo>>>(`${BASE_URL}/reply/mylist/search?pageNum=${pageNum}`, req);
+export const searchMyComments = async (
+  req: SearchCondition,
+  pageNum: number
+): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
+  const response = await axios.post<ApiResponse<PageResponse<ReplySimpleInfo>>>(
+    `${BASE_URL}/reply/mylist/search?pageNum=${pageNum}`,
+    req
+  );
   return response.data;
-}
+};

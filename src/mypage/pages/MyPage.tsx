@@ -40,7 +40,7 @@ const MyPage: React.FC = () => {
       setPhoneNumberAfter(splitPhoneNumber[1]);
       setNormalAddress(splitAddress[0]);
       setDetailAddress(splitAddress[1]);
-      setBirthday(memberData.birth)
+      setBirthday(memberData.birth);
       setGender(memberData.gender);
     };
     fetchMemberData();
@@ -81,14 +81,13 @@ const MyPage: React.FC = () => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-
-      const phoneNumber = phonePrefix+"-"+phoneNumberAfter;
-      const address = normalAddress+","+detailAddress;
+      const phoneNumber = phonePrefix + "-" + phoneNumberAfter;
+      const address = normalAddress + "," + detailAddress;
       const modifyData: MyPageModifyMemberDataType = {
         phoneNumber,
         password,
-        address
-      }
+        address,
+      };
       setErrors({});
       setPasswordMatchMessage("");
       setIsEditing(false);

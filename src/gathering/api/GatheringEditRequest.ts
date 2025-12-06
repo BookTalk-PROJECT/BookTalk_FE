@@ -12,7 +12,7 @@ export const getGatheringDetail = async (code: string): Promise<GatheringDetailR
 
 export const updateGathering = async (code: string, formData: FormData) => {
   const token = localStorage.getItem("accessToken");
-  const res = await axios.put(`${API_BASE_URL}/gathering/${code}`, formData, {
+  const res = await axios.put(`${API_BASE_URL}/gathering/modify/${code}`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
       Authorization: `Bearer ${token}`,

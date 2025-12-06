@@ -7,7 +7,7 @@ import axios from "axios";
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const {login} = useAuthStore();
+  const { login } = useAuthStore();
   const navigatge = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

@@ -4,7 +4,7 @@ import Pagenation from "../../common/component/Pagination";
 import GatheringHeader from "../component/GatheringHeader";
 import CustomButton from "../../common/component/CustomButton";
 import { fetchGatheringBoardList, posts } from "../api/GatheringDetailRequest";
-import BoardTable from "../../common/component/Board/page/BoardTable";
+// import BoardTable from "../../common/component/Board/page/BoardTable";
 import { Post } from "../../common/type/BoardTable";
 
 const GatheringDetailPage: React.FC = () => {
