@@ -36,9 +36,16 @@ import AdminRoleManage from "./admin/page/AdminRoleManagePage";
 import GatheringEditPage from "./gathering/pages/GatheringEditPage";
 import NaverRedirectPage from "./common/auth/page/NaverRedirecPage";
 import KakaoRedirectPage from "./common/auth/page/KakaoRedirecPage";
+import { useAuthStore } from "./store";
+import { useEffect } from "react";
 
 const AppContent = () => {
   const location = useLocation();
+  const initialize = useAuthStore((s) => s.initialize);
+
+  useEffect(() => {
+    initialize();
+  }, []);
 
   return (
     <>
