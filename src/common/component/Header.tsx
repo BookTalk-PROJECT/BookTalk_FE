@@ -36,7 +36,7 @@ const Header = () => {
           </nav>
         </div>
         <div className="flex items-center space-x-4">
-          {isAuthenticated ?
+          {isAuthenticated ?(
             <CustomButton color="white" onClick={logoutHandler}>
               <i className="fas fa-key"> &nbsp;로그아웃</i>
             </CustomButton>
@@ -44,7 +44,7 @@ const Header = () => {
             <CustomButton color="white" onClick={() => navigate("/login")}>
               <i className="fas fa-key"> &nbsp;로그인</i>
             </CustomButton>
-          }
+          )}
           { !isAuthenticated?
           <CustomButton onClick={() => navigate("/join")} color="black">
             <>

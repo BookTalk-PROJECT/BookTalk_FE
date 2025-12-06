@@ -1,3 +1,4 @@
+import axios from "axios";
 import { create } from "zustand";
 
 type AuthStore = {
@@ -18,9 +19,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
       if (!token) return;
 
       try {
-        const res = await fetch(`${BASE_URL}/member/authentication`);
-
-        if (!res.ok) throw new Error("Invalid token");
+        const res = await axios.get(`${BASE_URL}/member/authentication`);
         set({ isAuthenticated: true });
       } catch {
         localStorage.removeItem("accessToken");
