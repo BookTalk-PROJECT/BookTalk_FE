@@ -36,6 +36,8 @@ import AdminRoleManage from "./admin/page/AdminRoleManagePage";
 import GatheringEditPage from "./gathering/pages/GatheringEditPage";
 import NaverRedirectPage from "./common/auth/page/NaverRedirecPage";
 import KakaoRedirectPage from "./common/auth/page/KakaoRedirecPage";
+import { useAuthStore } from "./store";
+import { useEffect } from "react";
 import BookReviewList from "./bookReview/pages/BookReviewList";
 import BookReviewCreate from "./bookReview/pages/BookReviewCreate";
 import BookReviewEdit from "./bookReview/pages/BookReviewEdit";
@@ -43,6 +45,11 @@ import BookReviewDetail from "./bookReview/pages/BookReviewDetail";
 
 const AppContent = () => {
   const location = useLocation();
+  const initialize = useAuthStore((s) => s.initialize);
+
+  useEffect(() => {
+    initialize();
+  }, []);
 
   return (
     <>
