@@ -4,7 +4,6 @@ import axios from "axios";
 import { createMember, validationEmail } from "../api/Join.mock";
 import { Member } from "../type/type";
 
-
 const JoinPage: React.FC = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -59,7 +58,7 @@ const JoinPage: React.FC = () => {
     try {
       const emailJson = {
         email,
-      }
+      };
       const isExistMember = await validationEmail(emailJson);
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -78,7 +77,7 @@ const JoinPage: React.FC = () => {
     e.preventDefault();
     const newErrors: { [key: string]: string } = {};
 
-    if(!name){
+    if (!name) {
       newErrors.name = "이름을 입력하세요";
     }
 
@@ -123,7 +122,6 @@ const JoinPage: React.FC = () => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-
       const address = `${normalAddress},${detailAddress}`;
       const phoneNumber = `${p_phoneNumber}-${b_phoneNumber}`;
 
@@ -136,7 +134,7 @@ const JoinPage: React.FC = () => {
         birth,
         gender,
         authType,
-      }
+      };
       createMember(joinData);
 
       alert("회원가입 성공!");
@@ -173,16 +171,15 @@ const JoinPage: React.FC = () => {
           <div className="bg-white rounded-lg p-8 shadow">
             <h2 className="text-2xl font-bold mb-8 text-center">회원가입</h2>
             <form className="space-y-6" onSubmit={handleSubmit}>
-
               {/* 이름 입력 */}
               <div className="relative">
                 <label className="block text-sm mb-1">이름</label>
                 <div className="relative">
                   <input
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm"
-                      placeholder="이름을 입력해주세요"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm"
+                    placeholder="이름을 입력해주세요"
                   />
                 </div>
                 {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
@@ -262,8 +259,11 @@ const JoinPage: React.FC = () => {
               <div className="relative">
                 <label className="block text-sm mb-1">연락처</label>
                 <div className="flex gap-2">
-                  <select  className="w-24 border border-gray-300 rounded-md px-4 py-2 text-sm" defaultValue="010"  value={p_phoneNumber}
-                           onChange={onSelectP_phoneNumber}>
+                  <select
+                    className="w-24 border border-gray-300 rounded-md px-4 py-2 text-sm"
+                    defaultValue="010"
+                    value={p_phoneNumber}
+                    onChange={onSelectP_phoneNumber}>
                     <option value="010">010</option>
                     <option value="011">011</option>
                     <option value="016">016</option>

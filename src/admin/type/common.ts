@@ -1,6 +1,5 @@
-
 export interface AdminTableColType {
-    date: string;
-    manage: string;
-    deleteReason: string;
+  date: string;
+  manage: string;
+  deleteReason: string;
 }
