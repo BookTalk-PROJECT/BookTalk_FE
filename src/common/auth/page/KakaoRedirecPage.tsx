@@ -4,16 +4,15 @@ import { useNavigate } from "react-router";
 import { useAuthStore } from "../../../store";
 
 const KakaoRedirectPage: React.FC = () => {
-  
   const cookies = new Cookies();
 
-  const accessToken = cookies.get("access_token")
+  const accessToken = cookies.get("access_token");
 
-  const [message,setMessage] = useState<string>("카카오 로그인중.....")
+  const [message, setMessage] = useState<string>("카카오 로그인중.....");
 
   const navigate = useNavigate();
 
-  const {login} = useAuthStore();
+  const { login } = useAuthStore();
 
   useEffect(() => {
     localStorage.setItem("accessToken", accessToken);
@@ -21,7 +20,7 @@ const KakaoRedirectPage: React.FC = () => {
     navigate("/dashboard");
     login();
   }, []);
-  
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 overflow-x-hidden">
       {/*  본문 */}

@@ -37,54 +37,63 @@ const AdminPageComment: React.FC = () => {
     setSelectedCode(null);
   };
 
-
   const handleDelete = async (replyCode: string, deleteReason: string) => {
     await restrictComment(replyCode, deleteReason);
-    setComments(prev =>
-      prev.map(reply =>
-        reply.reply_code === replyCode
-          ? { ...reply, delYn: true, deleteReason: deleteReason } // delYn만 변경
-          : reply // 나머지는 그대로
+    setComments((prev) =>
+      prev.map(
+        (reply) =>
+          reply.reply_code === replyCode
+            ? { ...reply, delYn: true, deleteReason: deleteReason } // delYn만 변경
+            : reply // 나머지는 그대로
       )
     );
-  }
+  };
 
   const handleRecover = async (replyCode: string) => {
-    if(confirm("게시글을 복구하시겠습니까?")) {
+    if (confirm("게시글을 복구하시겠습니까?")) {
       await recoverComment(replyCode);
-      setComments(prev =>
-        prev.map(reply =>
-          reply.reply_code === replyCode
-            ? { ...reply, delYn: false, deleteReason: null } // delYn만 변경
-            : reply // 나머지는 그대로
+      setComments((prev) =>
+        prev.map(
+          (reply) =>
+            reply.reply_code === replyCode
+              ? { ...reply, delYn: false, deleteReason: null } // delYn만 변경
+              : reply // 나머지는 그대로
         )
       );
     }
-  }
+  };
 
   const renderColumn = (row: any, key: Extract<keyof AdminCommentColType, string>) => {
     switch (key) {
       case "content":
-      return <Link to={`/boardDetail/${row["post_code"]}`}>{row[key]}</Link>;
+        return <Link to={`/boardDetail/${row["post_code"]}`}>{row[key]}</Link>;
       case "manage":
-      return (
-        row["delYn"] ? 
-          <MyPageManageRowButton actions={[{ label: "복구", color: "green", onClick: () => handleRecover(row.reply_code) },]}/> 
-          : <MyPageManageRowButton actions={[{ label: "삭제", color: "red", onClick: () => openDeleteModal(row.reply_code) },]}/>
-      );
+        return row["delYn"] ? (
+          <MyPageManageRowButton
+            actions={[{ label: "복구", color: "green", onClick: () => handleRecover(row.reply_code) }]}
+          />
+        ) : (
+          <MyPageManageRowButton
+            actions={[{ label: "삭제", color: "red", onClick: () => openDeleteModal(row.reply_code) }]}
+          />
+        );
       case "deleteReason":
-      return row["deleteReason"] ? (
-        <td className="relative group overflow-visible flex items-center justify-center px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-          <div className="w-4 h-4 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xl font-bold">i</div>
-          <div className="absolute z-50 hidden group-hover:block p-2 bg-gray-800 text-white text-xs rounded shadow-lg top-0 right-full mr-2 whitespace-normal min-w-20 w-auto">
-            삭제 사유: {row[key]}
-          </div>
-        </td>
-      ) : <></>;
+        return row["deleteReason"] ? (
+          <td className="relative group overflow-visible flex items-center justify-center px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+            <div className="w-4 h-4 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xl font-bold">
+              i
+            </div>
+            <div className="absolute z-50 hidden group-hover:block p-2 bg-gray-800 text-white text-xs rounded shadow-lg top-0 right-full mr-2 whitespace-normal min-w-20 w-auto">
+              삭제 사유: {row[key]}
+            </div>
+          </td>
+        ) : (
+          <></>
+        );
       default:
-      return <>{row[key]}</>;
+        return <>{row[key]}</>;
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -95,8 +104,8 @@ const AdminPageComment: React.FC = () => {
             <BreadCrumb major="관리자" sub="댓글 관리" />
             <MyPageActiveTabButton
               actions={[
-                { label: "전체", color: "blue"},
-                { label: "커뮤니티", color: "yellow"},
+                { label: "전체", color: "blue" },
+                { label: "커뮤니티", color: "yellow" },
                 // { label: "북리뷰", color: "red"},
                 // { label: "모임", color: "green"},
               ]}

@@ -15,13 +15,7 @@ interface BoardCreateProps {
   subTopic: string;
 }
 
-const CreateBoard: React.FC<BoardCreateProps> = ({ 
-  categoryId,
-  redirectUri, 
-  createPost,
-  mainTopic,
-  subTopic
-}) => {
+const CreateBoard: React.FC<BoardCreateProps> = ({ categoryId, redirectUri, createPost, mainTopic, subTopic }) => {
   const navigate = useNavigate();
   const editorRef = useRef<Editor>(null);
   const [postData, setPostData] = useState<CommuPostRequest>({
@@ -30,9 +24,8 @@ const CreateBoard: React.FC<BoardCreateProps> = ({
     notification_yn: false,
   });
 
-  const handleSubmit = () => { 
-    if(categoryId)
-      createPost(postData, categoryId);
+  const handleSubmit = () => {
+    if (categoryId) createPost(postData, categoryId);
     navigate(redirectUri);
   };
 
@@ -53,7 +46,7 @@ const CreateBoard: React.FC<BoardCreateProps> = ({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <BreadCrumb major={mainTopic} sub={subTopic}/>
+      <BreadCrumb major={mainTopic} sub={subTopic} />
       <div className="max-w-6xl mx-auto px-8 py-12">
         <h1 className="text-3xl font-bold mb-10">글쓰기</h1>
         <div className="bg-white shadow-md rounded-2xl p-10 space-y-10">
@@ -89,7 +82,7 @@ const CreateBoard: React.FC<BoardCreateProps> = ({
                     tooltip: "되돌리기",
                     el: (() => {
                       const button = document.createElement("button");
-                      button.innerHTML = `<i class="fas fa-undo"></i>`;
+                      button.innerHTML = '<i class="fas fa-undo"></i>';
                       button.addEventListener("click", () => {
                         editorRef.current?.getInstance().exec("undo");
                       });
@@ -101,7 +94,7 @@ const CreateBoard: React.FC<BoardCreateProps> = ({
                     tooltip: "다시하기",
                     el: (() => {
                       const button = document.createElement("button");
-                      button.innerHTML = `<i class="fas fa-redo"></i>`;
+                      button.innerHTML = '<i class="fas fa-redo"></i>';
                       button.addEventListener("click", () => {
                         editorRef.current?.getInstance().exec("redo");
                       });

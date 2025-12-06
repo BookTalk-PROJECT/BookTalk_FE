@@ -113,9 +113,10 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gatheringId]);
 
-  const statusMeta =
-    STATUS_META[gatheringBookInfo?.status ?? 999] ??
-    { label: `상태(${gatheringBookInfo?.status ?? "-"})`, cls: "bg-slate-100 text-slate-700 border-slate-200" };
+  const statusMeta = STATUS_META[gatheringBookInfo?.status ?? 999] ?? {
+    label: `상태(${gatheringBookInfo?.status ?? "-"})`,
+    cls: "bg-slate-100 text-slate-700 border-slate-200",
+  };
 
   return (
     <div className="space-y-8">
@@ -132,8 +133,7 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
               {/* 상태 배지 */}
               <span
                 className={`inline-flex items-center rounded-full border px-3.5 py-1.5 text-sm font-semibold ${statusMeta.cls}`}
-                title={`현재 상태: ${statusMeta.label}`}
-              >
+                title={`현재 상태: ${statusMeta.label}`}>
                 {statusMeta.label}
               </span>
             </div>
@@ -180,7 +180,11 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
 
         {/* 디테일 섹션: 제목 : 값  */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          <DetailRow label="모집 인원" value={fmt(gatheringBookInfo?.recruitmentPersonnel)} icon="fas fa-user-friends" />
+          <DetailRow
+            label="모집 인원"
+            value={fmt(gatheringBookInfo?.recruitmentPersonnel)}
+            icon="fas fa-user-friends"
+          />
           <DetailRow label="모집 기간" value={fmt(gatheringBookInfo?.recruitmentPeriod)} icon="far fa-calendar-check" />
           <DetailRow label="활동 기간" value={fmt(gatheringBookInfo?.activityPeriod)} icon="far fa-calendar-alt" />
           <DetailRow label="행정구역(시군구)" value={fmt(gatheringBookInfo?.sigCd)} icon="fas fa-map-marker-alt" />
@@ -216,8 +220,7 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
                   const container = document.querySelector(".books-container") as HTMLElement;
                   if (container) container.scrollLeft -= container.offsetWidth;
                 }}
-                className="w-9 h-9 text-base flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 hover:scale-110 transition-transform duration-200 shadow-sm hover:shadow-md"
-              >
+                className="w-9 h-9 text-base flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 hover:scale-110 transition-transform duration-200 shadow-sm hover:shadow-md">
                 <i className="fas fa-chevron-left transition-transform duration-200"></i>
               </button>
               <button
@@ -225,8 +228,7 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
                   const container = document.querySelector(".books-container") as HTMLElement;
                   if (container) container.scrollLeft += container.offsetWidth;
                 }}
-                className="w-9 h-9 text-base flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 hover:scale-110 transition-transform duration-200 shadow-sm hover:shadow-md"
-              >
+                className="w-9 h-9 text-base flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 hover:scale-110 transition-transform duration-200 shadow-sm hover:shadow-md">
                 <i className="fas fa-chevron-right transition-transform duration-200"></i>
               </button>
             </div>
@@ -235,8 +237,7 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
 
         <div
           className="books-container overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
-          style={{ scrollbarWidth: "thin", msOverflowStyle: "none" }}
-        >
+          style={{ scrollbarWidth: "thin", msOverflowStyle: "none" }}>
           <div className="inline-flex gap-6 min-w-max pb-4">
             {books.map((book, index) => (
               <div key={`${book.id}-${index}`} className="w-[320px] cursor-pointer group">
@@ -271,9 +272,7 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
               </div>
             ))}
 
-            {books.length === 0 && !loading && (
-              <div className="text-gray-500 text-sm px-2">등록된 책이 없습니다.</div>
-            )}
+            {books.length === 0 && !loading && <div className="text-gray-500 text-sm px-2">등록된 책이 없습니다.</div>}
           </div>
         </div>
       </div>
@@ -286,8 +285,7 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
           role="dialog"
           onClick={(e) => {
             if (e.target === e.currentTarget) closeDeleteModal(); // 오버레이 클릭 닫기
-          }}
-        >
+          }}>
           {/* Overlay */}
           <div className="absolute inset-0 bg-black/40" />
 
@@ -310,7 +308,9 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
                 maxLength={reasonMax}
                 onChange={(e) => setDeleteReason(e.target.value)}
               />
-              <div className="mt-1 text-right text-xs text-gray-400">{deleteReason.length}/{reasonMax}</div>
+              <div className="mt-1 text-right text-xs text-gray-400">
+                {deleteReason.length}/{reasonMax}
+              </div>
             </div>
 
             <div className="px-5 py-3 border-t flex justify-end gap-2">
@@ -318,8 +318,7 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
                 type="button"
                 className="px-4 py-2 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50"
                 onClick={closeDeleteModal}
-                disabled={deleteLoading}
-              >
+                disabled={deleteLoading}>
                 취소
               </button>
               <button
@@ -327,8 +326,7 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
                 className={`px-4 py-2 text-sm rounded-lg text-white ${deleteReason.trim() && !deleteLoading ? "bg-red-600 hover:bg-red-700" : "bg-red-300 cursor-not-allowed"}`}
                 onClick={handleConfirmDelete}
                 disabled={!deleteReason.trim() || deleteLoading}
-                title={!deleteReason.trim() ? "삭제 사유를 입력하세요" : "Ctrl/⌘ + Enter로도 확인할 수 있어요"}
-              >
+                title={!deleteReason.trim() ? "삭제 사유를 입력하세요" : "Ctrl/⌘ + Enter로도 확인할 수 있어요"}>
                 {deleteLoading ? "삭제 중..." : "삭제하기"}
               </button>
             </div>

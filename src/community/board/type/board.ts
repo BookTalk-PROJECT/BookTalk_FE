@@ -1,4 +1,3 @@
-
 export interface Category {
   categoryId: number;
   value: string;
@@ -11,5 +10,3 @@ export interface SubCategory {
   value: string;
   isActive: boolean;
 }
-
-

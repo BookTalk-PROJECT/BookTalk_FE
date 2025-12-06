@@ -1,4 +1,3 @@
-
 export type GatheringStatus = "INTENDED" | "PROGRESS" | "END";
 
 export interface GatheringDetailResponse {

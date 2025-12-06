@@ -1,13 +1,13 @@
 import { create } from "zustand";
 
 type AuthStore = {
-    isAuthenticated: boolean;
-    login: () => void;
-    logout: () => void;
-}
+  isAuthenticated: boolean;
+  login: () => void;
+  logout: () => void;
+};
 
 export const useAuthStore = create<AuthStore>((set) => ({
-    isAuthenticated: !!localStorage.getItem("accessToken"),
-    login: () => set({isAuthenticated: true}),
-    logout: () => set({isAuthenticated: false})
+  isAuthenticated: !!localStorage.getItem("accessToken"),
+  login: () => set({ isAuthenticated: true }),
+  logout: () => set({ isAuthenticated: false }),
 }));

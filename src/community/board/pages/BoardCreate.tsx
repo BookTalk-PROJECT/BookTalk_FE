@@ -9,10 +9,10 @@ const BoardCreate: React.FC = () => {
   const [categoryId, setCategoryId] = useState<string>("");
 
   useEffect(() => {
-    setCategoryId(searchParams.get('categoryId') ?? "");
-  }, [searchParams])
+    setCategoryId(searchParams.get("categoryId") ?? "");
+  }, [searchParams]);
 
-  if(!categoryId) {
+  if (!categoryId) {
     return null;
   }
 
@@ -20,9 +20,8 @@ const BoardCreate: React.FC = () => {
     <CreateBoard
       categoryId={categoryId}
       redirectUri={`/boardList?categoryId=${categoryId}`}
-      createPost={ async (arg0: CommuPostRequest, categoryId: string | undefined) => {
-        if(categoryId)
-          await postBoard(arg0, categoryId);
+      createPost={async (arg0: CommuPostRequest, categoryId: string | undefined) => {
+        if (categoryId) await postBoard(arg0, categoryId);
       }}
       mainTopic="카테고리"
       subTopic="글쓰기"

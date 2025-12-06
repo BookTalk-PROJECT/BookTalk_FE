@@ -16,7 +16,7 @@ type BoardTableColDef = {
   author: string;
   date: string;
   views: string;
-}
+};
 
 const BoardList: React.FC = () => {
   const rowDef: RowDef<BoardTableColDef>[] = [
@@ -24,7 +24,7 @@ const BoardList: React.FC = () => {
     { label: "제목", key: "title", isSortable: true, isSearchType: true },
     { label: "작성자", key: "author", isSortable: true, isSearchType: true },
     { label: "날짜", key: "date", isSortable: true, isSearchType: true },
-    { label: "조회수", key: "views", isSortable: true, isSearchType: true }
+    { label: "조회수", key: "views", isSortable: true, isSearchType: true },
   ];
 
   const navigate = useNavigate();
@@ -50,19 +50,19 @@ const BoardList: React.FC = () => {
     const initCategories = () => {
       getCategories().then((res) => {
         const categories = res.data;
-        const filteredCategories = categories.filter((category: { subCategories: SubCategory[]; }) => 
-          category.subCategories && category.subCategories.length > 0
+        const filteredCategories = categories.filter(
+          (category: { subCategories: SubCategory[] }) => category.subCategories && category.subCategories.length > 0
         );
         setCategories(filteredCategories);
-        const categoryId = searchParams.get('categoryId');
-        if(categoryId) {
+        const categoryId = searchParams.get("categoryId");
+        if (categoryId) {
           const categoryIdNum = parseInt(categoryId);
           let activeCategory = null;
           let activeSubCategory = null;
 
           for (const category of filteredCategories) {
-            const matchedSubCategory = category.subCategories.find((subCategory: { categoryId: number; }) => 
-              subCategory.categoryId === categoryIdNum
+            const matchedSubCategory = category.subCategories.find(
+              (subCategory: { categoryId: number }) => subCategory.categoryId === categoryIdNum
             );
             if (matchedSubCategory) {
               activeCategory = category;
@@ -75,12 +75,12 @@ const BoardList: React.FC = () => {
             setActiveCategory(activeCategory);
             setActiveSubCategory(activeSubCategory);
           }
-        }else {
+        } else {
           setActiveCategory(filteredCategories[0]);
           setActiveSubCategory(filteredCategories[0].subCategories[0]);
         }
       });
-    }
+    };
 
     initCategories();
     checkScrollButtons();
@@ -89,27 +89,24 @@ const BoardList: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if(activeSubCategory) {
-      setSearchParams({categoryId: activeSubCategory.categoryId.toString()});
-      setForceUpdate(v => v + 1);
+    if (activeSubCategory) {
+      setSearchParams({ categoryId: activeSubCategory.categoryId.toString() });
+      setForceUpdate((v) => v + 1);
     }
-  },[activeSubCategory]);
-  
+  }, [activeSubCategory]);
+
   const renderColumn = (row: any, key: Extract<keyof BoardTableColDef, string>) => {
     switch (key) {
       case "title":
-      return (
-        <Link to={`/boardDetail/${row["board_code"]}?categoryId=${searchParams.get('categoryId')}`}>{row[key]}</Link>
-      );
+        return (
+          <Link to={`/boardDetail/${row["board_code"]}?categoryId=${searchParams.get("categoryId")}`}>{row[key]}</Link>
+        );
       default:
-      return (
-        <>{row[key]}</>
-      );
+        return <>{row[key]}</>;
     }
-  }
+  };
 
   const renderCategoryTab = () => {
-
     const handleScroll = (direction: "left" | "right") => {
       if (tabsRef.current) {
         const scrollAmount = 200;
@@ -172,8 +169,8 @@ const BoardList: React.FC = () => {
           )}
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderCategoryBar = () => {
     return (
@@ -187,7 +184,8 @@ const BoardList: React.FC = () => {
               <span>
                 {activeCategory?.value} &gt; {activeSubCategory?.value}
               </span>
-              <i className={`fas fa-chevron-down transition-transform duration-200 ${isDropdownOpen ? "transform rotate-180" : ""}`}></i>
+              <i
+                className={`fas fa-chevron-down transition-transform duration-200 ${isDropdownOpen ? "transform rotate-180" : ""}`}></i>
             </button>
             {isDropdownOpen && (
               <div className="absolute z-30 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200">
@@ -214,11 +212,13 @@ const BoardList: React.FC = () => {
           </div>
         </div>
         <ButtonWrapper onClick={() => navigate(`/boardCreate?categoryId=${activeSubCategory?.categoryId}`)}>
-          <><i className="fas fa-pencil-alt mr-1"></i> 글쓰기</>
+          <>
+            <i className="fas fa-pencil-alt mr-1"></i> 글쓰기
+          </>
         </ButtonWrapper>
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -230,20 +230,21 @@ const BoardList: React.FC = () => {
             {/* Active category display */}
             {renderCategoryBar()}
             {activeSubCategory && (
-            <DataTableCustom<PostSimpleInfo, BoardTableColDef>
-              rows={posts}
-              rowDef={rowDef}
-              getRowKey={(post) => post.board_code}
-              renderColumn={renderColumn}
-              setRowData={setPosts}
-              loadRowData={(pageNum) => {
-                return getBoards(activeSubCategory.categoryId, pageNum)
-              }}
-              searchRowData={(cond, pageNum) => {
-                return searchBoards(cond, activeSubCategory.categoryId, pageNum)
-              }}
-              forceUpdate={forceUpdate}
-            />)}
+              <DataTableCustom<PostSimpleInfo, BoardTableColDef>
+                rows={posts}
+                rowDef={rowDef}
+                getRowKey={(post) => post.board_code}
+                renderColumn={renderColumn}
+                setRowData={setPosts}
+                loadRowData={(pageNum) => {
+                  return getBoards(activeSubCategory.categoryId, pageNum);
+                }}
+                searchRowData={(cond, pageNum) => {
+                  return searchBoards(cond, activeSubCategory.categoryId, pageNum);
+                }}
+                forceUpdate={forceUpdate}
+              />
+            )}
           </div>
         </div>
       </main>

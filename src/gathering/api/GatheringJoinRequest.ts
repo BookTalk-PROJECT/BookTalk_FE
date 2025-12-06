@@ -31,7 +31,7 @@ export const GetRecruitQuestion = async (gatheringId: string): Promise<RecruitQu
   const res = await axios.get(`${API_BASE_URL}/gathering/${gatheringId}/recruitQuestions`, config);
 
   // 백엔드가 배열을 그대로 주는 경우와 ResponseDto로 감싼 경우 모두 처리
-  const payload = Array.isArray(res.data) ? res.data : res.data?.data ?? [];
+  const payload = Array.isArray(res.data) ? res.data : (res.data?.data ?? []);
 
   // 프론트에서 사용하기 위한 표준화 (required/maxLength는 기본값 유지)
   const serverQuestions: RecruitQuestion[] = payload.map((q: any, index: number) => ({

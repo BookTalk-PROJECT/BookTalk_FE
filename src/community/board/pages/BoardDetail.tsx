@@ -12,35 +12,34 @@ const BoardDetail: React.FC = () => {
   const [categoryId, setCategoryId] = useState<string>("");
 
   useEffect(() => {
-    setCategoryId(searchParams.get('categoryId') ?? "");
-  }, [searchParams])
+    setCategoryId(searchParams.get("categoryId") ?? "");
+  }, [searchParams]);
 
   const navigateToPrevBoard = async () => {
-    if(postCode) {
+    if (postCode) {
       const nextBoardCode = (await queryPrevBoardCode(postCode, categoryId)).data;
-      if(nextBoardCode===null) {
+      if (nextBoardCode === null) {
         alert("마지막 게시글입니다.");
         return;
       }
-      navigate(`/boardDetail/${nextBoardCode}?categoryId=${categoryId}`)
+      navigate(`/boardDetail/${nextBoardCode}?categoryId=${categoryId}`);
     }
-  }
-  
-  const navigateToNextBoard = async () => {
-    if(postCode) {
-      const nextBoardCode = (await queryNextBoardCode(postCode, categoryId)).data;
-      if(nextBoardCode===null) {
-        alert("마지막 게시글입니다.");
-        return;
-      }
-      navigate(`/boardDetail/${nextBoardCode}?categoryId=${categoryId}`)
-    }
-  }
+  };
 
-  if(!categoryId || !postCode) {
+  const navigateToNextBoard = async () => {
+    if (postCode) {
+      const nextBoardCode = (await queryNextBoardCode(postCode, categoryId)).data;
+      if (nextBoardCode === null) {
+        alert("마지막 게시글입니다.");
+        return;
+      }
+      navigate(`/boardDetail/${nextBoardCode}?categoryId=${categoryId}`);
+    }
+  };
+
+  if (!categoryId || !postCode) {
     return null;
   }
-
 
   return (
     <DetailBaord

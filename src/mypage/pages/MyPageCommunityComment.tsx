@@ -13,7 +13,7 @@ type MyPageCommentColType = {
   post_code: string;
   content: string;
   date: string;
-}
+};
 
 const MyPageCommunityComment: React.FC = () => {
   const rowDef: RowDef<MyPageCommentColType>[] = [
@@ -24,19 +24,15 @@ const MyPageCommunityComment: React.FC = () => {
   ];
 
   const [comments, setComments] = useState<ReplySimpleInfo[]>([]);
- 
+
   const renderColumn = (row: any, key: Extract<keyof MyPageCommentColType, string>) => {
     switch (key) {
       case "content":
-        return (
-          <Link to={`/boardDetail/${row.post_code}`}>{row[key]}</Link>
-        );
+        return <Link to={`/boardDetail/${row.post_code}`}>{row[key]}</Link>;
       default:
-        return (
-          <>{row[key]}</>
-        );
+        return <>{row[key]}</>;
     }
-  }
+  };
 
   return (
     <div className="flex h-screen">

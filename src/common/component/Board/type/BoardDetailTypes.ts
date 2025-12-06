@@ -24,7 +24,7 @@ export interface PostDetailInfo {
   author: string;
   views: number; // 조회수
   likes_cnt: number; // 좋아요 수
-  reg_date: string; // 등록일 
+  reg_date: string; // 등록일
   update_date: string;
   imageUrl: string; // 대표 이미지 URL
   is_liked: boolean; // 해당 게시글을 좋아요했었는가
@@ -54,7 +54,8 @@ export interface ReplySimpleInfo {
   manage: string;
   delete_reason: string;
   date: string;
-}export interface CommuPostRequest {
+}
+export interface CommuPostRequest {
   title: string;
   content: string;
   notification_yn?: boolean;
@@ -62,4 +63,3 @@ export interface ReplySimpleInfo {
 export interface CommuDetail extends PostDetailInfo {
   category_id: string;
 }
-

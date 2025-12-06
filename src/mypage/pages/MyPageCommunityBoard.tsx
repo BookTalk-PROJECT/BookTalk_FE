@@ -12,14 +12,14 @@ type MyPageBoardColType = {
   title: string;
   category: string;
   date: string;
-}
+};
 
 const MyPageCommunityBoard: React.FC = () => {
   const rowDef: RowDef<MyPageBoardColType>[] = [
     { label: "게시물 번호", key: "board_code", isSortable: true, isSearchType: true },
     { label: "제목", key: "title", isSortable: true, isSearchType: true },
     { label: "분류", key: "category", isSortable: true, isSearchType: true },
-    { label: "날짜", key: "date", isSortable: true, isSearchType: false }
+    { label: "날짜", key: "date", isSortable: true, isSearchType: false },
   ];
 
   const [posts, setPosts] = useState<PostSimpleInfo[]>([]);
@@ -27,15 +27,11 @@ const MyPageCommunityBoard: React.FC = () => {
   const renderColumn = (row: any, key: Extract<keyof MyPageBoardColType, string>) => {
     switch (key) {
       case "title":
-      return (
-        <Link to={`/boardDetail/${row["board_code"]}`}>{row[key]}</Link>
-      );
+        return <Link to={`/boardDetail/${row["board_code"]}`}>{row[key]}</Link>;
       default:
-      return (
-        <>{row[key]}</>
-      );
+        return <>{row[key]}</>;
     }
-  }
+  };
 
   return (
     <div className="flex h-screen">

@@ -1,7 +1,7 @@
 import { JSX } from "react";
 
 interface CustomButtonProps {
-  onClick: () => void;
+  onClick?: () => void;
   children: React.ReactNode;
   color?: "black" | "blue" | "red" | "white" | "none";
   customClassName?: string; // className 추가
