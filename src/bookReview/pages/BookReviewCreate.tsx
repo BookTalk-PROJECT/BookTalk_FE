@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { createBookReview } from "../api/bookReviewApi";
 import BookReviewForm from "../components/BookReviewForm";
 import { BookReviewCreate as BookReviewCreateType } from "../types/bookReview";
+import { useParams } from "react-router";
 
 const BookReviewCreate: React.FC = () => {
   const navigate = useNavigate();
+  const { categoryId } = useParams<string>();
 
   const handleCreateReview = async (formData: BookReviewCreateType) => {
     try {
@@ -17,7 +19,7 @@ const BookReviewCreate: React.FC = () => {
     }
   };
 
-  return <BookReviewForm onSubmit={handleCreateReview} />;
+  return <BookReviewForm categoryId={categoryId} onSubmit={handleCreateReview} />;
 };
 
 export default BookReviewCreate;

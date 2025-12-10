@@ -4,7 +4,7 @@ import { useAuthStore } from "../../store";
 import { fetchLogout } from "../auth/api/Auth";
 
 const Header = () => {
-  const {isAuthenticated ,logout} = useAuthStore();
+  const { isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
   const logoutHandler = async () => {
     await fetchLogout();
@@ -36,7 +36,7 @@ const Header = () => {
           </nav>
         </div>
         <div className="flex items-center space-x-4">
-          {isAuthenticated ?(
+          {isAuthenticated ? (
             <CustomButton color="white" onClick={logoutHandler}>
               <i className="fas fa-key"> &nbsp;로그아웃</i>
             </CustomButton>
@@ -45,14 +45,15 @@ const Header = () => {
               <i className="fas fa-key"> &nbsp;로그인</i>
             </CustomButton>
           )}
-          { !isAuthenticated?
-          <CustomButton onClick={() => navigate("/join")} color="black">
-            <>
-              <i className="fas fa-right-to-bracket"> &nbsp;회원가입</i>
-            </>
-          </CustomButton>:
-              <div></div>
-          }
+          {!isAuthenticated ? (
+            <CustomButton onClick={() => navigate("/join")} color="black">
+              <>
+                <i className="fas fa-right-to-bracket"> &nbsp;회원가입</i>
+              </>
+            </CustomButton>
+          ) : (
+            <div></div>
+          )}
         </div>
       </div>
     </header>

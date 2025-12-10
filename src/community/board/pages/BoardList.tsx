@@ -91,6 +91,7 @@ const BoardList: React.FC = () => {
   useEffect(() => {
     if (activeSubCategory) {
       setSearchParams({ categoryId: activeSubCategory.categoryId.toString() });
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForceUpdate((v) => v + 1);
     }
   }, [activeSubCategory]);

@@ -3,16 +3,15 @@ export interface BookReview {
   book_title: string;
   review_title: string;
   author: string;
-  publication_date: string;
   rating: number;
   thumbnail_url: string;
+  reg_date: string;
 }
 
 export interface BookReviewDetail extends BookReview {
+  categoryId: string;
   title: string;
   content: string;
-  isbn: string;
-  publisher: string;
   authors: string;
   views: number;
   likes_cnt: number;
@@ -22,10 +21,12 @@ export interface BookReviewDetail extends BookReview {
   del_reason: string | null;
   reg_date: string;
   update_date: string;
-  thumbnail: string;
+  publisher: string;
+  isbn: string;
 }
 
 export interface BookReviewCreate {
+  categoryId: string;
   book_title: string;
   authors: string;
   publisher: string;

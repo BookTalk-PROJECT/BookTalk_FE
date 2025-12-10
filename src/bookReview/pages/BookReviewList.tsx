@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState } from "react";
 import { BookReview } from "../types/bookReview";
 import { Category, SubCategory } from "../../community/board/type/board";
@@ -26,7 +27,8 @@ const BookReviewList: React.FC = () => {
   // MyPageTable의 loadContents와 동일한 패턴
   const loadReviews = (pageNum: number) => {
     setIsLoading(true);
-    getBookReviewList(pageNum, 6)
+    const categoryId = searchParams.get("categoryId") ?? "";
+    getBookReviewList(pageNum, 6, categoryId)
       .then((res) => {
         setReviews(res.data.content);
         setTotalPages(res.data.totalPages);
@@ -76,13 +78,12 @@ const BookReviewList: React.FC = () => {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadReviews(currentPage);
-  }, [currentPage]);
+  }, [currentPage, searchParams]);
 
   useEffect(() => {
     if (activeCategory) {
       setSearchParams({ categoryId: activeCategory.categoryId.toString() });
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCurrentPage(1);
     }
   }, [activeCategory]);
 
@@ -152,7 +153,7 @@ const BookReviewList: React.FC = () => {
 
         {/* Create Button */}
         <div className="flex justify-end mb-6">
-          <CustomButton color="blue" onClick={() => navigate("/book-review/create")}>
+          <CustomButton color="blue" onClick={() => navigate(`/book-review/create/${activeCategory?.categoryId}`)}>
             <i className="fas fa-pen mr-2"></i>북리뷰 작성하기
           </CustomButton>
         </div>
@@ -206,9 +207,6 @@ const PagenationCustom: React.FC<PagenationProps> = ({ totalPages, currentPage, 
     const endVal = Math.min(startVal + 9, totalPages);
     setPageRange(getIntegerArray(startVal, endVal));
   }, [totalPages, currentPage]);
-
-  // 렌더링
-  if (totalPages === 0) return null; // or <div>페이지 없음</div>
 
   return (
     <div className="flex justify-center items-center space-x-2 p-4 border-t">

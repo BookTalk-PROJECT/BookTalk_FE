@@ -88,7 +88,7 @@ const AppContent = () => {
               {/* Book Review */}
               <Route path="/book-review" element={<BookReviewList />} />
               <Route
-                path="/book-review/create"
+                path="/book-review/create/:categoryId"
                 element={
                   <PrivateRoute>
                     <BookReviewCreate />
