@@ -23,8 +23,8 @@ const BoardList: React.FC = () => {
     { label: "게시물 번호", key: "board_code", isSortable: true, isSearchType: true },
     { label: "제목", key: "title", isSortable: true, isSearchType: true },
     { label: "작성자", key: "author", isSortable: true, isSearchType: true },
-    { label: "날짜", key: "date", isSortable: true, isSearchType: true },
-    { label: "조회수", key: "views", isSortable: true, isSearchType: true },
+    { label: "날짜", key: "date", isSortable: true, isSearchType: false },
+    { label: "조회수", key: "views", isSortable: true, isSearchType: false },
   ];
 
   const navigate = useNavigate();

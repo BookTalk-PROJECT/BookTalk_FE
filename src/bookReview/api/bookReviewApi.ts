@@ -23,12 +23,12 @@ export const getBookReviewList = async (
 
 export const searchBookReviews = async (
   cond: SearchCondition,
-  page: number,
-  size: number,
+  pageNum: number,
+  pageSize: number,
   categoryId: string
 ): Promise<ApiResponse<PageResponse<BookReview>>> => {
   const response = await axios.post<ApiResponse<PageResponse<BookReview>>>(
-    `${BASE_URL}/book-reviews/search?pageNum=${page}&pageSize=${size}&categoryId=${categoryId}`,
+    `${BASE_URL}/book-reviews/search?pageNum=${pageNum}&pageSize=${pageSize}&categoryId=${categoryId}`,
     cond
   );
   return response.data;
