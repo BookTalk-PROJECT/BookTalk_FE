@@ -1,5 +1,6 @@
 import axios from "axios";
 import { fetchReissueToken } from "../api/Auth";
+import { useAuthStore } from "../../../store";
 
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
@@ -25,30 +26,52 @@ axios.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    if (originalRequest?.headers?.["X-Skip-Auth-Refresh"] === "true") {
+      return Promise.reject(error);
+    }
+
     // 401 에러이고, 재시도한 요청이 아닐 경우
+    const status = error?.response?.status;
+    const errorCode = error?.response?.data?.errorCode;
+
     if (
-      error.response.status === 401 &&
+      status === 401 &&
       !originalRequest._retry &&
-      error.response.data.errorCode == "ACCESS_TOKEN_EXPIRED"
+      errorCode === "ACCESS_TOKEN_EXPIRED"
     ) {
-      originalRequest._retry = true; // 재시도 플래그 설정
+      originalRequest._retry = true;
+
       try {
-        // 가상 토큰 재발급 엔드포인트
-        fetchReissueToken().then((newAccessToken) => {
-          // 기본 헤더 및 원래 요청 헤더 업데이트
-          axios.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
-          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-          return axios(originalRequest);
-        });
+        //  refresh 호출 결과를 await로 받아야 "재시도"가 정상 동작
+        const newAccessToken = await fetchReissueToken();
+
+        // 원래 요청에 토큰 다시 붙여서 재시도
+        originalRequest.headers = originalRequest.headers || {};
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        return axios(originalRequest);
       } catch (refreshError) {
-        // 토큰 재발급 실패 시 (예: 리프레시 토큰 만료)
-        console.error("Unable to refresh token:", refreshError);
-        // 로그인 페이지로 리디렉션 또는 다른 오류 처리
-        // window.location.href = '/login';
-        return Promise.reject(refreshError);
+        if (axios.isAxiosError(refreshError)) {
+          const refreshStatus = refreshError?.response?.status;
+          const refreshErrorCode = refreshError?.response?.data?.errorCode;
+
+          // refresh 토큰 만료/무효면 로그아웃
+          if (
+            refreshStatus === 401 &&
+            (refreshErrorCode === "REFRESH_TOKEN_EXPIRED" ||
+              refreshErrorCode === "INVALID_TOKEN" ||
+              refreshErrorCode === "REFRESH_TOKEN_MISSING")
+          ) {
+            await useAuthStore.getState().logout();
+            alert("로그인 상태가 만료되었습니다. 재로그인을 하세요.")
+            //window.location.replace("/");
+          }
+
+          return Promise.reject(refreshError);
+        }
       }
     }
-    // 401 에러가 아니거나 재시도 요청인 경우
+
     return Promise.reject(error);
   }
 );
