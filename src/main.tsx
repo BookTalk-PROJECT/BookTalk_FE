@@ -42,6 +42,7 @@ import BookReviewList from "./bookReview/pages/BookReviewList";
 import BookReviewCreate from "./bookReview/pages/BookReviewCreate";
 import BookReviewEdit from "./bookReview/pages/BookReviewEdit";
 import BookReviewDetail from "./bookReview/pages/BookReviewDetail";
+import GatheringEditBoardPage from "./gathering/pages/GatheringEditBoardPage";
 
 const AppContent = () => {
   const location = useLocation();
@@ -113,19 +114,18 @@ const AppContent = () => {
               />
               {/* Gathering */}
               <Route path="/gathering">
-                {" "}
-                {/* 모임 관련 */}
-                <Route index element={<GatheringListPage />} /> {/* 이성종 모임 조회 */}
-                <Route path="create" element={<GatheringCreatePage />} /> {/* 이성종 모임 상세 */}
-                <Route path="detail/:gatheringId" element={<GatheringDetailPage />} /> {/* 이성종 모임 상세 */}
-                <Route path=":gatheringId/join" element={<GatheringJoin />} />
-                {/* 이성종 모임 참여 신청 */}
-                <Route path="/gathering/:gatheringId/edit" element={<GatheringEditPage />} />
+                {/* 모임 */}
+                <Route index element={<GatheringListPage />} />
+                <Route path="create" element={<PrivateRoute><GatheringCreatePage /></PrivateRoute>} />
+                <Route path="detail/:gatheringId" element={<PrivateRoute><GatheringDetailPage /></PrivateRoute>} />
+                <Route path=":gatheringId/join" element={<PrivateRoute><GatheringJoin /></PrivateRoute>} />
+                <Route path=":gatheringId/edit" element={<PrivateRoute><GatheringEditPage /></PrivateRoute>} />
+
+                {/* 모임 게시판 */}
                 <Route path=":gatheringId/gatheringboard">
-                  {" "}
-                  {/* 모임 게시판 관련 */}
-                  <Route path="create" element={<GatheringCreateBoardPage />} /> {/* 이성종 모임 게시판 글쓰기 */}
-                  <Route path=":postId" element={<GatheringBoardDetailPage />} /> {/* 이성종 모임 게시판 상세 */}
+                  <Route path="create" element={<PrivateRoute><GatheringCreateBoardPage /></PrivateRoute>} />
+                  <Route path=":postId" element={<PrivateRoute><GatheringBoardDetailPage /></PrivateRoute>} />
+                  <Route path=":postId/edit" element={<PrivateRoute><GatheringEditBoardPage /></PrivateRoute>} />
                 </Route>
               </Route>
               {/* Auth */}

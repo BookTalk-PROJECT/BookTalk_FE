@@ -109,13 +109,41 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
   };
 
   useEffect(() => {
-    loadGatheringData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gatheringId]);
+      loadGatheringData();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [gatheringId]);
 
-  const statusMeta = STATUS_META[gatheringBookInfo?.status ?? 999] ?? {
-    label: `상태(${gatheringBookInfo?.status ?? "-"})`,
-    cls: "bg-slate-100 text-slate-700 border-slate-200",
+    const statusMeta = STATUS_META[gatheringBookInfo?.status ?? 999] ?? {
+      label: `상태(${gatheringBookInfo?.status ?? "-"})`,
+      cls: "bg-slate-100 text-slate-700 border-slate-200",
+    };
+
+    const copyCurrentUrl = async () => {
+    const url = window.location.href;
+
+    try {
+      // 최신 브라우저
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        // fallback (http 환경/구형 브라우저)
+        const textarea = document.createElement("textarea");
+        textarea.value = url;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        textarea.style.top = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+
+      alert("현재 페이지 URL이 복사되었습니다.");
+    } catch (e) {
+      console.error("URL 복사 실패:", e);
+      alert("URL 복사에 실패했습니다.");
+    }
   };
 
   return (
@@ -148,7 +176,7 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
 
           {/* 액션 버튼 */}
           <div className="flex shrink-0 items-center gap-2">
-            <CustomButton onClick={() => alert("공유하기 클릭됨")} color="white">
+            <CustomButton onClick={copyCurrentUrl} color="white">
               <>
                 <i className="fas fa-share-alt mr-2"></i>공유하기
               </>

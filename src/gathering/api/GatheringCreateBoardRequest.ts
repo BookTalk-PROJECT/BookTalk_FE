@@ -1,14 +1,28 @@
-// src/api/youtube.ts
 import axios from "axios";
-import { GatheringPostRequest } from "../../community/board/type/boardList";
+import { CommuPostRequest } from "../../common/component/Board/type/BoardDetailTypes";
 
-const apiKey = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-//게시글 등록 api
-export const gatheringCreatePost = async (postData: GatheringPostRequest) => {
-  //CommuPostRequest : 커뮤니티 GatheringPostRequest : 모임 게시글
-  console.log("게시글 등록 요청 데이터:", postData);
+type ResponseDto<T = any> = {
+  code: number;
+  data?: T;
+};
 
-  const response = await axios.post(apiKey + "/api/gatherings", postData);
-  return response.data;
+// 모임 게시글 등록 api
+export const gatheringCreatePost = async (
+  gatheringCode: string,
+  postData: CommuPostRequest
+): Promise<ResponseDto> => {
+  const payload = {
+    gatheringCode,                 // 서버 CreateGatheringBoardCommand에 맞춰
+    title: postData.title,
+    content: postData.content,
+    notification_yn: postData.notification_yn ?? false,
+  };
+
+  const res = await axios.post(`${API_BASE_URL}/gathering/board/create`, payload);
+
+  // const res = await axios.post(`${API_BASE_URL}/gathering/create`, payload);
+
+  return res.data;
 };
