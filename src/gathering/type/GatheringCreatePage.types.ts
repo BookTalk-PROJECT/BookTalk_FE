@@ -1,7 +1,7 @@
 export interface Books {
   isbn: string | number; //책 ISBN
   name: string; // 책 이름
-  order : number;
+  order: number;
   complete_yn: number;
   startDate: string; // 시작 날짜
 }
