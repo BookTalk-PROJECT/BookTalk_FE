@@ -23,7 +23,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
         set({ isAuthenticated: true });
       } catch {
         localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
         set({ isAuthenticated: false });
       }
     },
