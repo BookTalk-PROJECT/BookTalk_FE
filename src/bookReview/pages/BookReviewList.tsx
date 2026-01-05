@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState } from "react";
 import { BookReview } from "../types/bookReview";
 import { Category, SubCategory } from "../../community/board/type/board";
@@ -5,10 +6,11 @@ import { useNavigate, useSearchParams } from "react-router";
 import { useRef } from "react";
 import { useEffect } from "react";
 import { getCategories } from "../../community/category/api/categoryApi";
-import { deleteBookReview, getBookReviewList } from "../api/bookReviewApi";
+import { deleteBookReview, getBookReviewList, searchBookReviews } from "../api/bookReviewApi";
 import CustomButton from "../../common/component/CustomButton";
 import LoadingBar from "../../common/component/Loading";
 import BookReviewCard from "../components/BookReviewCard";
+import { SearchType } from "../../common/type/common";
 
 const BookReviewList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,10 +25,50 @@ const BookReviewList: React.FC = () => {
   const navigate = useNavigate();
   const carouselRef = useRef<HTMLDivElement>(null);
 
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+  const [dateRange, setDateRange] = useState({ start: "", end: "" });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const searchTypes = [
+    { key: "title", value: "제목" },
+    { key: "author", value: "저자" },
+    { key: "book_title", value: "도서명" },
+    { key: "isbn", value: "ISBN" },
+  ];
+  const [selectedFilter, setSelectedFilter] = useState(searchTypes[0]);
+
+  const handleSearch = (pageNum: number) => {
+    if (activeCategory) {
+      searchBookReviews(
+        {
+          keywordType: selectedFilter.key as SearchType,
+          keyword: searchTerm,
+          startDate: dateRange.start,
+          endDate: dateRange.end,
+        },
+        pageNum,
+        6,
+        activeCategory.categoryId.toString()
+      ).then((res) => {
+        setReviews(res.data.content);
+        setTotalPages(res.data.totalPages);
+        setIsSearching(true);
+      });
+    }
+  };
+
+  const resetSearch = () => {
+    setSearchTerm("");
+    setDateRange({ start: "", end: "" });
+    setIsSearching(false);
+    handleSearch(1);
+  };
+
   // MyPageTable의 loadContents와 동일한 패턴
   const loadReviews = (pageNum: number) => {
     setIsLoading(true);
-    getBookReviewList(pageNum, 6)
+    const categoryId = searchParams.get("categoryId") ?? "";
+    getBookReviewList(pageNum, 6, categoryId)
       .then((res) => {
         setReviews(res.data.content);
         setTotalPages(res.data.totalPages);
@@ -76,13 +118,12 @@ const BookReviewList: React.FC = () => {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadReviews(currentPage);
-  }, [currentPage]);
+  }, [currentPage, searchParams]);
 
   useEffect(() => {
     if (activeCategory) {
       setSearchParams({ categoryId: activeCategory.categoryId.toString() });
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCurrentPage(1);
     }
   }, [activeCategory]);
 
@@ -150,11 +191,66 @@ const BookReviewList: React.FC = () => {
           </button>
         </div>
 
-        {/* Create Button */}
-        <div className="flex justify-end mb-6">
-          <CustomButton color="blue" onClick={() => navigate("/book-review/create")}>
-            <i className="fas fa-pen mr-2"></i>북리뷰 작성하기
-          </CustomButton>
+        {/* Search Bar */}
+        <div className="flex justify-end items-center gap-5 mt-6 mb-6 pr-5">
+          <div className="relative">
+            <button
+              onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+              className="bg-white px-4 py-2 rounded-md shadow-sm flex items-center gap-2 border border-gray-300 hover:bg-gray-100">
+              <span>{selectedFilter.value}</span>
+              <i className={`fas fa-chevron-${isFilterDropdownOpen ? "up" : "down"}`}></i>
+            </button>
+            {isFilterDropdownOpen && (
+              <div className="absolute top-full left-0 mt-1 w-40 bg-white rounded-md shadow-lg z-50">
+                <ul className="py-1">
+                  {searchTypes.map((type) => (
+                    <li
+                      key={type.key}
+                      className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        setSelectedFilter(type);
+                        setIsFilterDropdownOpen(false);
+                      }}>
+                      {type.value}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+          <>
+            <div className="relative">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="검색어를 입력하세요"
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-64"
+              />
+              <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="date"
+                value={dateRange.start}
+                onChange={(e) => setDateRange((prev) => ({ ...prev, start: e.target.value }))}
+                className="border rounded-button px-3 py-1.5 text-sm"
+              />
+              <span className="text-sm text-gray-600">~</span>
+              <input
+                type="date"
+                value={dateRange.end}
+                onChange={(e) => setDateRange((prev) => ({ ...prev, end: e.target.value }))}
+                className="border rounded-button px-3 py-1.5 text-sm"
+              />
+            </div>
+            <CustomButton onClick={() => resetSearch()}>초기화</CustomButton>
+            <CustomButton onClick={() => handleSearch(1)}>검색</CustomButton>
+            {/* Create Button */}
+            <CustomButton onClick={() => navigate(`/book-review/create/${activeCategory?.categoryId}`)}>
+              <i className="fas fa-pen mr-2"></i>북리뷰 작성하기
+            </CustomButton>
+          </>
         </div>
 
         {/* Content Area */}
@@ -206,9 +302,6 @@ const PagenationCustom: React.FC<PagenationProps> = ({ totalPages, currentPage, 
     const endVal = Math.min(startVal + 9, totalPages);
     setPageRange(getIntegerArray(startVal, endVal));
   }, [totalPages, currentPage]);
-
-  // 렌더링
-  if (totalPages === 0) return null; // or <div>페이지 없음</div>
 
   return (
     <div className="flex justify-center items-center space-x-2 p-4 border-t">

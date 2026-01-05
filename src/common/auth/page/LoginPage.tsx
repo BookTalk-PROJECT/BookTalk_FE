@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
     const loginData = {
       username,
       password,
-    }
+    };
     fetchLogin(loginData)
       .then((data) => {
         // 로그인 컨텍스트 업데이트
@@ -36,8 +36,7 @@ const LoginPage: React.FC = () => {
           alert("알 수 없는 오류가 발생했습니다.");
         }
       });
-
-  }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 overflow-x-hidden">

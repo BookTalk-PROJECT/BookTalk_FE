@@ -10,20 +10,25 @@ export const createBookReview = async (req: BookReviewCreate): Promise<ApiRespon
   return response.data;
 };
 
-export const getBookReviewList = async (page: number, size: number): Promise<ApiResponse<PageResponse<BookReview>>> => {
+export const getBookReviewList = async (
+  page: number,
+  size: number,
+  categoryId: string
+): Promise<ApiResponse<PageResponse<BookReview>>> => {
   const response = await axios.get<ApiResponse<PageResponse<BookReview>>>(
-    `${BASE_URL}/book-reviews?page=${page}&size=${size}`
+    `${BASE_URL}/book-reviews?pageNum=${page}&pageSize=${size}&categoryId=${categoryId}`
   );
   return response.data;
 };
 
 export const searchBookReviews = async (
   cond: SearchCondition,
-  page: number,
-  size: number
+  pageNum: number,
+  pageSize: number,
+  categoryId: string
 ): Promise<ApiResponse<PageResponse<BookReview>>> => {
   const response = await axios.post<ApiResponse<PageResponse<BookReview>>>(
-    `${BASE_URL}/book-reviews/search?page=${page}&size=${size}`,
+    `${BASE_URL}/book-reviews/search?pageNum=${pageNum}&pageSize=${pageSize}&categoryId=${categoryId}`,
     cond
   );
   return response.data;

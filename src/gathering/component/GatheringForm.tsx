@@ -166,57 +166,56 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
   const [total, setTotal] = useState(0);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-const doSearch = useCallback(
-  async (kwd: string, page = 1) => {
-    if (!kwd.trim()) return;
+  const doSearch = useCallback(
+    async (kwd: string, page = 1) => {
+      if (!kwd.trim()) return;
 
-    setIsSearching(true);
-    setErrorMsg(null);
+      setIsSearching(true);
+      setErrorMsg(null);
 
-    try {
-      const params = new URLSearchParams({
-        kwd: kwd.trim(),
-        pageNum: String(page),
-        pageSize: String(pageSize),
-      });
+      try {
+        const params = new URLSearchParams({
+          kwd: kwd.trim(),
+          pageNum: String(page),
+          pageSize: String(pageSize),
+        });
 
-      // 백엔드 프록시 호출
-      const url = `${API_BASE_URL}/nlk/search?${params.toString()}`;
+        // 백엔드 프록시 호출
+        const url = `${API_BASE_URL}/nlk/search?${params.toString()}`;
 
-      const res = await fetch(url, { method: "GET" });
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+        const res = await fetch(url, { method: "GET" });
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        // 백엔드에서 NlkSearchResponse 형태로 내려온다고 가정:
+        // { total, pageNum, pageSize, items: [{ id, title, isbn, author, year, cover }] }
+        setSearchResults(
+          (data.items ?? []).map((it: any) => ({
+            id: it.id,
+            title: it.title,
+            isbn: it.isbn,
+            cover: it.cover,
+            _author: it.author,
+            _year: it.year,
+          }))
+        );
+
+        setTotal(data.total ?? 0);
+        setPageNum(data.pageNum ?? page);
+      } catch (err) {
+        console.error("도서 검색 실패:", err);
+        setErrorMsg("도서 검색 중 오류가 발생했습니다. (서버 또는 네트워크 문제일 수 있어요)");
+        setSearchResults([]);
+        setTotal(0);
+      } finally {
+        setIsSearching(false);
       }
-
-      const data = await res.json();
-
-      // 백엔드에서 NlkSearchResponse 형태로 내려온다고 가정:
-      // { total, pageNum, pageSize, items: [{ id, title, isbn, author, year, cover }] }
-      setSearchResults(
-        (data.items ?? []).map((it: any) => ({
-          id: it.id,
-          title: it.title,
-          isbn: it.isbn,
-          cover: it.cover,
-          _author: it.author,
-          _year: it.year,
-        }))
-      );
-
-      setTotal(data.total ?? 0);
-      setPageNum(data.pageNum ?? page);
-    } catch (err) {
-      console.error("도서 검색 실패:", err);
-      setErrorMsg("도서 검색 중 오류가 발생했습니다. (서버 또는 네트워크 문제일 수 있어요)");
-      setSearchResults([]);
-      setTotal(0);
-    } finally {
-      setIsSearching(false);
-    }
-  },
-  [pageSize]
-);
-
+    },
+    [pageSize]
+  );
 
   const onSearchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -227,11 +226,7 @@ const doSearch = useCallback(
 
   const handleBookStatusChange = (isbn: string | number, nextStatus: number) => {
     setBooks((prev) =>
-      prev.map((book) =>
-        String(book.isbn) === String(isbn)
-          ? { ...book, complete_yn: nextStatus }
-          : book
-      )
+      prev.map((book) => (String(book.isbn) === String(isbn) ? { ...book, complete_yn: nextStatus } : book))
     );
   };
   // 모달 닫힐 때 초기화
@@ -301,29 +296,25 @@ const doSearch = useCallback(
                 <div className="text-xs text-gray-500 mt-1 truncate" title={String(book.isbn)}>
                   ISBN: {book.isbn}
                 </div>
-                  <div className="mt-auto flex items-center justify-between gap-2">
-                    <span className="text-[11px] text-gray-500"></span>
-                    <div className="flex items-center gap-2">
-                      {/* 상태 배지 (현재 상태 표시) */}
-                        <span
-                          className={`px-2.5 py-1 text-xs rounded ${
-                            book.complete_yn === 1 ? "bg-blue-500 text-white" : "bg-yellow-500 text-white"
-                          }`}
-                        >
-                          {book.complete_yn === 1 ? "완료" : "진행중"}
-                        </span>
-                        {/* 실제 선택 컨트롤 */}
-                        <select
-                          className="text-[10px] border border-gray-300 rounded px-1.5 py-0.5 bg-white focus:outline-none focus:ring-1 focus:ring-purple-400"
-                          value={book.complete_yn}
-                          onChange={(e) =>
-                            handleBookStatusChange(book.isbn, Number(e.target.value))
-                          }
-                        >
-                        <option value={0}>진행중</option>
-                        <option value={1}>완료</option>
-                      </select>
-                    </div>
+                <div className="mt-auto flex items-center justify-between gap-2">
+                  <span className="text-[11px] text-gray-500"></span>
+                  <div className="flex items-center gap-2">
+                    {/* 상태 배지 (현재 상태 표시) */}
+                    <span
+                      className={`px-2.5 py-1 text-xs rounded ${
+                        book.complete_yn === 1 ? "bg-blue-500 text-white" : "bg-yellow-500 text-white"
+                      }`}>
+                      {book.complete_yn === 1 ? "완료" : "진행중"}
+                    </span>
+                    {/* 실제 선택 컨트롤 */}
+                    <select
+                      className="text-[10px] border border-gray-300 rounded px-1.5 py-0.5 bg-white focus:outline-none focus:ring-1 focus:ring-purple-400"
+                      value={book.complete_yn}
+                      onChange={(e) => handleBookStatusChange(book.isbn, Number(e.target.value))}>
+                      <option value={0}>진행중</option>
+                      <option value={1}>완료</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>

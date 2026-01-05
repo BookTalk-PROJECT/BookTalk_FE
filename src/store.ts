@@ -11,12 +11,12 @@ type AuthStore = {
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const useAuthStore = create<AuthStore>((set) => ({
-    isAuthenticated: !!localStorage.getItem("accessToken"),
+  isAuthenticated: !!localStorage.getItem("accessToken"),
 
-    // 앱 들어올 때 토큰 유효성 검사
-    initialize: async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) return;
+  // 앱 들어올 때 토큰 유효성 검사
+  initialize: async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
 
       try {
         const res = await axios.get(`${BASE_URL}/member/authentication`);

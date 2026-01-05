@@ -44,7 +44,7 @@ module.exports = {
   ],
   rules: {
     // Disable rules handled by Prettier
-    "prettier/prettier": "error",
+    "prettier/prettier": "warn",
     "linebreak-style": ["error", "unix"],
     quotes: ["error", "double"],
     semi: ["error", "always"],

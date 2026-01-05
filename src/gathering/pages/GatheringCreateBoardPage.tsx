@@ -1,20 +1,24 @@
+import { useParams } from "react-router-dom";
 import CreateBoard from "../../common/component/Board/page/CreateBoard";
-import { GatheringPostRequest } from "../../community/board/type/boardList";
 import { gatheringCreatePost } from "../api/GatheringCreateBoardRequest";
+import { CommuPostRequest } from "../../common/component/Board/type/BoardDetailTypes";
 
 const GatheringCreateBoardPage: React.FC = () => {
-  const handleSubmit = async (gatheringPost: GatheringPostRequest) => {
-    try {
-      const result = await gatheringCreatePost(gatheringPost);
-      alert("글이 성공적으로 등록되었습니다.");
-      window.history.back(); // 또는 등록 성공 후 원하는 페이지로 이동
-    } catch (error) {
-      console.error("글 등록 실패:", error);
-      alert("글 등록 중 오류가 발생했습니다.");
-    }
+  const { gatheringId } = useParams();
+
+  const handleSubmit = (postData: CommuPostRequest, _categoryId?: string) => {
+    return gatheringCreatePost(gatheringId!, postData);
   };
 
-  return <CreateBoard createPost={handleSubmit} />;
+  return (
+    <CreateBoard
+      categoryId="__GATHERING__" // 더미값 필수
+      redirectUri={`/gathering/detail/${gatheringId}`}
+      mainTopic="모임"
+      subTopic="게시판"
+      createPost={handleSubmit}
+    />
+  );
 };
 
 export default GatheringCreateBoardPage;

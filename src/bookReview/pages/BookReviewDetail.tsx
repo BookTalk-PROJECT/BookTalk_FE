@@ -18,7 +18,7 @@ const BookReviewDetail: React.FC = () => {
       setIsLoading(true);
       getBookReview(id)
         .then((response) => {
-          setReview(response.data.post);
+          setReview(response.data);
         })
         .catch((error) => {
           console.error("Failed to fetch book review:", error);
@@ -102,7 +102,7 @@ const BookReviewDetail: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-8 mb-8">
             <div className="md:w-1/3 flex-shrink-0">
               <img
-                src={review.thumbnail}
+                src={review.thumbnail_url}
                 alt={review.book_title}
                 className="w-full h-auto object-cover rounded-lg shadow-md"
               />
@@ -116,9 +116,9 @@ const BookReviewDetail: React.FC = () => {
                 <p>
                   <strong>출판사:</strong> {review.publisher}
                 </p>
-                <p>
+                {/* <p>
                   <strong>출간일:</strong> {review.publication_date}
-                </p>
+                </p> */}
                 <p>
                   <strong>ISBN:</strong> {review.isbn}
                 </p>

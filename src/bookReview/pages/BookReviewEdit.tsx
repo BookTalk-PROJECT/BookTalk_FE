@@ -15,10 +15,10 @@ const BookReviewEdit: React.FC = () => {
     if (id) {
       setIsLoading(true);
       getBookReview(id)
-        .then(response => {
-          setInitialData(response.data.post);
+        .then((response) => {
+          setInitialData(response.data);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Failed to fetch book review for editing:", error);
           navigate("/book-review");
         })
