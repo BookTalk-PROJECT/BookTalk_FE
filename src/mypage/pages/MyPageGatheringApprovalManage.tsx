@@ -1,65 +1,176 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState } from "react";
+
 import MyPageSideBar from "../component/MyPageSideBar";
-import Pagenation from "../../common/component/Pagination";
 import MyPageTable from "../../common/component/DataTableCustom";
 import BreadCrumb from "../../common/component/BreadCrumb";
-import { myGatheringRequestMockData } from "../testdata/MyPageTestData";
-import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
-import { MyPageGatheringRequestManageType } from "../type/MyPageTable";
+import { RowDef } from "../../common/type/common";
 
-const MyPageBookGatheringApprovalManage: React.FC = () => {
-  const row: { label: string; key: keyof MyPageGatheringRequestManageType }[] = [
-    { label: "번호", key: "id" },
-    { label: "모임명", key: "gathering" },
-    { label: "분류", key: "category" },
-    { label: "신청 일시", key: "date" },
-    { label: "상태", key: "status" },
-    { label: "관리", key: "manage" },
+import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
+import RequestQAModal from "../component/RequestQAModal";
+import { approveGatheringRequest, getGatheringApprovalList, rejectGatheringRequest } from "../api/MyPage";
+
+
+type ApprovalColType = {
+  gathering_name: string;
+  applicant_name: string;
+  qa_button: string;
+  manage: string;
+  status: string;
+};
+
+export type ApprovalRow = {
+  gathering_code: string;
+  gathering_name: string;
+
+  applicant_id: number;
+  applicant_name: string;
+
+  qa_json: string;
+  status: "WAITING" | "REJECT";
+  reject_reason?: string | null;
+
+  qa_button?: string;
+  manage?: string;
+};
+
+export type ApproveReq = {
+  gathering_code: string;
+  applicant_id: number;
+};
+
+export type RejectReq = {
+  gathering_code: string;
+  applicant_id: number;
+  reject_reason: string;
+};
+
+
+const MyPageGatheringApprovalManage: React.FC = () => {
+  const rowDef: RowDef<ApprovalColType>[] = [
+    { label: "모임명", key: "gathering_name", isSortable: true, isSearchType: false },
+    { label: "신청자", key: "applicant_name", isSortable: true, isSearchType: false },
+    { label: "답변목록", key: "qa_button", isSortable: false, isSearchType: false },
+    { label: "관리", key: "manage", isSortable: false, isSearchType: false },
+    { label: "상태", key: "status", isSortable: true, isSearchType: false },
   ];
 
-  {
-    /* 초기 검색 필터*/
-  }
-  const filterOption: { label: string; key: string }[] = [row[0], row[1], row[2]];
+  const [rows, setRows] = useState<ApprovalRow[]>([]);
+  const [forceUpdate, setForceUpdate] = useState(0);
 
-  const initialFilter: { label: string; key: string }[] = [row[1]];
+  const [isQAModalOpen, setIsQAModalOpen] = useState(false);
+  const [selectedGatheringName, setSelectedGatheringName] = useState("");
+  const [selectedQaJson, setSelectedQaJson] = useState("[]");
 
-  const postKeys = myGatheringRequestMockData.length > 0 ? Object.keys(myGatheringRequestMockData[0]) : [];
+  const openQAModal = (gatheringName: string, qaJson: string) => {
+    setSelectedGatheringName(gatheringName);
+    setSelectedQaJson(qaJson ?? "[]");
+    setIsQAModalOpen(true);
+  };
+
+  const closeQAModal = () => {
+    setIsQAModalOpen(false);
+    setSelectedGatheringName("");
+    setSelectedQaJson("[]");
+  };
+
+  const statusLabel = (s: string) => {
+    if (s === "WAITING") return "대기";
+    if (s === "REJECT") return "거부";
+    return s ?? "";
+  };
+
+  const onApprove = async (row: ApprovalRow) => {
+    await approveGatheringRequest({
+      gathering_code: row.gathering_code,
+      applicant_id: row.applicant_id,
+    });
+    setForceUpdate((p) => p + 1);
+  };
+
+  const onReject = async (row: ApprovalRow) => {
+    const reason = window.prompt("거부 사유를 입력하세요", "") ?? "";
+    await rejectGatheringRequest({
+      gathering_code: row.gathering_code,
+      applicant_id: row.applicant_id,
+      reject_reason: reason,
+    });
+    setForceUpdate((p) => p + 1);
+  };
+
+  const renderColumn = (row: any, key: Extract<keyof ApprovalColType, string>) => {
+    const gatheringName = row.gathering_name ?? "";
+    const applicantName = row.applicant_name ?? "";
+    const qaJson = row.qa_json ?? "[]";
+    const status = row.status ?? "";
+    const rejectReason = row.reject_reason ?? "";
+
+    switch (key) {
+      case "gathering_name":
+        return <>{gatheringName}</>;
+
+      case "applicant_name":
+        return <>{applicantName}</>;
+
+      case "qa_button":
+        return (
+          <MyPageManageRowButton
+            actions={[
+              { label: "보기", color: "blue", onClick: () => openQAModal(gatheringName, qaJson) },
+            ]}
+          />
+        );
+
+      case "manage":
+        if (status === "REJECT") {
+          return <>{rejectReason ? `거부 사유: ${rejectReason}` : "-"}</>;
+        }
+        return (
+          <MyPageManageRowButton
+            actions={[
+              { label: "승인", color: "green", onClick: () => onApprove(row as ApprovalRow) },
+              { label: "거부", color: "red", onClick: () => onReject(row as ApprovalRow) },
+            ]}
+          />
+        );
+
+      case "status":
+        return <>{statusLabel(status)}</>;
+
+      default:
+        return <>{row[key]}</>;
+    }
+  };
 
   return (
     <div className="flex h-screen">
-      {/* 사이드바 */}
       <MyPageSideBar />
-      {/* 메인 컨텐츠 */}
+
       <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
-            {/* 브레드크럼 */}
             <BreadCrumb major="모임" sub="신청 승인 관리" />
-            {/* 테이블 */}
-            <MyPageTable
-              posts={myGatheringRequestMockData}
-              row={row}
-              isExpandableRow={true}
-              initialFilter={initialFilter}
-              filterOptions={filterOption}
-              manageOption={
-                <MyPageManageRowButton
-                  actions={[
-                    { label: "승인", color: "green", onClick: () => alert("승인") },
-                    { label: "거절", color: "red", onClick: () => alert("거절") },
-                  ]}
-                />
-              }
-              postKeys={postKeys}
+
+            <MyPageTable<ApprovalRow, ApprovalColType>
+              rows={rows}
+              rowDef={rowDef}
+              getRowKey={(r) => `${r.gathering_code}_${r.applicant_id}`}
+              renderColumn={renderColumn}
+              setRowData={setRows}
+              loadRowData={(pageNum) => getGatheringApprovalList(pageNum)}
+              forceUpdate={forceUpdate}
             />
-            {/* 페이지네이션 */}
-            <Pagenation totalPages={10} loadPageByPageNum={() => {}} />
           </main>
         </div>
       </div>
+
+      <RequestQAModal
+        isOpen={isQAModalOpen}
+        gatheringName={selectedGatheringName}
+        qaJson={selectedQaJson}
+        onClose={closeQAModal}
+      />
     </div>
   );
 };
 
-export default MyPageBookGatheringApprovalManage;
+export default MyPageGatheringApprovalManage;
