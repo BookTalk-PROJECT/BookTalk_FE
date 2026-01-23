@@ -5,6 +5,8 @@ import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
 import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
 import { Member } from "../../common/auth/type/type";
 import { SearchCondition } from "../../common/type/common";
+import { MyGatheringSimpleInfo } from "../pages/MyPageMyGatherings";
+import { MyGatheringBoardSimpleInfo } from "../pages/MyPageGatheringBoard";
 
 //BASE URL import
 const BASE_URL = import.meta.env.VITE_API_URL;
@@ -80,6 +82,58 @@ export const searchMyComments = async (
 ): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
   const response = await axios.post<ApiResponse<PageResponse<ReplySimpleInfo>>>(
     `${BASE_URL}/reply/mylist/search?pageNum=${pageNum}`,
+    req
+  );
+  return response.data;
+};
+
+//========================================================================================
+
+// mypage gathering API
+export const getMyGatheringAll = async (
+  pageNum: number
+): Promise<ApiResponse<PageResponse<MyGatheringSimpleInfo>>> => {
+  const response = await axios.get<ApiResponse<PageResponse<MyGatheringSimpleInfo>>>(
+    `${BASE_URL}/gathering/myList?pageNum=${pageNum}`
+  );
+  return response.data;
+};
+
+export const searchMyGatherings = async (
+  req: SearchCondition,
+  pageNum: number
+): Promise<ApiResponse<PageResponse<MyGatheringSimpleInfo>>> => {
+  const response = await axios.post<ApiResponse<PageResponse<MyGatheringSimpleInfo>>>(
+    `${BASE_URL}/gathering/myList/search?pageNum=${pageNum}`,
+    req
+  );
+  return response.data;
+};
+
+export const restoreGathering = async (code: string, reason: string) => {
+  const token = localStorage.getItem("accessToken");
+  await axios.post(
+    `${BASE_URL}/gathering/${code}/restore`,
+    { reason },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+};
+
+export const getMyGatheringBoardAll = async (
+  pageNum: number
+): Promise<ApiResponse<PageResponse<MyGatheringBoardSimpleInfo>>> => {
+  const response = await axios.get<ApiResponse<PageResponse<MyGatheringBoardSimpleInfo>>>(
+    `${BASE_URL}/gathering/myBoardList?pageNum=${pageNum}`
+  );
+  return response.data;
+};
+
+export const searchMyGatheringBoards = async (
+  req: SearchCondition,
+  pageNum: number
+): Promise<ApiResponse<PageResponse<MyGatheringBoardSimpleInfo>>> => {
+  const response = await axios.post<ApiResponse<PageResponse<MyGatheringBoardSimpleInfo>>>(
+    `${BASE_URL}/gathering/myBoardList/search?pageNum=${pageNum}`,
     req
   );
   return response.data;
