@@ -95,7 +95,9 @@ const MyPageTable = <T, K>({
   }
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
-  const [selectedFilter, setSelectedFilter] = useState(rowDef[0]);
+  const [selectedFilter, setSelectedFilter] = useState(
+    rowDef.find((def) => def.isSearchType) || rowDef[0]
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 

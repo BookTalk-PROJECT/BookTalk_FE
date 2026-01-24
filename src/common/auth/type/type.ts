@@ -25,6 +25,9 @@ export enum AuthType {
 }
 
 export enum AuthorityType {
-  ADMIN = "관리자",
-  COMMON = "일반 사용자",
+  // 백엔드에서 "ADMIN" 문자열을 보내므로 값을 "ADMIN"으로 지정해야 합니다.
+  ADMIN = "ADMIN",
+
+  // 백엔드에서 일반 유저를 "COMMON"으로 보낸다면 값도 "COMMON"이어야 합니다.
+  COMMON = "COMMON"
 }

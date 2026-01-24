@@ -7,8 +7,6 @@ const Header = () => {
   const { isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
   const logoutHandler = async () => {
-    await fetchLogout();
-    localStorage.removeItem("accessToken");
     logout();
     navigate("/");
   };

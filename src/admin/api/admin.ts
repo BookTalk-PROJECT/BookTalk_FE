@@ -2,6 +2,8 @@ import axios from "axios";
 import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
 import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
 import { SearchCondition } from "../../common/type/common";
+import { MyPageMemberDataType } from "../../mypage/type/MyPageTable";
+import { Memberboard } from "../type/role";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -64,5 +66,27 @@ export const restrictComment = async (replyCode: string, del_reason: string): Pr
 
 export const recoverComment = async (replyCode: string): Promise<ApiResponse<string>> => {
   const response = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/reply/recover/${replyCode}`);
+  return response.data;
+};
+
+export const getMemberAdminAll = async (
+  pageNum: number,
+  pageSize: number = 10
+): Promise<ApiResponse<PageResponse<Memberboard>>> => {
+  const response = await axios.get<ApiResponse<PageResponse<Memberboard>>>(
+    `${BASE_URL}/member/list?pageNum=${pageNum}&pageSize=${pageSize}`
+  );
+  return response.data;
+};
+
+export const searchMemberAdminAll = async (
+  req: SearchCondition, // 기존에 정의된 SearchCondition 사용 (keywordType, keyword 등 포함)
+  pageNum: number,
+  pageSize: number = 10
+): Promise<ApiResponse<PageResponse<Memberboard>>> => {
+  const response = await axios.post<ApiResponse<PageResponse<Memberboard>>>(
+    `${BASE_URL}/member/list/search?pageNum=${pageNum}&pageSize=${pageSize}`,
+    req
+  );
   return response.data;
 };

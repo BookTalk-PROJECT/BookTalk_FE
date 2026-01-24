@@ -1,7 +1,7 @@
 import { AuthorityType, Member } from "../../common/auth/type/type";
 
 export interface Memberboard extends Member {
-  id: number;
+  id: string;
   joinDate: string;
   authority: AuthorityType;
   manage: string;

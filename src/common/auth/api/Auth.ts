@@ -39,24 +39,26 @@ export const fetchLogout = async () => {
   }
 };
 
-export const fetchReissueToken = async () => {
+export const fetchReissueToken = async (): Promise<string> => {
   try {
-    const response = await axios.post(`${baseURL}/refresh`);
+    const response = await axios.post(`${baseURL}/refresh`, null, {
+      withCredentials: true,
+      headers: { "X-Skip-Auth-Refresh": "true" }, // refresh 요청은 인터셉터 refresh 로직 스킵(안전)
+    });
 
-    const IsExistToken = response.data.data.accessToken !== undefined;
+    const accessToken = response.data?.data?.accessToken as string | undefined;
 
-    if (response.status === 200 && IsExistToken) {
+    if (response.status === 200 && accessToken) {
       console.log("엑세스 토큰 재발급");
-      const { accessToken } = response.data.data;
-      //  로컬스토리지에 저장
       localStorage.setItem("accessToken", accessToken);
-
       return accessToken;
-    } else {
-      console.error("엑세스 토큰 재발급 실패", response.status);
     }
+
+    // “정상 응답인데 토큰이 없음”도 실패로 처리
+    throw new Error("Refresh succeeded but accessToken missing");
   } catch (error) {
-    console.error("서버 오류:", error);
+    // 중요: 바깥(인터셉터)에서 잡을 수 있게 다시 throw
+    throw error;
   }
 };
 

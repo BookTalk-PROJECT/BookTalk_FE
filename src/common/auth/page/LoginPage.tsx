@@ -107,7 +107,7 @@ const LoginPage: React.FC = () => {
                 카카오로 로그인하기
               </button>
               <button
-                // onClick={() => (window.location.href = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${NAVER_STATE}&redirect_uri=${NAVER_CALLBACK_URL}`)}
+                onClick={() => (window.location.href = "http://localhost:8080/oauth2/authorization/naver")}
                 className="w-full flex items-center justify-center bg-[#03C75A] text-white py-3 text-sm font-medium rounded">
                 <i className="fa-solid fa-n text-white mr-2"></i>
                 네이버로 로그인하기
