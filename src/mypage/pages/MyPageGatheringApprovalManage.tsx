@@ -9,7 +9,6 @@ import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
 import RequestQAModal from "../component/RequestQAModal";
 import { approveGatheringRequest, getGatheringApprovalList, rejectGatheringRequest } from "../api/MyPage";
 
-
 type ApprovalColType = {
   gathering_name: string;
   applicant_name: string;
@@ -43,7 +42,6 @@ export type RejectReq = {
   applicant_id: number;
   reject_reason: string;
 };
-
 
 const MyPageGatheringApprovalManage: React.FC = () => {
   const rowDef: RowDef<ApprovalColType>[] = [
@@ -114,9 +112,7 @@ const MyPageGatheringApprovalManage: React.FC = () => {
       case "qa_button":
         return (
           <MyPageManageRowButton
-            actions={[
-              { label: "보기", color: "blue", onClick: () => openQAModal(gatheringName, qaJson) },
-            ]}
+            actions={[{ label: "보기", color: "blue", onClick: () => openQAModal(gatheringName, qaJson) }]}
           />
         );
 

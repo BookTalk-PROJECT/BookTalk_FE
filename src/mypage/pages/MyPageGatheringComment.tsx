@@ -21,7 +21,7 @@ type MyPageGatheringCommentColType = {
 
 export type MyGatheringCommentSimpleInfo = MyPageGatheringCommentColType & {
   reply_code: string; // rowKey / 삭제/복원 대상
-  post_code: string;  // 링크 이동용(원하면)
+  post_code: string; // 링크 이동용(원하면)
 };
 
 const MyPageGatheringComment: React.FC = () => {
@@ -100,12 +100,8 @@ const MyPageGatheringComment: React.FC = () => {
 
       case "del_yn": {
         const actions = isDeleted
-          ? [
-              { label: "복원", color: "gray" as const, onClick: () => handleRestore(replyCode) },
-            ]
-          : [
-              { label: "삭제", color: "red" as const, onClick: () => openDeleteModal(replyCode) },
-            ];
+          ? [{ label: "복원", color: "gray" as const, onClick: () => handleRestore(replyCode) }]
+          : [{ label: "삭제", color: "red" as const, onClick: () => openDeleteModal(replyCode) }];
 
         return <MyPageManageRowButton actions={actions} />;
       }

@@ -7,6 +7,7 @@ import axios from "axios";
 import { useNavigate } from "react-router";
 import BreadCrumb from "../../BreadCrumb";
 import ReplyList from "../../../../community/reply/page/ReplyList";
+import { Viewer } from "@toast-ui/react-editor";
 
 interface DetailBoardProps {
   mainTopic: string;
@@ -96,7 +97,8 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
         </div>
         <div className="mb-8">
           <div className="prose max-w-none">
-            <p className="text-gray-800 leading-relaxed">{detailData?.post.content}</p>
+            {/* <p className="text-gray-800 leading-relaxed">{detailData?.post.content}</p> */}
+            {detailData && <Viewer initialValue={detailData.post.content} />}
           </div>
         </div>
       </div>

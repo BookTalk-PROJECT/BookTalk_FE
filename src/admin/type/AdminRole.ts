@@ -1,6 +1,6 @@
 import { AdminTableColType } from "./common";
 
-export interface AdminRoleColType  {
+export interface AdminRoleColType {
   id: string;
   email: string;
   name: string;

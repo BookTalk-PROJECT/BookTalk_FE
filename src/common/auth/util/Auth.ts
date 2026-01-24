@@ -20,10 +20,7 @@ export async function logoutWithServer(): Promise<void> {
   }
 }
 
-export async function logoutAndRedirect(
-  navigate: NavigateFunction,
-  path: string = "/"
-): Promise<void> {
+export async function logoutAndRedirect(navigate: NavigateFunction, path: string = "/"): Promise<void> {
   await logoutWithServer();
   navigate(path, { replace: true });
 }

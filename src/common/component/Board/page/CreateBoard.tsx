@@ -6,6 +6,7 @@ import CustomButton from "../../CustomButton";
 import { redirect, useNavigate, useSearchParams } from "react-router";
 import { CommuPostRequest } from "../type/BoardDetailTypes";
 import BreadCrumb from "../../BreadCrumb";
+import { uploadImage } from "../../../api/BoardApi";
 
 interface BoardCreateProps {
   categoryId?: string;
@@ -71,6 +72,20 @@ const CreateBoard: React.FC<BoardCreateProps> = ({ categoryId, redirectUri, crea
               initialEditType="wysiwyg"
               useCommandShortcut={true}
               onChange={handleEditorChange}
+              hooks={{
+                addImageBlobHook: async (blob: string | Blob, callback: (arg0: string, arg1: string) => void) => {
+                  // 이미지를 서버에 업로드
+                  const formData = new FormData();
+                  formData.append("image", blob);
+                  try {
+                    const response = await uploadImage(formData);
+                    // 업로드된 이미지의 URL을 에디터에 삽입
+                    callback(`/api${response.imageUrl}`, "image");
+                  } catch (error) {
+                    console.error("이미지 업로드 실패:", error);
+                  }
+                },
+              }}
               toolbarItems={[
                 ["heading", "bold", "italic", "strike"],
                 ["hr", "quote"],
@@ -82,7 +97,8 @@ const CreateBoard: React.FC<BoardCreateProps> = ({ categoryId, redirectUri, crea
                     tooltip: "되돌리기",
                     el: (() => {
                       const button = document.createElement("button");
-                      button.innerHTML = '<i class="fas fa-undo"></i>';
+                      button.innerHTML = "<i class='fas fa-undo'></i>";
+                      // eslint-disable-next-line react-hooks/refs
                       button.addEventListener("click", () => {
                         editorRef.current?.getInstance().exec("undo");
                       });
@@ -94,7 +110,8 @@ const CreateBoard: React.FC<BoardCreateProps> = ({ categoryId, redirectUri, crea
                     tooltip: "다시하기",
                     el: (() => {
                       const button = document.createElement("button");
-                      button.innerHTML = '<i class="fas fa-redo"></i>';
+                      button.innerHTML = "<i class='fas fa-redo'></i>";
+                      // eslint-disable-next-line react-hooks/refs
                       button.addEventListener("click", () => {
                         editorRef.current?.getInstance().exec("redo");
                       });

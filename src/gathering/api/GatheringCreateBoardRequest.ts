@@ -9,12 +9,9 @@ type ResponseDto<T = any> = {
 };
 
 // 모임 게시글 등록 api
-export const gatheringCreatePost = async (
-  gatheringCode: string,
-  postData: CommuPostRequest
-): Promise<ResponseDto> => {
+export const gatheringCreatePost = async (gatheringCode: string, postData: CommuPostRequest): Promise<ResponseDto> => {
   const payload = {
-    gatheringCode,                 // 서버 CreateGatheringBoardCommand에 맞춰
+    gatheringCode, // 서버 CreateGatheringBoardCommand에 맞춰
     title: postData.title,
     content: postData.content,
     notification_yn: postData.notification_yn ?? false,

@@ -1,4 +1,3 @@
-
 // 내 모임
 export type MyGatheringSimpleInfo = {
   gathering_code: string;

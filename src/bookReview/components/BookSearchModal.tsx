@@ -74,7 +74,7 @@ const BookSearchModal: React.FC<BookSearchModalProps> = ({ isOpen, onClose, onBo
             _author: it.author || "",
             _year: it.year || "",
             _publisher: it.publisher || "",
-          } as SearchResult)
+          }) as SearchResult
       );
 
       setSearchResults(() => mapped);

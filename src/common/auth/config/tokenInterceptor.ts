@@ -34,11 +34,7 @@ axios.interceptors.response.use(
     const status = error?.response?.status;
     const errorCode = error?.response?.data?.errorCode;
 
-    if (
-      status === 401 &&
-      !originalRequest._retry &&
-      errorCode === "ACCESS_TOKEN_EXPIRED"
-    ) {
+    if (status === 401 && !originalRequest._retry && errorCode === "ACCESS_TOKEN_EXPIRED") {
       originalRequest._retry = true;
 
       try {
@@ -63,7 +59,7 @@ axios.interceptors.response.use(
               refreshErrorCode === "REFRESH_TOKEN_MISSING")
           ) {
             await useAuthStore.getState().logout();
-            alert("로그인 상태가 만료되었습니다. 재로그인을 하세요.")
+            alert("로그인 상태가 만료되었습니다. 재로그인을 하세요.");
             //window.location.replace("/");
           }
 

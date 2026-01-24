@@ -11,13 +11,8 @@ export const getAllMember = async (): Promise<ApiResponse<Memberboard[]>> => {
 };
 
 export const updateMemberRole = async (memberId: number, role: string): Promise<ApiResponse<any>> => {
-
-  const response = await axios.post(
-    `${baseURL}/member/role/${memberId}`,
-    null,
-    {
-      params: { role: role }
-    }
-  );
+  const response = await axios.post(`${baseURL}/member/role/${memberId}`, null, {
+    params: { role: role },
+  });
   return response.data;
 };

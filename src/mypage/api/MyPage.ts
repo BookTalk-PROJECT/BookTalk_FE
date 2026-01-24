@@ -93,9 +93,7 @@ export const searchMyComments = async (
 //========================================================================================
 
 // mypage gathering API(All)
-export const getMyGatheringAll = async (
-  pageNum: number
-): Promise<ApiResponse<PageResponse<MyGatheringSimpleInfo>>> => {
+export const getMyGatheringAll = async (pageNum: number): Promise<ApiResponse<PageResponse<MyGatheringSimpleInfo>>> => {
   const response = await axios.get<ApiResponse<PageResponse<MyGatheringSimpleInfo>>>(
     `${BASE_URL}/gathering/myList?pageNum=${pageNum}`
   );
@@ -112,7 +110,6 @@ export const searchMyGatherings = async (
   );
   return response.data;
 };
-
 
 export const restoreGathering = async (code: string, reason: string) => {
   const token = localStorage.getItem("accessToken");
@@ -145,7 +142,6 @@ export const searchMyGatheringBoards = async (
   return response.data;
 };
 
-
 // mypage gathering reply API(All)
 export const getMyGatheringCommentAll = async (
   pageNum: number
@@ -168,7 +164,6 @@ export const searchMyGatheringComments = async (
   return response.data;
 };
 
-
 // mypage gathering recruit request API(All)
 export const getMyGatheringRequestAll = async (
   pageNum: number
@@ -179,9 +174,7 @@ export const getMyGatheringRequestAll = async (
   return response.data;
 };
 
-export const getGatheringApprovalList = async (
-  pageNum: number
-): Promise<ApiResponse<PageResponse<ApprovalRow>>> => {
+export const getGatheringApprovalList = async (pageNum: number): Promise<ApiResponse<PageResponse<ApprovalRow>>> => {
   const response = await axios.get<ApiResponse<PageResponse<ApprovalRow>>>(
     `${BASE_URL}/gathering/requestMyList?pageNum=${pageNum}`
   );

@@ -109,16 +109,16 @@ const GatheringHeader: React.FC<GatheringId> = ({ gatheringId }) => {
   };
 
   useEffect(() => {
-      loadGatheringData();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [gatheringId]);
+    loadGatheringData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gatheringId]);
 
-    const statusMeta = STATUS_META[gatheringBookInfo?.status ?? 999] ?? {
-      label: `상태(${gatheringBookInfo?.status ?? "-"})`,
-      cls: "bg-slate-100 text-slate-700 border-slate-200",
-    };
+  const statusMeta = STATUS_META[gatheringBookInfo?.status ?? 999] ?? {
+    label: `상태(${gatheringBookInfo?.status ?? "-"})`,
+    cls: "bg-slate-100 text-slate-700 border-slate-200",
+  };
 
-    const copyCurrentUrl = async () => {
+  const copyCurrentUrl = async () => {
     const url = window.location.href;
 
     try {

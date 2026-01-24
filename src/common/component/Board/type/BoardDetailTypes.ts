@@ -1,5 +1,3 @@
-import { GatheringDetail } from "../../../../gathering/type/GatheringBoardDetailPage.types";
-
 export interface PostDetail {
   //게시글 조회 type
   post: CommuDetail; // 게시글 상세 정보
@@ -62,4 +60,9 @@ export interface CommuPostRequest {
 }
 export interface CommuDetail extends PostDetailInfo {
   category_id: string;
+}
+
+export interface ImageUploadRes {
+  imageUrl: string;
+  fileName: string;
 }

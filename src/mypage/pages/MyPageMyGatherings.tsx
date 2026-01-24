@@ -22,9 +22,7 @@ type MyPageGatheringColType = {
 
 export type MyGatheringSimpleInfo = MyPageGatheringColType;
 
-
 const MyPageMyGatherings: React.FC = () => {
-
   const navigate = useNavigate();
   // 컬럼 순서: 모임코드, 모임명, 모임장, 관리, 개설일
   const rowDef: RowDef<MyPageGatheringColType>[] = [

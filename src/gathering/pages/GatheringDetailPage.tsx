@@ -106,10 +106,7 @@ const GatheringDetailPage: React.FC = () => {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold">게시판</h2>
 
-                <CustomButton
-                  onClick={() => navigate(`/gathering/${gatheringId}/gatheringboard/create`)}
-                  color="black"
-                >
+                <CustomButton onClick={() => navigate(`/gathering/${gatheringId}/gatheringboard/create`)} color="black">
                   <>
                     <i className="fas fa-pen mr-2"></i> 글쓰기
                   </>
@@ -117,9 +114,7 @@ const GatheringDetailPage: React.FC = () => {
               </div>
 
               {errorMsg && (
-                <div className="mb-4 p-3 text-sm rounded bg-red-50 text-red-700 border border-red-200">
-                  {errorMsg}
-                </div>
+                <div className="mb-4 p-3 text-sm rounded bg-red-50 text-red-700 border border-red-200">{errorMsg}</div>
               )}
 
               <div className="overflow-hidden rounded-lg border">

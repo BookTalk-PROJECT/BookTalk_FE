@@ -9,12 +9,8 @@ import { Memberboard } from "../type/role";
 import { AdminRoleColType } from "../type/AdminRole";
 import { RowDef } from "../../common/type/common";
 
-import {
-  getMemberAdminAll,
-  searchMemberAdminAll,
-} from "../api/admin";
+import { getMemberAdminAll, searchMemberAdminAll } from "../api/admin";
 import { AuthorityType } from "../../common/auth/type/type";
-
 
 const AdminRoleManage: React.FC = () => {
   const [memberList, setMemberList] = useState<Memberboard[]>([]);
@@ -38,7 +34,7 @@ const AdminRoleManage: React.FC = () => {
     { label: "관리", key: "manage", isSortable: true, isSearchType: false },
   ];
 
-// 권한 변경 핸들러
+  // 권한 변경 핸들러
   // 권한 변경 핸들러
   const handleRole = async (memberId: string, currentRole: string) => {
     // 2. targetRole 계산 (AuthorityType에 맞는 문자열이어야 함)
@@ -54,11 +50,11 @@ const AdminRoleManage: React.FC = () => {
         setMemberList((prev) =>
           prev.map((member) =>
             member.id === memberId
-              ? {
-                ...member,
-                // 3. authority 타입을 명시적으로 단언 (as AuthorityType)
-                authority: targetRole as AuthorityType
-              } as Memberboard // 4. 최종 객체를 Memberboard 타입으로 단언하여 에러 해결
+              ? ({
+                  ...member,
+                  // 3. authority 타입을 명시적으로 단언 (as AuthorityType)
+                  authority: targetRole as AuthorityType,
+                } as Memberboard) // 4. 최종 객체를 Memberboard 타입으로 단언하여 에러 해결
               : member
           )
         );
@@ -79,11 +75,8 @@ const AdminRoleManage: React.FC = () => {
         return (
           <span
             className={`px-2 py-1 rounded-full text-xs font-semibold ${
-              row.authority === AuthorityType.ADMIN
-                ? "bg-red-100 text-red-700"
-                : "bg-blue-100 text-blue-700"
-            }`}
-          >
+              row.authority === AuthorityType.ADMIN ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"
+            }`}>
             {row.authority === AuthorityType.ADMIN ? "관리자" : "일반유저"}
           </span>
         );
@@ -95,8 +88,8 @@ const AdminRoleManage: React.FC = () => {
               {
                 label: "일반유저로 변경",
                 color: "blue",
-                onClick: () => handleRole(row.id, row.authority)
-              }
+                onClick: () => handleRole(row.id, row.authority),
+              },
             ]}
           />
         ) : (
@@ -105,8 +98,8 @@ const AdminRoleManage: React.FC = () => {
               {
                 label: "관리자로 변경",
                 color: "red",
-                onClick: () => handleRole(row.id, row.authority)
-              }
+                onClick: () => handleRole(row.id, row.authority),
+              },
             ]}
           />
         );

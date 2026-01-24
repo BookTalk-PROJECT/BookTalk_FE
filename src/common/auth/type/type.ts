@@ -29,5 +29,5 @@ export enum AuthorityType {
   ADMIN = "ADMIN",
 
   // 백엔드에서 일반 유저를 "COMMON"으로 보낸다면 값도 "COMMON"이어야 합니다.
-  COMMON = "COMMON"
+  COMMON = "COMMON",
 }
