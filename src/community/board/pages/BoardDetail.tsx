@@ -71,7 +71,9 @@ const BoardDetail: React.FC = () => {
       subTopic="게시글"
       postCode={postCode!}
       editPageUri={`/boardEdit?postCode=${postCode}&categoryId=${categoryId}`}
-      listPageUri={categoryId ? `/boardList?categoryId=${categoryId}` : `/boardList`}
+      listPageUri={categoryId
+        ? `/boardList?categoryId=${categoryId}${searchParams.get("page") ? `&page=${searchParams.get("page")}` : ''}`
+        : `/boardList`}
       GetBoardDetail={getBoardDetail}
       DeleteBoard={deleteBoard}
       SetLikePost={async (postId) => { await setLikePost(postId); }}

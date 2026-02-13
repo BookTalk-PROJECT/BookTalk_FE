@@ -1,7 +1,8 @@
 import axios from "axios";
 import { MyPageMemberDataType, MyPageModifyMemberDataType } from "../type/MyPageTable";
 import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
-import { PostSimpleInfo, ReplySimpleInfo, BookReviewSimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
+import { ReplySimpleInfo, BookReviewSimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
+import { MyCommunityBoardSimpleInfo } from "../pages/MyPageCommunityBoard";
 import { SearchCondition } from "../../common/type/common";
 import { MyGatheringSimpleInfo } from "../pages/MyPageMyGatherings";
 import { MyGatheringBoardSimpleInfo } from "../pages/MyPageGatheringBoard";
@@ -62,8 +63,8 @@ export const searchMyBookReviewComments = async (
   return response.data;
 };
 
-export const getMyBoardAll = async (pageNum: number): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
-  const response = await axios.get<ApiResponse<PageResponse<PostSimpleInfo>>>(
+export const getMyBoardAll = async (pageNum: number): Promise<ApiResponse<PageResponse<MyCommunityBoardSimpleInfo>>> => {
+  const response = await axios.get<ApiResponse<PageResponse<MyCommunityBoardSimpleInfo>>>(
     `${BASE_URL}/community/board/mylist?pageNum=${pageNum}`
   );
   return response.data;
@@ -72,8 +73,8 @@ export const getMyBoardAll = async (pageNum: number): Promise<ApiResponse<PageRe
 export const searchMyBoards = async (
   req: SearchCondition,
   pageNum: number
-): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
-  const response = await axios.post<ApiResponse<PageResponse<PostSimpleInfo>>>(
+): Promise<ApiResponse<PageResponse<MyCommunityBoardSimpleInfo>>> => {
+  const response = await axios.post<ApiResponse<PageResponse<MyCommunityBoardSimpleInfo>>>(
     `${BASE_URL}/community/board/mylist/search?pageNum=${pageNum}`,
     req
   );

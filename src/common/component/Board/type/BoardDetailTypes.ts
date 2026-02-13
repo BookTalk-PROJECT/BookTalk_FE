@@ -27,13 +27,15 @@ export interface PostDetailInfo {
   imageUrl: string; // 대표 이미지 URL
   is_liked: boolean; // 해당 게시글을 좋아요했었는가
   notification_yn: boolean; // 공지 여부
+  del_yn: boolean; // 삭제 여부
   del_reason: string | null; // 삭제 사유
 }
 
 export interface Reply {
   //댓글조회 type
   reply_code: string; // 댓글 ID (PK)
-  member_name: string; // 댓글 작성자 (회원 ID)
+  member_id?: number; // 댓글 작성자 회원 ID
+  member_name: string; // 댓글 작성자 (회원 이름)
   post_code?: string; // 게시글 ID (매핑)
   content: string; // 댓글 내용
   p_reply_code?: number | null | undefined; // 부모 댓글 ID (대댓글일 경우)

@@ -6,7 +6,7 @@ import MyPageManageRowButton from "../../mypage/component/button/MyPageManageRow
 import MyPageActiveTabButton from "../../mypage/component/button/MyPageActiveTabButton";
 import { RowDef } from "../../common/type/common";
 import { AdminBoardColType } from "../type/AdminCommunity";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import DeleteModal from "../../mypage/component/DeleteModal";
 import {
   getBoardAdminAll,
@@ -22,6 +22,10 @@ import {
 import { usePaginatedData } from "../../common/hooks/usePaginatedData";
 
 const AdminPageBoard: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const initialPage = pageParam ? parseInt(pageParam) : 1;
+
   const rowDef: RowDef<AdminBoardColType>[] = [
     { label: "게시물 번호", key: "board_code", isSortable: true, isSearchType: true },
     { label: "제목", key: "title", isSortable: true, isSearchType: true },
@@ -52,6 +56,7 @@ const AdminPageBoard: React.FC = () => {
   // 커스텀 훅 사용
   const {
     data: posts,
+    setData: setPosts,
     totalPages,
     currentPage,
     isLoading,
@@ -59,11 +64,24 @@ const AdminPageBoard: React.FC = () => {
     goToPage,
     search,
     resetSearch,
-    refresh,
   } = usePaginatedData<AdminPostInfo>({
     fetchData: fetchData as any,
     searchData: searchData as any,
+    initialPage,
   });
+
+  const handlePageChange = useCallback((page: number) => {
+    setSearchParams(
+      page > 1 ? { page: page.toString() } : {},
+      { replace: true }
+    );
+    goToPage(page);
+  }, [setSearchParams, goToPage]);
+
+  const handleTabChange = useCallback((tab: string) => {
+    setActiveTab(tab);
+    setSearchParams({}, { replace: true });
+  }, [setSearchParams]);
 
   const handleDelete = async (boardCode: string, deleteReason: string) => {
     // Determine which API to use based on code prefix
@@ -72,7 +90,9 @@ const AdminPageBoard: React.FC = () => {
     } else {
       await restrictBoard(boardCode, deleteReason);
     }
-    refresh();
+    setPosts(prev => prev.map(post =>
+      post.board_code === boardCode ? { ...post, delYn: true, deleteReason } : post
+    ));
   };
 
   const handleRecover = useCallback(async (boardCode: string) => {
@@ -83,9 +103,11 @@ const AdminPageBoard: React.FC = () => {
       } else {
         await recoverBoard(boardCode);
       }
-      refresh();
+      setPosts(prev => prev.map(post =>
+        post.board_code === boardCode ? { ...post, delYn: false, deleteReason: null } : post
+      ));
     }
-  }, [refresh]);
+  }, [setPosts]);
 
   const openDeleteModal = useCallback((code: string) => {
     setSelectedCode(code);
@@ -140,7 +162,7 @@ const AdminPageBoard: React.FC = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <MyPageSideBar />
-      <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
+      <div className="flex-1 bg-gray-50 py-8 px-3 md:px-6 overflow-auto min-w-0">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             <BreadCrumb major="관리자" sub="게시물 관리" />
@@ -149,7 +171,7 @@ const AdminPageBoard: React.FC = () => {
                 { label: "커뮤니티", color: "yellow" },
                 { label: "북리뷰", color: "red" },
               ]}
-              setActiveTab={setActiveTab}
+              setActiveTab={handleTabChange}
             />
             <DataTableCustom<AdminPostInfo, AdminBoardColType>
               rows={posts}
@@ -158,7 +180,7 @@ const AdminPageBoard: React.FC = () => {
               renderColumn={renderColumn}
               totalPages={totalPages}
               currentPage={currentPage}
-              onPageChange={goToPage}
+              onPageChange={handlePageChange}
               isLoading={isLoading}
               error={error}
               searchEnabled={true}

@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useCallback } from "react";
 import MyPageSideBar from "../component/MyPageSideBar";
 import DataTableCustom from "../../common/component/DataTableCustom";
 import BreadCrumb from "../../common/component/BreadCrumb";
 import { RowDef } from "../../common/type/common";
 import { BookReviewSimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
 import { getMyBookReviewBoardAll, searchMyBookReviewBoards } from "../api/MyPage";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { usePaginatedData } from "../../common/hooks/usePaginatedData";
 
 type MyPageBookReviewColType = {
@@ -17,6 +17,10 @@ type MyPageBookReviewColType = {
 };
 
 const MyPageBookReviewBoard: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const initialPage = pageParam ? parseInt(pageParam) : 1;
+
   const rowDef: RowDef<MyPageBookReviewColType>[] = [
     { label: "리뷰 번호", key: "code", isSortable: true, isSearchType: true },
     { label: "책 제목", key: "book_title", isSortable: true, isSearchType: true },
@@ -38,7 +42,16 @@ const MyPageBookReviewBoard: React.FC = () => {
   } = usePaginatedData({
     fetchData: getMyBookReviewBoardAll,
     searchData: searchMyBookReviewBoards,
+    initialPage,
   });
+
+  const handlePageChange = useCallback((page: number) => {
+    setSearchParams(
+      page > 1 ? { page: page.toString() } : {},
+      { replace: true }
+    );
+    goToPage(page);
+  }, [setSearchParams, goToPage]);
 
   const renderColumn = (row: any, key: Extract<keyof MyPageBookReviewColType, string>) => {
     switch (key) {
@@ -52,11 +65,11 @@ const MyPageBookReviewBoard: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       {/* 사이드바 */}
       <MyPageSideBar />
       {/* 메인 컨텐츠 */}
-      <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
+      <div className="flex-1 bg-gray-50 py-8 px-3 md:px-6 overflow-auto min-w-0">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             <BreadCrumb major="북리뷰" sub="게시글 관리" />
@@ -67,7 +80,7 @@ const MyPageBookReviewBoard: React.FC = () => {
               renderColumn={renderColumn}
               totalPages={totalPages}
               currentPage={currentPage}
-              onPageChange={goToPage}
+              onPageChange={handlePageChange}
               isLoading={isLoading}
               error={error}
               searchEnabled={true}

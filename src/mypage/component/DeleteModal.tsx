@@ -23,7 +23,7 @@ const DeleteModal = ({ onDelete, isDeleteModalOpen, selectedCode, closeDeleteMod
     <>
       {isDeleteModalOpen && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-md shadow-lg w-96 p-6">
+          <div className="bg-white rounded-md shadow-lg w-[90vw] max-w-96 p-6">
             <h2 className="text-lg font-semibold mb-4">삭제 사유 입력</h2>
             <textarea
               value={deleteReason}

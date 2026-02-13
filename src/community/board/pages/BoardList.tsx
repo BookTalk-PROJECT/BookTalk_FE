@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import ButtonWrapper from "../../../common/component/Button";
 import { useNavigate, useSearchParams } from "react-router";
 import { Category, SubCategory } from "../type/board";
@@ -18,6 +18,9 @@ type BoardTableColDef = {
   views: string;
 };
 
+const EMPTY_FETCH = () =>
+  Promise.resolve({ msg: '', code: 0, data: { content: [], totalPages: 0, totalElements: 0 } });
+
 const BoardList: React.FC = () => {
   const rowDef: RowDef<BoardTableColDef>[] = [
     { label: "게시물 번호", key: "board_code", isSortable: true, isSearchType: true },
@@ -28,14 +31,33 @@ const BoardList: React.FC = () => {
   ];
 
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [categories, setCategories] = useState<Category[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const tabsRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<Category>();
-  const [activeSubCategory, setActiveSubCategory] = useState<SubCategory>();
+
+  // URL이 Single Source of Truth — state 대신 URL에서 파생
+  const categoryId = searchParams.get("categoryId");
+  const pageParam = searchParams.get("page");
+  const initialPage = pageParam ? parseInt(pageParam) : 1;
+
+  const { activeCategory, activeSubCategory } = useMemo(() => {
+    if (!categoryId || categories.length === 0) {
+      return { activeCategory: undefined, activeSubCategory: undefined };
+    }
+    const categoryIdNum = parseInt(categoryId);
+    for (const category of categories) {
+      const matchedSub = category.subCategories.find(
+        (sub: SubCategory) => sub.categoryId === categoryIdNum
+      );
+      if (matchedSub) {
+        return { activeCategory: category, activeSubCategory: matchedSub };
+      }
+    }
+    return { activeCategory: undefined, activeSubCategory: undefined };
+  }, [categoryId, categories]);
 
   const checkScrollButtons = () => {
     if (tabsRef.current) {
@@ -44,53 +66,27 @@ const BoardList: React.FC = () => {
     }
   };
 
+  // 카테고리 로드
   useEffect(() => {
-    const initCategories = () => {
-      getCategories().then((res) => {
-        const categories = res.data;
-        const filteredCategories = categories.filter(
-          (category: { subCategories: SubCategory[] }) => category.subCategories && category.subCategories.length > 0
-        );
-        setCategories(filteredCategories);
-        const categoryId = searchParams.get("categoryId");
-        if (categoryId) {
-          const categoryIdNum = parseInt(categoryId);
-          let activeCategory = null;
-          let activeSubCategory = null;
+    getCategories().then((res) => {
+      const cats = res.data;
+      const filtered = cats.filter(
+        (category: { subCategories: SubCategory[] }) => category.subCategories && category.subCategories.length > 0
+      );
+      setCategories(filtered);
+    });
 
-          for (const category of filteredCategories) {
-            const matchedSubCategory = category.subCategories.find(
-              (subCategory: { categoryId: number }) => subCategory.categoryId === categoryIdNum
-            );
-            if (matchedSubCategory) {
-              activeCategory = category;
-              activeSubCategory = matchedSubCategory;
-              break;
-            }
-          }
-
-          if (activeCategory && activeSubCategory) {
-            setActiveCategory(activeCategory);
-            setActiveSubCategory(activeSubCategory);
-          }
-        } else {
-          setActiveCategory(filteredCategories[0]);
-          setActiveSubCategory(filteredCategories[0].subCategories[0]);
-        }
-      });
-    };
-
-    initCategories();
     checkScrollButtons();
     window.addEventListener("resize", checkScrollButtons);
     return () => window.removeEventListener("resize", checkScrollButtons);
   }, []);
 
+  // categoryId 없이 진입 시 기본값으로 replace redirect
   useEffect(() => {
-    if (activeSubCategory) {
-      setSearchParams({ categoryId: activeSubCategory.categoryId.toString() });
+    if (categories.length > 0 && !categoryId) {
+      navigate(`/boardList?categoryId=${categories[0].subCategories[0].categoryId}`, { replace: true });
     }
-  }, [activeSubCategory, setSearchParams]);
+  }, [categories, categoryId, navigate]);
 
   // fetchData 함수 안정화 - activeSubCategory.categoryId가 변경될 때만 새 참조
   const fetchData = useMemo(() => {
@@ -115,15 +111,21 @@ const BoardList: React.FC = () => {
     search,
     resetSearch,
   } = usePaginatedData({
-    fetchData: fetchData ?? (() => Promise.resolve({ msg: '', code: 0, data: { content: [], totalPages: 0, totalElements: 0 } })),
+    fetchData: fetchData ?? EMPTY_FETCH,
     searchData,
+    initialPage,
   });
+
+  const handlePageChange = useCallback((page: number) => {
+    navigate(`/boardList?categoryId=${categoryId}&page=${page}`, { replace: true });
+    goToPage(page);
+  }, [navigate, categoryId, goToPage]);
 
   const renderColumn = (row: any, key: Extract<keyof BoardTableColDef, string>) => {
     switch (key) {
       case "title":
         return (
-          <Link to={`/boardDetail/${row["board_code"]}?categoryId=${searchParams.get("categoryId")}`}>{row[key]}</Link>
+          <Link to={`/boardDetail/${row["board_code"]}?categoryId=${categoryId}&page=${currentPage}`}>{row[key]}</Link>
         );
       default:
         return <>{row[key]}</>;
@@ -143,9 +145,8 @@ const BoardList: React.FC = () => {
       }
     };
 
-    const handleCategoryChange = async (catetory: Category) => {
-      setActiveCategory(catetory);
-      setActiveSubCategory(catetory.subCategories[0]);
+    const handleCategoryChange = (category: Category) => {
+      navigate(`/boardList?categoryId=${category.subCategories[0].categoryId}`, { replace: true });
     };
 
     return (
@@ -163,15 +164,13 @@ const BoardList: React.FC = () => {
               <div key={category.categoryId} className="relative group">
                 <button
                   className={`px-4 py-2 font-medium text-sm whitespace-nowrap cursor-pointer transition-all duration-300 relative ${
-                    activeCategory === category
+                    activeCategory?.categoryId === category.categoryId
                       ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50 shadow-sm"
                       : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
                   }`}
-                  onClick={async () => {
-                    await handleCategoryChange(category);
-                  }}>
+                  onClick={() => handleCategoryChange(category)}>
                   {category.value}
-                  {activeCategory === category && (
+                  {activeCategory?.categoryId === category.categoryId && (
                     <>
                       <span className="absolute -right-1 -top-1 flex h-3 w-3">
                         <span className="z-20 animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
@@ -218,16 +217,16 @@ const BoardList: React.FC = () => {
                     <div
                       key={index}
                       className={`px-4 py-2.5 text-sm cursor-pointer transition-colors duration-150 flex items-center justify-between ${
-                        activeSubCategory === subCategory
+                        activeSubCategory?.categoryId === subCategory.categoryId
                           ? "bg-blue-50 text-blue-600"
                           : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                       }`}
                       onClick={() => {
-                        setActiveSubCategory(subCategory);
+                        navigate(`/boardList?categoryId=${subCategory.categoryId}`, { replace: true });
                         setIsDropdownOpen(false);
                       }}>
                       <span>{subCategory.value}</span>
-                      {activeSubCategory === subCategory && <i className="fas fa-check text-blue-600"></i>}
+                      {activeSubCategory?.categoryId === subCategory.categoryId && <i className="fas fa-check text-blue-600"></i>}
                     </div>
                   ))}
                 </div>
@@ -261,7 +260,7 @@ const BoardList: React.FC = () => {
                 renderColumn={renderColumn}
                 totalPages={totalPages}
                 currentPage={currentPage}
-                onPageChange={goToPage}
+                onPageChange={handlePageChange}
                 isLoading={isLoading}
                 error={error}
                 searchEnabled={true}

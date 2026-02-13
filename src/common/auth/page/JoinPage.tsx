@@ -178,7 +178,7 @@ const JoinPage: React.FC = () => {
                   <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
                     placeholder="이름을 입력해주세요"
                   />
                 </div>
@@ -196,14 +196,14 @@ const JoinPage: React.FC = () => {
                       setEmail(e.target.value);
                       setEmailStatus("none");
                     }}
-                    className="flex-1 border border-gray-300 rounded-md px-4 py-2 text-sm"
+                    className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
                     placeholder="이메일을 입력하세요"
                   />
                   <button
                     type="button"
                     onClick={checkEmailDuplicate}
                     disabled={isChecking}
-                    className={`px-4 py-2 rounded-md text-sm transition-colors min-w-[90px] ${isChecking ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"} text-white`}>
+                    className={`px-4 py-2 rounded-md text-sm transition-colors min-w-[90px] ${isChecking ? "bg-gray-400 cursor-not-allowed" : "bg-emerald-600 hover:bg-emerald-700"} text-white`}>
                     {isChecking ? "확인 중..." : "중복체크"}
                   </button>
                 </div>
@@ -223,7 +223,7 @@ const JoinPage: React.FC = () => {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
                     placeholder="비밀번호를 입력해주세요"
                   />
                   <div className="absolute right-2 top-1/2 transform -translate-y-1/2 group">
@@ -243,7 +243,7 @@ const JoinPage: React.FC = () => {
                   type="password"
                   value={passwordConfirm}
                   onChange={(e) => setPasswordConfirm(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
                   placeholder="비밀번호를 다시 입력해주세요"
                 />
                 {passwordMatchError && (
@@ -260,7 +260,7 @@ const JoinPage: React.FC = () => {
                 <label className="block text-sm mb-1">연락처</label>
                 <div className="flex gap-2">
                   <select
-                    className="w-24 border border-gray-300 rounded-md px-4 py-2 text-sm"
+                    className="w-24 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
                     defaultValue="010"
                     value={p_phoneNumber}
                     onChange={onSelectP_phoneNumber}>
@@ -275,7 +275,7 @@ const JoinPage: React.FC = () => {
                     type="tel"
                     value={b_phoneNumber}
                     onChange={(e) => setB_PhoneNumber(e.target.value)}
-                    className="flex-1 border border-gray-300 rounded-md px-4 py-2 text-sm"
+                    className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
                     placeholder="연락처를 입력하세요"
                   />
                 </div>
@@ -290,14 +290,14 @@ const JoinPage: React.FC = () => {
                   value={normalAddress}
                   onClick={handleAddressSearch}
                   readOnly
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm cursor-pointer"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none cursor-pointer"
                   placeholder="주소를 검색하세요"
                 />
                 <input
                   type="text"
                   value={detailAddress}
                   onChange={(e) => setDetailAddress(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm mt-2"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none mt-2"
                   placeholder="상세주소를 입력하세요"
                 />
                 {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
@@ -337,7 +337,7 @@ const JoinPage: React.FC = () => {
                   type="date"
                   value={birth}
                   onChange={(e) => setBirth(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
                 />
                 {errors.birth && <p className="text-red-500 text-sm mt-1">{errors.birth}</p>}
               </div>
@@ -359,7 +359,7 @@ const JoinPage: React.FC = () => {
               {/* 가입 버튼 */}
               <button
                 type="submit"
-                className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition-colors mt-6">
+                className="w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition-colors mt-6">
                 가입하기
               </button>
             </form>

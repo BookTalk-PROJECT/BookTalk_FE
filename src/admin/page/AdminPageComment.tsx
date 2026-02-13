@@ -7,12 +7,16 @@ import MyPageActiveTabButton from "../../mypage/component/button/MyPageActiveTab
 import { ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
 import { RowDef } from "../../common/type/common";
 import { AdminCommentColType } from "../type/AdminCommunity";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import DeleteModal from "../../mypage/component/DeleteModal";
 import { getCommentAdminAll, recoverComment, restrictComment, searchCommentAdminAll } from "../api/admin";
 import { usePaginatedData } from "../../common/hooks/usePaginatedData";
 
 const AdminPageComment: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const initialPage = pageParam ? parseInt(pageParam) : 1;
+
   const rowDef: RowDef<AdminCommentColType>[] = [
     { label: "댓글 번호", key: "reply_code", isSortable: true, isSearchType: true },
     { label: "글 번호", key: "post_code", isSortable: true, isSearchType: true },
@@ -47,6 +51,7 @@ const AdminPageComment: React.FC = () => {
   // 커스텀 훅 사용
   const {
     data: comments,
+    setData: setComments,
     totalPages,
     currentPage,
     isLoading,
@@ -54,11 +59,24 @@ const AdminPageComment: React.FC = () => {
     goToPage,
     search,
     resetSearch,
-    refresh,
   } = usePaginatedData({
     fetchData,
     searchData,
+    initialPage,
   });
+
+  const handlePageChange = useCallback((page: number) => {
+    setSearchParams(
+      page > 1 ? { page: page.toString() } : {},
+      { replace: true }
+    );
+    goToPage(page);
+  }, [setSearchParams, goToPage]);
+
+  const handleTabChange = useCallback((tab: string) => {
+    setActiveTab(tab);
+    setSearchParams({}, { replace: true });
+  }, [setSearchParams]);
 
   const openDeleteModal = useCallback((code: string) => {
     setSelectedCode(code);
@@ -72,15 +90,19 @@ const AdminPageComment: React.FC = () => {
 
   const handleDelete = async (replyCode: string, deleteReason: string) => {
     await restrictComment(replyCode, deleteReason);
-    refresh();
+    setComments(prev => prev.map(comment =>
+      comment.reply_code === replyCode ? { ...comment, delYn: true, deleteReason } : comment
+    ));
   };
 
   const handleRecover = useCallback(async (replyCode: string) => {
     if (confirm("게시글을 복구하시겠습니까?")) {
       await recoverComment(replyCode);
-      refresh();
+      setComments(prev => prev.map(comment =>
+        comment.reply_code === replyCode ? { ...comment, delYn: false, deleteReason: null } : comment
+      ));
     }
-  }, [refresh]);
+  }, [setComments]);
 
   // Get detail page path based on post code prefix
   const getDetailPath = (postCode: string) => {
@@ -125,7 +147,7 @@ const AdminPageComment: React.FC = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <MyPageSideBar />
-      <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
+      <div className="flex-1 bg-gray-50 py-8 px-3 md:px-6 overflow-auto min-w-0">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             <BreadCrumb major="관리자" sub="댓글 관리" />
@@ -134,7 +156,7 @@ const AdminPageComment: React.FC = () => {
                 { label: "커뮤니티", color: "yellow" },
                 { label: "북리뷰", color: "red" },
               ]}
-              setActiveTab={setActiveTab}
+              setActiveTab={handleTabChange}
             />
             <DataTableCustom<ReplySimpleInfo, AdminCommentColType>
               rows={comments}
@@ -143,7 +165,7 @@ const AdminPageComment: React.FC = () => {
               renderColumn={renderColumn}
               totalPages={totalPages}
               currentPage={currentPage}
-              onPageChange={goToPage}
+              onPageChange={handlePageChange}
               isLoading={isLoading}
               error={error}
               searchEnabled={true}

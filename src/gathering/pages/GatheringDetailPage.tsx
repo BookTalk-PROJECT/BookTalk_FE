@@ -117,7 +117,7 @@ const GatheringDetailPage: React.FC = () => {
                 <div className="mb-4 p-3 text-sm rounded bg-red-50 text-red-700 border border-red-200">{errorMsg}</div>
               )}
 
-              <div className="overflow-hidden rounded-lg border">
+              <div className="overflow-x-auto rounded-lg border">
                 <BoardTableNoCategory posts={postList} requestUrl={requestUrl} />
               </div>
 

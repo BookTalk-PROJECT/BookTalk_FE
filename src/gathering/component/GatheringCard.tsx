@@ -34,7 +34,7 @@ const GatheringCard: React.FC<GatheringCardProps> = ({ gathering, lastRef }) => 
         <div className="flex flex-col space-y-3">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center">
-              <i className="fas fa-users text-red-500 mr-2"></i>
+              <i className="fas fa-users text-emerald-600 mr-2"></i>
               <span className="text-gray-700 font-medium">
                 {gathering.currentMembers}/{gathering.maxMembers}명
               </span>
@@ -46,7 +46,7 @@ const GatheringCard: React.FC<GatheringCardProps> = ({ gathering, lastRef }) => 
               {gathering.hashtags.map((tag: string, tagIndex: number) => (
                 <span
                   key={tagIndex}
-                  className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs hover:bg-blue-200 transition">
+                  className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-xs hover:bg-emerald-200 transition">
                   {tag}
                 </span>
               ))}

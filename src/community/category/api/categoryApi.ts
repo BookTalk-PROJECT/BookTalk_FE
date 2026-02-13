@@ -49,3 +49,15 @@ export const deleteCategory = async (categoryId: number): Promise<ApiResponse<nu
   const response = await axios.delete(`${BASE_URL}/community/category/delete/${categoryId}`);
   return response.data;
 };
+
+export interface ReorderItem {
+  categoryId: number;
+  displayOrder: number;
+}
+
+export const reorderCategories = async (orders: ReorderItem[]): Promise<ApiResponse<void>> => {
+  const response = await axios.patch(`${BASE_URL}/community/category/reorder`, {
+    orders,
+  });
+  return response.data;
+};

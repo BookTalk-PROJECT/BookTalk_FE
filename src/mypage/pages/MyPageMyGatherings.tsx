@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import MyPageSideBar from "../component/MyPageSideBar";
 import DataTableCustom from "../../common/component/DataTableCustom";
@@ -25,6 +25,10 @@ export type MyGatheringSimpleInfo = MyPageGatheringColType;
 
 const MyPageMyGatherings: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const initialPage = pageParam ? parseInt(pageParam) : 1;
+
   const rowDef: RowDef<MyPageGatheringColType>[] = [
     { label: "모임 코드", key: "gathering_code", isSortable: true, isSearchType: true },
     { label: "모임명", key: "name", isSortable: true, isSearchType: true },
@@ -51,7 +55,16 @@ const MyPageMyGatherings: React.FC = () => {
   } = usePaginatedData({
     fetchData: getMyGatheringAll,
     searchData: searchMyGatherings,
+    initialPage,
   });
+
+  const handlePageChange = useCallback((page: number) => {
+    setSearchParams(
+      page > 1 ? { page: page.toString() } : {},
+      { replace: true }
+    );
+    goToPage(page);
+  }, [setSearchParams, goToPage]);
 
   const openDeleteModal = useCallback((code: string) => {
     setSelectedCode(code);
@@ -146,10 +159,10 @@ const MyPageMyGatherings: React.FC = () => {
   }, [handleRestore, openDeleteModal]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       <MyPageSideBar />
 
-      <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
+      <div className="flex-1 bg-gray-50 py-8 px-3 md:px-6 overflow-auto min-w-0">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             <BreadCrumb major="모임" sub="내 모임" />
@@ -161,7 +174,7 @@ const MyPageMyGatherings: React.FC = () => {
               renderColumn={renderColumn}
               totalPages={totalPages}
               currentPage={currentPage}
-              onPageChange={goToPage}
+              onPageChange={handlePageChange}
               isLoading={isLoading}
               error={error}
               searchEnabled={true}

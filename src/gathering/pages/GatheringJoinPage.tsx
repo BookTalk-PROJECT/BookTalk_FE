@@ -103,7 +103,7 @@ const GatheringJoin: React.FC = () => {
       <header className="sticky top-0 bg-white shadow-sm z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center">
           <button
-            className="mr-4 text-gray-600 hover:text-gray-900 cursor-pointer !rounded-button whitespace-nowrap"
+            className="mr-4 text-gray-600 hover:text-gray-900 cursor-pointer whitespace-nowrap"
             aria-label="뒤로 가기"
             onClick={() => navigate(-1)} // 이전 페이지로 이동
           >
@@ -159,7 +159,7 @@ const GatheringJoin: React.FC = () => {
 
                 <div className="ml-10">
                   <textarea
-                    className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
                     rows={4}
                     placeholder="답변을 입력해주세요..."
                     maxLength={question.maxLength}
@@ -192,8 +192,8 @@ const GatheringJoin: React.FC = () => {
           </div>
           <button
             className={`px-6 py-3 rounded-lg font-medium text-white ${
-              isFormValid ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"
-            } transition-colors duration-200 !rounded-button whitespace-nowrap cursor-pointer`}
+              isFormValid ? "bg-emerald-600 hover:bg-emerald-700" : "bg-gray-400 cursor-not-allowed"
+            } transition-colors duration-200 whitespace-nowrap cursor-pointer`}
             disabled={!isFormValid}
             onClick={handleSubmit}>
             가입 신청하기

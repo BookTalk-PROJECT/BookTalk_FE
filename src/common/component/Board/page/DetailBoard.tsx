@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import CustomButton from "../../CustomButton";
 import { PostDetail } from "../type/BoardDetailTypes";
 import { ApiResponse } from "../../../type/ApiResponse";
@@ -6,6 +7,7 @@ import { useNavigate } from "react-router";
 import BreadCrumb from "../../BreadCrumb";
 import ReplyList from "../../../../community/reply/page/ReplyList";
 import { Viewer } from "@toast-ui/react-editor";
+import { useAuthStore } from "../../../../store";
 
 interface DetailBoardProps {
   mainTopic: string;
@@ -36,8 +38,11 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
   NavigateToPrevPost,
 }) => {
   const navigate = useNavigate();
+  const { userInfo } = useAuthStore();
   const [detailData, setDetailData] = useState<PostDetail>();
   const [isLikeLoading, setIsLikeLoading] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState<string>("");
 
   // 댓글 데이터 불러오기
   useEffect(() => {
@@ -45,8 +50,15 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
   }, [postCode]);
 
   const loadDetailData = async () => {
-    const data = await GetBoardDetail(postCode);
-    setDetailData(data.data);
+    try {
+      const data = await GetBoardDetail(postCode);
+      setDetailData(data.data);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 400) {
+        setIsDeleted(true);
+        setDeleteMessage(error.response.data?.msg || "");
+      }
+    }
   };
 
   const handleDeleteBoard = () => {
@@ -62,18 +74,20 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold">{detailData?.post.title}</h1>
-            <div className="flex items-center space-x-4">
-              <CustomButton onClick={() => navigate(editPageUri)} color="white">
-                <>
-                  <i className="fas fa-edit mr-2"></i>수정
-                </>
-              </CustomButton>
-              <CustomButton onClick={() => handleDeleteBoard()} color="red">
-                <>
-                  <i className="fas fa-trash-alt mr-2"></i>삭제
-                </>
-              </CustomButton>
-            </div>
+            {userInfo?.id != null && detailData?.post.member_id === userInfo.id && (
+              <div className="flex items-center space-x-4">
+                <CustomButton onClick={() => navigate(editPageUri)} color="white">
+                  <>
+                    <i className="fas fa-edit mr-2"></i>수정
+                  </>
+                </CustomButton>
+                <CustomButton onClick={() => handleDeleteBoard()} color="red">
+                  <>
+                    <i className="fas fa-trash-alt mr-2"></i>삭제
+                  </>
+                </CustomButton>
+              </div>
+            )}
           </div>
           <div className="flex items-center text-sm text-gray-500 pb-4 border-b">
             <span className="mr-4 flex items-center">
@@ -155,7 +169,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
         onClick={handleLikeToggle}
         disabled={isLikeLoading}
         className={
-          "px-6 py-3 bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200 flex items-center disabled:opacity-50"
+          "px-6 py-3 bg-gray-100 rounded-lg whitespace-nowrap cursor-pointer hover:bg-gray-200 flex items-center disabled:opacity-50"
         }>
         <i className={`fas fa-heart mr-2 ${detailData?.post.is_liked ? "text-red-500" : "text-gray-500"}`}></i>
         <span>좋아요</span>
@@ -192,6 +206,26 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
 
   if (!postCode) {
     return <div>잘못된 접근입니다.</div>;
+  }
+
+  if (isDeleted) {
+    return (
+      <div>
+        <BreadCrumb major={mainTopic} sub={subTopic} />
+        <div className="flex flex-col items-center justify-center py-20 text-gray-500">
+          <i className="fas fa-ban text-5xl mb-4 text-gray-400"></i>
+          <p className="text-xl font-semibold mb-2">삭제된 게시글입니다.</p>
+          {deleteMessage && (
+            <p className="text-sm text-gray-400 mb-6">{deleteMessage}</p>
+          )}
+          <CustomButton onClick={() => navigate(listPageUri)} color="black" customClassName="px-6 py-2 mt-4">
+            <>
+              <i className="fas fa-list mr-2"></i>목록으로
+            </>
+          </CustomButton>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -5,18 +5,24 @@ import { useNavigate } from "react-router-dom";
 interface BookReviewCardProps {
   review: BookReview;
   onDelete: (code: string) => void;
+  categoryId?: number;
+  currentPage?: number;
 }
 
-const BookReviewCard: React.FC<BookReviewCardProps> = ({ review, onDelete }) => {
+const BookReviewCard: React.FC<BookReviewCardProps> = ({ review, onDelete, categoryId, currentPage }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/book-review/${review.code}`);
+    const params = new URLSearchParams();
+    if (categoryId) params.set("categoryId", categoryId.toString());
+    if (currentPage && currentPage > 1) params.set("page", currentPage.toString());
+    const query = params.toString();
+    navigate(`/book-review/${review.code}${query ? `?${query}` : ''}`);
   };
 
   return (
     <div
-      className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full cursor-pointer"
+      className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full cursor-pointer hover:shadow-lg transition-shadow"
       onClick={handleCardClick}>
       <img src={review.thumbnail_url} alt={review.book_title} className="w-full h-48 object-cover" />
       <div className="p-4 flex flex-col flex-grow">

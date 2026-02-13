@@ -2,9 +2,10 @@ import axios from "axios";
 import { create } from "zustand";
 
 type UserInfo = {
-  memberId?: number;
+  id?: number;
   name?: string;
   email?: string;
+  authority?: string;
 };
 
 type AuthStore = {

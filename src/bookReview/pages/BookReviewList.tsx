@@ -19,7 +19,10 @@ const BookReviewList: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<Category>();
 
   const [totalPages, setTotalPages] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageFromUrl = searchParams.get("page");
+  const [currentPage, setCurrentPage] = useState<number>(
+    pageFromUrl ? parseInt(pageFromUrl) : 1
+  );
 
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -120,10 +123,21 @@ const BookReviewList: React.FC = () => {
     loadReviews(currentPage);
   }, [currentPage, searchParams]);
 
+  const isInitialMount = useRef(true);
+
   useEffect(() => {
     if (activeCategory) {
-      setSearchParams({ categoryId: activeCategory.categoryId.toString() });
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (isInitialMount.current) {
+        const page = searchParams.get("page");
+        setSearchParams({
+          categoryId: activeCategory.categoryId.toString(),
+          ...(page ? { page } : {}),
+        }, { replace: true });
+        isInitialMount.current = false;
+      } else {
+        setSearchParams({ categoryId: activeCategory.categoryId.toString() }, { replace: true });
+        setCurrentPage(1);
+      }
     }
   }, [activeCategory]);
 
@@ -132,7 +146,7 @@ const BookReviewList: React.FC = () => {
       setSearchParams({
         categoryId: activeCategory.categoryId.toString(),
         page: pageNum.toString(),
-      });
+      }, { replace: true });
     }
     setCurrentPage(pageNum);
   };
@@ -177,7 +191,7 @@ const BookReviewList: React.FC = () => {
                 key={category.categoryId}
                 onClick={() => handleCategoryChange(category)}
                 className={`flex-shrink-0 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
-                  activeCategory === category ? "bg-blue-600 text-white" : "bg-white text-gray-700 hover:bg-gray-100"
+                  activeCategory === category ? "bg-emerald-600 text-white" : "bg-white text-gray-700 hover:bg-gray-100"
                 }`}>
                 {category.value}
               </button>
@@ -192,65 +206,86 @@ const BookReviewList: React.FC = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="flex justify-end items-center gap-5 mt-6 mb-6 pr-5">
-          <div className="relative">
-            <button
-              onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
-              className="bg-white px-4 py-2 rounded-md shadow-sm flex items-center gap-2 border border-gray-300 hover:bg-gray-100">
-              <span>{selectedFilter.value}</span>
-              <i className={`fas fa-chevron-${isFilterDropdownOpen ? "up" : "down"}`}></i>
-            </button>
-            {isFilterDropdownOpen && (
-              <div className="absolute top-full left-0 mt-1 w-40 bg-white rounded-md shadow-lg z-50">
-                <ul className="py-1">
-                  {searchTypes.map((type) => (
-                    <li
-                      key={type.key}
-                      className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
-                        setSelectedFilter(type);
-                        setIsFilterDropdownOpen(false);
-                      }}>
-                      {type.value}
-                    </li>
-                  ))}
-                </ul>
+        <div className="bg-white border border-gray-200 rounded-xl p-4 mt-6 mb-6 shadow-sm">
+          <div className="flex flex-wrap items-center gap-3 justify-between">
+            <div className="flex flex-wrap items-center gap-3">
+            {/* 필터 + 검색어 그룹 */}
+            <div className="flex items-stretch">
+              <div className="relative">
+                <button
+                  onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+                  className="h-full px-3 py-2 rounded-l-lg flex items-center gap-2 border border-r-0 border-gray-300 bg-gray-50 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
+                  <span>{selectedFilter.value}</span>
+                  <i className={`fas fa-chevron-${isFilterDropdownOpen ? "up" : "down"} text-xs`}></i>
+                </button>
+                {isFilterDropdownOpen && (
+                  <div className="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50 py-1">
+                    {searchTypes.map((type) => (
+                      <button
+                        key={type.key}
+                        className={`w-full text-left px-4 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-700 transition-colors ${
+                          selectedFilter.key === type.key ? "bg-emerald-50 text-emerald-700 font-medium" : "text-gray-700"
+                        }`}
+                        onClick={() => {
+                          setSelectedFilter(type);
+                          setIsFilterDropdownOpen(false);
+                        }}>
+                        {type.value}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <>
-            <div className="relative">
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="검색어를 입력하세요"
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-64"
-              />
-              <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="검색어를 입력하세요"
+                  className="h-full pl-9 pr-4 py-2 border border-gray-300 rounded-r-lg text-sm w-full sm:w-44 focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
+                />
+                <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
+
+            <div className="h-8 w-px bg-gray-200 hidden sm:block" />
+
+            {/* 날짜 범위 그룹 */}
+            <div className="flex items-center gap-2">
+              <i className="fas fa-calendar-alt text-gray-400 text-xs"></i>
               <input
                 type="date"
                 value={dateRange.start}
                 onChange={(e) => setDateRange((prev) => ({ ...prev, start: e.target.value }))}
-                className="border rounded-button px-3 py-1.5 text-sm"
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
               />
-              <span className="text-sm text-gray-600">~</span>
+              <span className="text-xs text-gray-400">~</span>
               <input
                 type="date"
                 value={dateRange.end}
                 onChange={(e) => setDateRange((prev) => ({ ...prev, end: e.target.value }))}
-                className="border rounded-button px-3 py-1.5 text-sm"
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
               />
             </div>
-            <CustomButton onClick={() => resetSearch()}>초기화</CustomButton>
-            <CustomButton onClick={() => handleSearch(1)}>검색</CustomButton>
-            {/* Create Button */}
-            <CustomButton onClick={() => navigate(`/book-review/create/${activeCategory?.categoryId}`)}>
-              <i className="fas fa-pen mr-2"></i>북리뷰 작성하기
-            </CustomButton>
-          </>
+            </div>
+
+            {/* 액션 버튼 그룹 */}
+            <div className="flex items-center gap-2">
+              <button
+                className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                onClick={() => resetSearch()}>
+                <i className="fas fa-undo text-xs mr-1.5"></i>초기화
+              </button>
+              <button
+                className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors"
+                onClick={() => handleSearch(1)}>
+                <i className="fas fa-search text-xs mr-1.5"></i>검색
+              </button>
+              <CustomButton onClick={() => navigate(`/book-review/create/${activeCategory?.categoryId}`)} color="black">
+                <><i className="fas fa-pen mr-2"></i>북리뷰 작성하기</>
+              </CustomButton>
+            </div>
+          </div>
         </div>
 
         {/* Content Area */}
@@ -258,11 +293,25 @@ const BookReviewList: React.FC = () => {
           <LoadingBar />
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {reviews.map((review) => (
-                <BookReviewCard key={review.code} review={review} onDelete={handleDelete} />
-              ))}
-            </div>
+            {reviews.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+                <i className="fas fa-book-open text-5xl mb-4"></i>
+                <p className="text-lg">등록된 북리뷰가 없습니다.</p>
+                <p className="text-sm mt-1">첫 번째 북리뷰를 작성해보세요!</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {reviews.map((review) => (
+                  <BookReviewCard
+                    key={review.code}
+                    review={review}
+                    onDelete={handleDelete}
+                    categoryId={activeCategory?.categoryId}
+                    currentPage={currentPage}
+                  />
+                ))}
+              </div>
+            )}
             <div className="mt-10">
               {/* MyPageTable과 동일한 패턴 */}
               <PagenationCustom totalPages={totalPages} currentPage={currentPage} handlePageChange={handlePageChange} />
@@ -303,28 +352,38 @@ const PagenationCustom: React.FC<PagenationProps> = ({ totalPages, currentPage, 
     setPageRange(getIntegerArray(startVal, endVal));
   }, [totalPages, currentPage]);
 
+  const isEmpty = totalPages === 0;
+
   return (
-    <div className="flex justify-center items-center space-x-2 p-4 border-t">
+    <div className="flex flex-wrap justify-center items-center gap-1 sm:gap-2 p-4 border-t">
       <button
         onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
-        disabled={currentPage === 1}
-        className="!rounded-button whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
+        disabled={isEmpty || currentPage === 1}
+        className="rounded-lg whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
         <i className="fas fa-chevron-left"></i>
       </button>
-      {pageRange.map((value) => (
+      {isEmpty ? (
         <button
-          key={value}
-          onClick={() => handlePageChange(value)}
-          className={`!rounded-button whitespace-nowrap px-3 py-1 ${
-            currentPage === value ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
-          }`}>
-          {value}
+          disabled
+          className="rounded-lg whitespace-nowrap px-3 py-1 bg-emerald-600 text-white opacity-50">
+          1
         </button>
-      ))}
+      ) : (
+        pageRange.map((value) => (
+          <button
+            key={value}
+            onClick={() => handlePageChange(value)}
+            className={`rounded-lg whitespace-nowrap px-3 py-1 ${
+              currentPage === value ? "bg-emerald-600 text-white" : "bg-gray-200 text-gray-700"
+            }`}>
+            {value}
+          </button>
+        ))
+      )}
       <button
         onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
-        disabled={currentPage === totalPages}
-        className="!rounded-button whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
+        disabled={isEmpty || currentPage === totalPages}
+        className="rounded-lg whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
         <i className="fas fa-chevron-right"></i>
       </button>
     </div>

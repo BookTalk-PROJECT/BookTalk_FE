@@ -4,10 +4,12 @@ import { ApiResponse, PageResponse } from '../type/ApiResponse';
 interface UsePaginatedDataOptions<T> {
   fetchData: (pageNum: number) => Promise<ApiResponse<PageResponse<T>>>;
   searchData?: (cond: any, pageNum: number) => Promise<ApiResponse<PageResponse<T>>>;
+  initialPage?: number;
 }
 
 interface UsePaginatedDataReturn<T> {
   data: T[];
+  setData: React.Dispatch<React.SetStateAction<T[]>>;
   totalPages: number;
   currentPage: number;
   isLoading: boolean;
@@ -22,6 +24,7 @@ interface UsePaginatedDataReturn<T> {
 export function usePaginatedData<T>({
   fetchData,
   searchData,
+  initialPage,
 }: UsePaginatedDataOptions<T>): UsePaginatedDataReturn<T> {
   const [data, setData] = useState<T[]>([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -30,6 +33,10 @@ export function usePaginatedData<T>({
   const [error, setError] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [searchCond, setSearchCond] = useState<any>(null);
+
+  // initialPage를 ref로 보관 — deps에 넣지 않아 페이지 변경만으로 재로드되지 않음
+  const initialPageRef = useRef(initialPage ?? 1);
+  useEffect(() => { initialPageRef.current = initialPage ?? 1; });
 
   // 함수 참조 안정화
   const fetchDataRef = useRef(fetchData);
@@ -49,6 +56,7 @@ export function usePaginatedData<T>({
 
     setIsLoading(true);
     setError(null);
+    setCurrentPage(page);
 
     try {
       const res = searchCondition && searchDataRef.current
@@ -58,7 +66,6 @@ export function usePaginatedData<T>({
       if (!controller.signal.aborted) {
         setData(res.data.content);
         setTotalPages(res.data.totalPages);
-        setCurrentPage(page);
       }
     } catch (err: any) {
       if (!controller.signal.aborted) {
@@ -73,7 +80,7 @@ export function usePaginatedData<T>({
 
   // 초기 로드 및 fetchData 변경 시 재로드
   useEffect(() => {
-    loadPage(1);
+    loadPage(initialPageRef.current);
     return () => abortControllerRef.current?.abort();
   }, [fetchData, loadPage]);
 
@@ -99,6 +106,7 @@ export function usePaginatedData<T>({
 
   return {
     data,
+    setData,
     totalPages,
     currentPage,
     isLoading,

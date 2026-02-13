@@ -67,7 +67,7 @@ const LoginPage: React.FC = () => {
                 <input
                   type="text"
                   id="userId"
-                  className="border border-gray-200 rounded-md p-2 w-full text-sm"
+                  className="border border-gray-300 rounded-lg p-2 w-full text-sm focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
                   placeholder="아이디를 입력해주세요"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -80,7 +80,7 @@ const LoginPage: React.FC = () => {
                 <input
                   type="password"
                   id="password"
-                  className="border border-gray-200 rounded-md p-2 w-full text-sm"
+                  className="border border-gray-300 rounded-lg p-2 w-full text-sm focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
                   placeholder="비밀번호를 입력해주세요"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -88,13 +88,13 @@ const LoginPage: React.FC = () => {
               </div>
               <button
                 type="submit"
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md">
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg">
                 로그인
               </button>
             </form>
 
             <div className="mt-4 text-center">
-              <div className="inline-block border border-red-500 rounded-full px-4 py-1">
+              <div className="inline-block border border-emerald-500 rounded-full px-4 py-1">
                 <span className="text-sm">아이디 찾기 | 비밀번호 찾기</span>
               </div>
             </div>

@@ -186,7 +186,7 @@ const MyPage: React.FC = () => {
     <div className="flex min-h-screen bg-gray-50">
       {/* 사이드바 */}
       <MyPageSideBar />
-      <div className="flex-1 px-6 py-8">
+      <div className="flex-1 px-3 md:px-6 py-8 min-w-0">
         {/* 프로필 섹션 */}
         <section className="max-w-3xl mx-auto mb-10">
           <div className="flex flex-col items-center gap-6">
@@ -199,7 +199,7 @@ const MyPage: React.FC = () => {
             </div>
             <div className="text-center">
               <h2 className="text-2xl font-bold">{formData.name} 님</h2>
-              <button onClick={handleWithdraw} className="bg-red-500 text-white px-4 py-1 rounded-md text-sm mt-2">
+              <button onClick={handleWithdraw} className="bg-red-500 text-white px-4 py-1 rounded-lg text-sm mt-2 hover:bg-red-600">
                 회원 탈퇴
               </button>
               <p className="text-sm text-gray-700 mt-2">생년월일: {formData.birthday}</p>
@@ -217,13 +217,13 @@ const MyPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block font-medium mb-1">이메일</label>
-              <input type="email" className="w-full border p-2 rounded-md" value={formData.email} readOnly />
+              <input type="email" className="w-full border border-gray-300 p-2 rounded-lg focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none" value={formData.email} readOnly />
             </div>
             <div>
               <label className="block font-medium mb-1">비밀번호</label>
               <input
                 type="password"
-                className="w-full border p-2 rounded-md"
+                className="w-full border border-gray-300 p-2 rounded-lg focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
                 value={passwords.password}
                 onChange={(e) => setPasswords(prev => ({ ...prev, password: e.target.value }))}
                 readOnly={!uiState.isEditing}
@@ -234,7 +234,7 @@ const MyPage: React.FC = () => {
               <label className="block font-medium mb-1">비밀번호 확인</label>
               <input
                 type="password"
-                className="w-full border p-2 rounded-md"
+                className="w-full border border-gray-300 p-2 rounded-lg focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
                 value={passwords.confirm}
                 onChange={(e) => setPasswords(prev => ({ ...prev, confirm: e.target.value }))}
                 readOnly={!uiState.isEditing}
@@ -248,13 +248,13 @@ const MyPage: React.FC = () => {
             </div>
             <div>
               <label className="block font-medium mb-1">이름</label>
-              <input type="text" className="w-full border p-2 rounded-md" value={formData.name} readOnly />
+              <input type="text" className="w-full border border-gray-300 p-2 rounded-lg focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none" value={formData.name} readOnly />
             </div>
             <div className="md:col-span-2">
               <label className="block font-medium mb-1">주소</label>
               <input
                 type="text"
-                className="w-full border p-2 rounded-md mb-2 cursor-pointer"
+                className="w-full border border-gray-300 p-2 rounded-lg focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none mb-2 cursor-pointer"
                 value={formData.address.normal}
                 placeholder="주소 검색 클릭"
                 onClick={uiState.isEditing ? handleAddressSearch : undefined}
@@ -263,7 +263,7 @@ const MyPage: React.FC = () => {
               {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
               <input
                 type="text"
-                className="w-full border p-2 rounded-md"
+                className="w-full border border-gray-300 p-2 rounded-lg focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
                 value={formData.address.detail}
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
@@ -275,7 +275,7 @@ const MyPage: React.FC = () => {
             </div>
             <div>
               <label className="block font-medium mb-1">생년월일</label>
-              <input type="date" className="w-full border p-2 rounded-md" value={formData.birthday} readOnly />
+              <input type="date" className="w-full border border-gray-300 p-2 rounded-lg focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none" value={formData.birthday} readOnly />
             </div>
             <div>
               <label className="block font-medium mb-1">연락처</label>
@@ -287,7 +287,7 @@ const MyPage: React.FC = () => {
                     phone: { ...prev.phone, prefix: e.target.value }
                   }))}
                   disabled={!uiState.isEditing}
-                  className="border p-2 rounded-md">
+                  className="border border-gray-300 p-2 rounded-lg focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none">
                   <option value="010">010</option>
                   <option value="011">011</option>
                   <option value="016">016</option>
@@ -297,7 +297,7 @@ const MyPage: React.FC = () => {
                 </select>
                 <input
                   type="text"
-                  className="flex-1 border p-2 rounded-md"
+                  className="flex-1 border border-gray-300 p-2 rounded-lg focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
                   value={formData.phone.number}
                   onChange={(e) => setFormData(prev => ({
                     ...prev,
@@ -314,13 +314,13 @@ const MyPage: React.FC = () => {
             <button
               onClick={handleEdit}
               disabled={uiState.isEditing}
-              className="bg-blue-300 text-blue-900 px-4 py-2 rounded-md disabled:opacity-50">
+              className="bg-emerald-100 text-emerald-800 px-4 py-2 rounded-lg disabled:opacity-50 hover:bg-emerald-200">
               정보 편집
             </button>
             <button
               onClick={handleSave}
               disabled={!uiState.isEditing}
-              className="bg-green-300 text-green-900 px-4 py-2 rounded-md disabled:opacity-50">
+              className="bg-emerald-600 text-white px-4 py-2 rounded-lg disabled:opacity-50 hover:bg-emerald-700">
               저장
             </button>
           </div>

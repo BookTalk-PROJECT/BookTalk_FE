@@ -94,11 +94,11 @@ const AdminRoleManage: React.FC = () => {
   }, [handleRole]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       {/* 사이드바 */}
       <MyPageSideBar />
       {/* 메인 컨텐츠 */}
-      <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
+      <div className="flex-1 bg-gray-50 py-8 px-3 md:px-6 overflow-auto min-w-0">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             {/* 브레드크럼 */}

@@ -85,7 +85,7 @@ const DashBoardPage: React.FC = () => {
           {cards.map((card, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-md p-6 transition-transform hover:scale-105 cursor-pointer !rounded-button">
+              className="bg-white rounded-lg shadow-md p-6 transition-transform hover:scale-105 cursor-pointer">
               <div className="flex items-center justify-between mb-4">
                 <div className="text-xl font-semibold text-gray-800">{card.title}</div>
                 <div className={`w-12 h-12 ${card.iconColor} rounded-full flex items-center justify-center`}>
@@ -103,7 +103,7 @@ const DashBoardPage: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-800">인기 독서 모임</h2>
-              <button className="text-blue-500 hover:text-blue-700 text-sm font-medium cursor-pointer whitespace-nowrap !rounded-button">
+              <button className="text-emerald-600 hover:text-emerald-700 text-sm font-medium cursor-pointer whitespace-nowrap">
                 모임 찾아보기 <i className="fas fa-chevron-right ml-1"></i>
               </button>
             </div>
@@ -125,7 +125,7 @@ const DashBoardPage: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-800">추천 도서 리뷰</h2>
-              <button className="text-blue-500 hover:text-blue-700 text-sm font-medium cursor-pointer whitespace-nowrap !rounded-button">
+              <button className="text-emerald-600 hover:text-emerald-700 text-sm font-medium cursor-pointer whitespace-nowrap">
                 더 많은 리뷰 <i className="fas fa-chevron-right ml-1"></i>
               </button>
             </div>
@@ -155,7 +155,7 @@ const DashBoardPage: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-800">최신 댓글</h2>
-              <button className="text-blue-500 hover:text-blue-700 text-sm font-medium cursor-pointer whitespace-nowrap !rounded-button">
+              <button className="text-emerald-600 hover:text-emerald-700 text-sm font-medium cursor-pointer whitespace-nowrap">
                 전체 댓글 보기 <i className="fas fa-chevron-right ml-1"></i>
               </button>
             </div>

@@ -23,30 +23,38 @@ const Pagination: React.FC<PaginationProps> = ({
     return result;
   }, [totalPages, currentPage]);
 
-  if (totalPages === 0) return null;
+  const isEmpty = totalPages === 0;
 
   return (
-    <div className="flex justify-center items-center space-x-2 p-4 border-t">
+    <div className="flex flex-wrap justify-center items-center gap-1 sm:gap-2 p-4 border-t">
       <button
         onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
-        disabled={currentPage === 1}
-        className="!rounded-button whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
+        disabled={isEmpty || currentPage === 1}
+        className="rounded-lg whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
         <i className="fas fa-chevron-left"></i>
       </button>
-      {pageRange.map((value) => (
+      {isEmpty ? (
         <button
-          key={value}
-          onClick={() => onPageChange(value)}
-          className={`!rounded-button whitespace-nowrap px-3 py-1 ${
-            currentPage === value ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
-          }`}>
-          {value}
+          disabled
+          className="rounded-lg whitespace-nowrap px-3 py-1 bg-emerald-600 text-white opacity-50">
+          1
         </button>
-      ))}
+      ) : (
+        pageRange.map((value) => (
+          <button
+            key={value}
+            onClick={() => onPageChange(value)}
+            className={`rounded-lg whitespace-nowrap px-3 py-1 ${
+              currentPage === value ? "bg-emerald-600 text-white" : "bg-gray-200 text-gray-700"
+            }`}>
+            {value}
+          </button>
+        ))
+      )}
       <button
         onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
-        disabled={currentPage === totalPages}
-        className="!rounded-button whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
+        disabled={isEmpty || currentPage === totalPages}
+        className="rounded-lg whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
         <i className="fas fa-chevron-right"></i>
       </button>
     </div>

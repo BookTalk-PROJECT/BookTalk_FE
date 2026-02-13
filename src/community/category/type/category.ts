@@ -4,7 +4,7 @@ export interface AdminCategoryT {
   isActive: boolean;
   isEditing: boolean;
   isExpanded: boolean;
-  displayOrder?: number;
+  displayOrder: number;
   subCategories: AdminSubCategoryT[];
 }
 
@@ -14,7 +14,7 @@ export interface AdminSubCategoryT {
   isActive: boolean;
   isEditing: boolean;
   isExpanded: boolean;
-  displayOrder?: number;
+  displayOrder: number;
 }
 
 export interface CreateCategoryT {

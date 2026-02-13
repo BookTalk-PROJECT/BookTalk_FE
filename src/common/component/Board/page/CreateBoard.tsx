@@ -75,9 +75,9 @@ const CreateBoard: React.FC<BoardCreateProps> = ({ categoryId, redirectUri, crea
   return (
     <div className="min-h-screen bg-gray-50">
       <BreadCrumb major={mainTopic} sub={subTopic} />
-      <div className="max-w-6xl mx-auto px-8 py-12">
+      <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-12">
         <h1 className="text-3xl font-bold mb-10">글쓰기</h1>
-        <div className="bg-white shadow-md rounded-2xl p-10 space-y-10">
+        <div className="bg-white shadow-md rounded-2xl p-4 md:p-10 space-y-6 md:space-y-10">
           <div>
             <label className="block text-lg font-semibold mb-2 text-gray-700">제목</label>
             <CustomInput
@@ -149,7 +149,7 @@ const CreateBoard: React.FC<BoardCreateProps> = ({ categoryId, redirectUri, crea
           </div>
           {/* 버튼 그룹 */}
           <div className="flex justify-end space-x-4">
-            <CustomButton onClick={handleSubmit} color="blue" customClassName="px-6 py-3" disabled={isSubmitting}>
+            <CustomButton onClick={handleSubmit} color="primary" customClassName="px-6 py-3" disabled={isSubmitting}>
               <>{isSubmitting ? '저장 중...' : '등록하기'}</>
             </CustomButton>
             <CustomButton onClick={() => window.history.back()} color="white" customClassName="px-6 py-3">

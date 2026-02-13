@@ -17,6 +17,7 @@ type ReplyItemProps = {
   editingReplyId: string | null;
   editContent: string;
   isAuthenticated: boolean;
+  currentMemberId?: number;
   onReplyClick: (replyCode: string) => void;
   onEditReply: (replyCode: string, content: string) => void;
   onDeleteReply: (replyCode: string) => void;
@@ -36,6 +37,7 @@ function ReplyItem({
   editingReplyId,
   editContent,
   isAuthenticated,
+  currentMemberId,
   onReplyClick,
   onEditReply,
   onDeleteReply,
@@ -76,18 +78,22 @@ function ReplyItem({
               <i className="fas fa-reply mr-1"></i>답글
             </CustomButton>
           )}
-          <CustomButton onClick={() => onEditReply(reply.reply_code, reply.content)} color="none">
-            <i className="fas fa-pencil"></i>수정
-          </CustomButton>
-          <CustomButton onClick={() => onDeleteReply(reply.reply_code)} color="none">
-            <i className="fas fa-trash mr-1"></i>삭제
-          </CustomButton>
+          {currentMemberId != null && reply.member_id === currentMemberId && (
+            <>
+              <CustomButton onClick={() => onEditReply(reply.reply_code, reply.content)} color="none">
+                <i className="fas fa-pencil"></i>수정
+              </CustomButton>
+              <CustomButton onClick={() => onDeleteReply(reply.reply_code)} color="none">
+                <i className="fas fa-trash mr-1"></i>삭제
+              </CustomButton>
+            </>
+          )}
         </div>
       </div>
       {editingReplyId === reply.reply_code ? (
         <>
           <textarea
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-emerald-300 focus:border-emerald-500 outline-none"
             value={editContent}
             onChange={(e) => onEditContentChange(e.target.value)}
             rows={4}
@@ -95,12 +101,12 @@ function ReplyItem({
           <div className="mt-2 space-x-2 flex justify-end">
             <button
               onClick={() => onEditSave(reply.reply_code)}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow transition">
+              className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 shadow transition">
               저장
             </button>
             <button
               onClick={onEditCancel}
-              className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition">
+              className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition">
               취소
             </button>
           </div>
@@ -122,6 +128,7 @@ function ReplyItem({
               editingReplyId={editingReplyId}
               editContent={editContent}
               isAuthenticated={isAuthenticated}
+              currentMemberId={currentMemberId}
               onReplyClick={onReplyClick}
               onEditReply={onEditReply}
               onDeleteReply={onDeleteReply}
@@ -380,7 +387,7 @@ export default function ReplyList({ postCode }: ReplyListProps) {
         <div className="flex items-start space-x-4">
           <div className="flex-grow">
             <textarea
-              className="w-full h-[90px] p-4 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-gray-200"
+              className="w-full h-[90px] p-4 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-emerald-300"
               placeholder="댓글을 작성해주세요."
               value={parentCommentContent}
               onChange={(e) => setParentCommentContent(e.target.value)}
@@ -402,6 +409,7 @@ export default function ReplyList({ postCode }: ReplyListProps) {
             editingReplyId={editingReplyId}
             editContent={editContent}
             isAuthenticated={isAuthenticated}
+            currentMemberId={userInfo?.id}
             onReplyClick={handleReplyClick}
             onEditReply={handleEditReply}
             onDeleteReply={handleDeleteReply}
