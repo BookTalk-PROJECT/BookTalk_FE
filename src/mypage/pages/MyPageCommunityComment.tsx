@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import MyPageSideBar from "../component/MyPageSideBar";
-import MyPageTable from "../../common/component/DataTableCustom";
+import DataTableCustom from "../../common/component/DataTableCustom";
 import BreadCrumb from "../../common/component/BreadCrumb";
 import { RowDef } from "../../common/type/common";
-import { AdminCommentColType } from "../../admin/type/AdminCommunity";
 import { ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
 import { getMyCommentAll, searchMyComments } from "../api/MyPage";
 import { Link } from "react-router-dom";
+import { usePaginatedData } from "../../common/hooks/usePaginatedData";
 
 type MyPageCommentColType = {
   reply_code: string;
@@ -23,7 +23,20 @@ const MyPageCommunityComment: React.FC = () => {
     { label: "작성일", key: "date", isSortable: true, isSearchType: false },
   ];
 
-  const [comments, setComments] = useState<ReplySimpleInfo[]>([]);
+  // 커스텀 훅 사용
+  const {
+    data: comments,
+    totalPages,
+    currentPage,
+    isLoading,
+    error,
+    goToPage,
+    search,
+    resetSearch,
+  } = usePaginatedData({
+    fetchData: getMyCommentAll,
+    searchData: searchMyComments,
+  });
 
   const renderColumn = (row: any, key: Extract<keyof MyPageCommentColType, string>) => {
     switch (key) {
@@ -43,14 +56,19 @@ const MyPageCommunityComment: React.FC = () => {
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             <BreadCrumb major="커뮤니티" sub="댓글 관리" />
-            <MyPageTable<ReplySimpleInfo, MyPageCommentColType>
+            <DataTableCustom<ReplySimpleInfo, MyPageCommentColType>
               rows={comments}
               rowDef={rowDef}
               getRowKey={(comment) => comment.reply_code}
               renderColumn={renderColumn}
-              setRowData={setComments}
-              loadRowData={getMyCommentAll}
-              searchRowData={searchMyComments}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={goToPage}
+              isLoading={isLoading}
+              error={error}
+              searchEnabled={true}
+              onSearch={search}
+              onResetSearch={resetSearch}
             />
           </main>
         </div>

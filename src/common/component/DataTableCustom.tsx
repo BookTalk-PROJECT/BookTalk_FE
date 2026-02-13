@@ -1,62 +1,85 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 import { RowDef } from "../type/common";
-import { AdminTableColType } from "../../admin/type/common";
 import { SearchType } from "../type/common";
-import Pagenation from "./Pagination";
-import { ApiResponse, PageResponse } from "../type/ApiResponse";
+import Pagination from "./Pagination";
 
-type MyPageTableProps<T, K> = {
+interface SearchCondition {
+  keywordType: SearchType;
+  keyword: string;
+  startDate: string;
+  endDate: string;
+}
+
+type DataTableCustomProps<T, K> = {
+  // 데이터
   rows: T[];
   rowDef: RowDef<K>[];
   getRowKey: (row: T) => string;
   renderColumn: (row: T, key: Extract<keyof K, string>) => React.JSX.Element;
-  setRowData: (rowData: T[]) => void;
-  loadRowData: (pageNum: number) => Promise<ApiResponse<PageResponse<T>>>;
-  searchRowData?: (cond: any, pageNum: number) => Promise<ApiResponse<PageResponse<T>>>;
-  forceUpdate?: number;
+
+  // 페이지네이션
+  totalPages: number;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+
+  // 상태
+  isLoading?: boolean;
+  error?: string | null;
+
+  // 검색 (선택적)
+  searchEnabled?: boolean;
+  onSearch?: (cond: SearchCondition) => void;
+  onResetSearch?: () => void;
 };
 
-const MyPageTable = <T, K>({
+const DataTableCustom = <T, K>({
   rows,
   rowDef,
   getRowKey,
   renderColumn,
-  setRowData,
-  loadRowData,
-  searchRowData,
-  forceUpdate,
-}: MyPageTableProps<T, K>) => {
-  {
-    /* init */
-  }
-  const [totalPages, setTotalPages] = useState<number>(0);
+  totalPages,
+  currentPage,
+  onPageChange,
+  isLoading = false,
+  error = null,
+  searchEnabled = false,
+  onSearch,
+  onResetSearch,
+}: DataTableCustomProps<T, K>) => {
+  // 검색 UI 상태만 관리
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dateRange, setDateRange] = useState({ start: "", end: "" });
+  const [selectedFilter, setSelectedFilter] = useState(
+    rowDef.find((def) => def.isSearchType) || rowDef[0]
+  );
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
 
-  const loadContents = (pageNum: number) => {
-    loadRowData(pageNum).then((res) => {
-      setRowData(res.data.content);
-      setTotalPages(res.data.totalPages);
-      resetSearch();
-    });
-  };
-
-  useEffect(() => {
-    loadContents(1);
-  }, [forceUpdate]);
-
-  {
-    /* header */
-  }
+  // 정렬 상태
   const [sortField, setSortField] = useState("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const handleSort = (field: string) => {
     if (sortField === field) {
-      //이미 해당 필드일 시 정렬만 해줌
       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
       setSortField(field);
       setSortOrder("asc");
     }
+  };
+
+  const handleSearchClick = () => {
+    onSearch?.({
+      keywordType: selectedFilter.key as SearchType,
+      keyword: searchTerm,
+      startDate: dateRange.start,
+      endDate: dateRange.end,
+    });
+  };
+
+  const handleResetClick = () => {
+    setSearchTerm("");
+    setDateRange({ start: "", end: "" });
+    onResetSearch?.();
   };
 
   const renderHeader = () => {
@@ -65,6 +88,7 @@ const MyPageTable = <T, K>({
         {rowDef.map(({ label, key, isSortable }) => {
           return isSortable ? (
             <th
+              key={key}
               onClick={() => handleSort(key)}
               className="px-4 py-2 text-left text-sm font-medium text-gray-700 whitespace-nowrap cursor-pointer">
               <span className="inline-flex items-center gap-1">
@@ -81,7 +105,7 @@ const MyPageTable = <T, K>({
               </span>
             </th>
           ) : (
-            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 whitespace-nowrap cursor-pointer">
+            <th key={key} className="px-4 py-2 text-left text-sm font-medium text-gray-700 whitespace-nowrap cursor-pointer">
               <span>{label}</span>
             </th>
           );
@@ -90,44 +114,9 @@ const MyPageTable = <T, K>({
     );
   };
 
-  {
-    /* searchBar */
-  }
-  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
-  const [dateRange, setDateRange] = useState({ start: "", end: "" });
-  const [selectedFilter, setSelectedFilter] = useState(rowDef.find((def) => def.isSearchType) || rowDef[0]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-
-  const handleSearch = (pageNum: number) => {
-    if (searchRowData) {
-      searchRowData(
-        {
-          keywordType: selectedFilter.key as SearchType,
-          keyword: searchTerm,
-          startDate: dateRange.start,
-          endDate: dateRange.end,
-        },
-        pageNum
-      ).then((res) => {
-        setRowData(res.data.content);
-        setTotalPages(res.data.totalPages);
-        setIsSearching(true);
-      });
-    }
-  };
-
-  const resetSearch = () => {
-    setSearchTerm("");
-    setDateRange({ start: "", end: "" });
-    setIsSearching(false);
-    handleSearch(1);
-  };
-
   const renderSearchBar = () => {
     return (
       <div className="flex justify-end items-center gap-5 mt-6 mb-6 pr-5">
-        <div style={{ display: "none" }}>{forceUpdate}</div>
         <div className="relative">
           <button
             onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
@@ -184,12 +173,12 @@ const MyPageTable = <T, K>({
           </div>
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-            onClick={() => resetSearch()}>
+            onClick={handleResetClick}>
             초기화
           </button>
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-            onClick={() => handleSearch(1)}>
+            onClick={handleSearchClick}>
             검색
           </button>
         </>
@@ -201,7 +190,7 @@ const MyPageTable = <T, K>({
     <React.Fragment key={getRowKey(row)}>
       <tr className="hover:bg-gray-50 border-b">
         {rowDef.map(({ key }) => (
-          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{renderColumn(row, key)}</td>
+          <td key={key} className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{renderColumn(row, key)}</td>
         ))}
       </tr>
     </React.Fragment>
@@ -210,22 +199,33 @@ const MyPageTable = <T, K>({
   return (
     <>
       <div>
-        {searchRowData && renderSearchBar()}
+        {searchEnabled && renderSearchBar()}
+        {/* 로딩 상태 */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          </div>
+        )}
+        {/* 에러 상태 */}
+        {error && <div className="text-red-500 text-center py-4">{error}</div>}
         {/* 테이블 구조 */}
-        <div className="bg-white rounded-lg shadow-sm ">
-          <table className="min-w-full w-full table-auto text-sm ">
-            <thead className="bg-gray-50 border-b border-gray-200">{renderHeader()}</thead>
-            <tbody>{rows.map((row) => renderRow(row))}</tbody>
-          </table>
-        </div>
+        {!isLoading && !error && (
+          <div className="bg-white rounded-lg shadow-sm ">
+            <table className="min-w-full w-full table-auto text-sm ">
+              <thead className="bg-gray-50 border-b border-gray-200">{renderHeader()}</thead>
+              <tbody>{rows.map((row) => renderRow(row))}</tbody>
+            </table>
+          </div>
+        )}
       </div>
       {/* 페이지네이션 */}
-      <Pagenation
+      <Pagination
         totalPages={totalPages}
-        loadPageByPageNum={(pageNum) => (isSearching ? handleSearch(pageNum) : loadContents(pageNum))}
+        currentPage={currentPage}
+        onPageChange={onPageChange}
       />
     </>
   );
 };
 
-export default MyPageTable;
+export default DataTableCustom;

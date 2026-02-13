@@ -42,6 +42,7 @@ export interface Reply {
   replies: Reply[]; // 대댓글 리스트 (2차 댓글)
   create_at: string; // 작성일
   likes: number; // 좋아요
+  is_liked?: boolean; // 좋아요 여부
 }
 
 export interface ReplySimpleInfo {
@@ -65,4 +66,14 @@ export interface CommuDetail extends PostDetailInfo {
 export interface ImageUploadRes {
   imageUrl: string;
   fileName: string;
+}
+
+export interface BookReviewSimpleInfo {
+  code: string;
+  book_title: string;
+  review_title: string;
+  author: string;
+  reg_date: string;
+  rating: number;
+  thumbnail_url: string;
 }

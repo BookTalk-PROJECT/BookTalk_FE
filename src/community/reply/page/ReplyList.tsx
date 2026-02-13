@@ -1,25 +1,199 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Reply } from "../../../common/component/Board/type/BoardDetailTypes";
-import { deleteReply, editReply, getReplies, postReply } from "../api/replyApi";
+import { deleteReply, editReply, getRepliesPaginated, postReply, setLikeReply, resetLikeReply } from "../api/replyApi";
 import axios from "axios";
 import CustomButton from "../../../common/component/CustomButton";
+import { useAuthStore } from "../../../store";
 
 type ReplyListProps = {
   postCode: string;
 };
 
-export default function ReplyList({ postCode }: ReplyListProps) {
-  const [replies, setReplies] = useState<Reply[]>([]);
-  const [parentCommentContent, setParentCommentContent] = useState<string>(""); // 부모 댓글 입력
-  const [reReply_yn, setReReply_yn] = useState<string | null>(null); // 부모 댓글 여부(대댓글 or 댓글 판단)
-  const [replyContent, setReplyContent] = useState<string>(""); // 댓글/대댓글 공통 입력
-  const [editingReplyId, setEditingReplyId] = useState<string | null>(null);
-  const [editContent, setEditContent] = useState<string>(""); // 수정 중인 글 내용
+type ReplyItemProps = {
+  reply: Reply;
+  depth: number;
+  reReply_yn: string | null;
+  replyContent: string;
+  editingReplyId: string | null;
+  editContent: string;
+  isAuthenticated: boolean;
+  onReplyClick: (replyCode: string) => void;
+  onEditReply: (replyCode: string, content: string) => void;
+  onDeleteReply: (replyCode: string) => void;
+  onLikeToggle: (replyCode: string, isCurrentlyLiked: boolean) => void;
+  onEditContentChange: (content: string) => void;
+  onEditSave: (replyCode: string) => void;
+  onEditCancel: () => void;
+  onReplyContentChange: (content: string) => void;
+  onReplySubmit: () => void;
+};
 
-  const loadReplies = async () => {
-    const response = await getReplies(postCode);
-    setReplies(response.data);
+function ReplyItem({
+  reply,
+  depth,
+  reReply_yn,
+  replyContent,
+  editingReplyId,
+  editContent,
+  isAuthenticated,
+  onReplyClick,
+  onEditReply,
+  onDeleteReply,
+  onLikeToggle,
+  onEditContentChange,
+  onEditSave,
+  onEditCancel,
+  onReplyContentChange,
+  onReplySubmit,
+}: ReplyItemProps) {
+  const isRoot = depth === 0;
+  const maxReplyDepth = 2; // depth 2까지만 답글 버튼 표시
+
+  const handleLikeClick = () => {
+    if (!isAuthenticated) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+    onLikeToggle(reply.reply_code, !!reply.is_liked);
   };
+
+  return (
+    <div className={isRoot ? "border-b pb-6" : "border-l-2 pl-4"}>
+      <div className="flex justify-between items-start mb-2">
+        <div className="flex items-center space-x-2">
+          <span className="font-semibold">{reply.member_name}</span>
+          <span className="text-sm text-gray-500">{reply.create_at}</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <CustomButton
+            onClick={handleLikeClick}
+            color="none">
+            <i className={`fas fa-heart mr-1 ${reply.is_liked ? "text-red-500" : "text-gray-400"}`}></i>
+            {reply.likes}
+          </CustomButton>
+          {depth < maxReplyDepth && (
+            <CustomButton onClick={() => onReplyClick(reply.reply_code)} color="none">
+              <i className="fas fa-reply mr-1"></i>답글
+            </CustomButton>
+          )}
+          <CustomButton onClick={() => onEditReply(reply.reply_code, reply.content)} color="none">
+            <i className="fas fa-pencil"></i>수정
+          </CustomButton>
+          <CustomButton onClick={() => onDeleteReply(reply.reply_code)} color="none">
+            <i className="fas fa-trash mr-1"></i>삭제
+          </CustomButton>
+        </div>
+      </div>
+      {editingReplyId === reply.reply_code ? (
+        <>
+          <textarea
+            className="w-full p-2 border rounded"
+            value={editContent}
+            onChange={(e) => onEditContentChange(e.target.value)}
+            rows={4}
+          />
+          <div className="mt-2 space-x-2 flex justify-end">
+            <button
+              onClick={() => onEditSave(reply.reply_code)}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow transition">
+              저장
+            </button>
+            <button
+              onClick={onEditCancel}
+              className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition">
+              취소
+            </button>
+          </div>
+        </>
+      ) : (
+        <p className="text-gray-800">{reply.content}</p>
+      )}
+
+      {/* 대댓글 재귀 렌더링 */}
+      {reply.replies && reply.replies.length > 0 && (
+        <div className="ml-6 mt-4 space-y-4">
+          {reply.replies.map((childReply) => (
+            <ReplyItem
+              key={childReply.reply_code}
+              reply={childReply}
+              depth={depth + 1}
+              reReply_yn={reReply_yn}
+              replyContent={replyContent}
+              editingReplyId={editingReplyId}
+              editContent={editContent}
+              isAuthenticated={isAuthenticated}
+              onReplyClick={onReplyClick}
+              onEditReply={onEditReply}
+              onDeleteReply={onDeleteReply}
+              onLikeToggle={onLikeToggle}
+              onEditContentChange={onEditContentChange}
+              onEditSave={onEditSave}
+              onEditCancel={onEditCancel}
+              onReplyContentChange={onReplyContentChange}
+              onReplySubmit={onReplySubmit}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* 답글 입력 폼 */}
+      {reReply_yn === reply.reply_code && (
+        <div className="flex items-start space-x-4 mt-2">
+          <textarea
+            className="w-full h-[60px] p-2 border rounded-lg resize-none focus:outline-none"
+            placeholder="답글을 작성해주세요."
+            value={replyContent}
+            onChange={(e) => onReplyContentChange(e.target.value)}
+          ></textarea>
+          <CustomButton onClick={onReplySubmit} color="black" customClassName="h-[60px] px-6">
+            등록
+          </CustomButton>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function ReplyList({ postCode }: ReplyListProps) {
+  const { userInfo, isAuthenticated } = useAuthStore();
+  const [replies, setReplies] = useState<Reply[]>([]);
+  const [parentCommentContent, setParentCommentContent] = useState<string>("");
+  const [reReply_yn, setReReply_yn] = useState<string | null>(null);
+  const [replyContent, setReplyContent] = useState<string>("");
+  const [editingReplyId, setEditingReplyId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState<string>("");
+
+  // Pagination state
+  const [pageNum, setPageNum] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+
+  const loadReplies = useCallback(async (page: number, reset: boolean = false) => {
+    if (isLoading) return;
+    setIsLoading(true);
+
+    try {
+      const response = await getRepliesPaginated(postCode, page, 10);
+      const newReplies = response.data.content || [];
+      const totalPages = response.data.totalPages || 0;
+      const totalElements = response.data.totalElements || 0;
+
+      if (reset) {
+        setReplies(newReplies);
+      } else {
+        setReplies((prev) => [...prev, ...newReplies]);
+      }
+
+      setTotalCount(totalElements);
+      setHasMore(page < totalPages);
+      setPageNum(page);
+    } catch (error) {
+      console.error("Failed to load replies:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [postCode, isLoading]);
 
   const handleReplySubmit = async () => {
     if (!postCode) return;
@@ -37,8 +211,8 @@ export default function ReplyList({ postCode }: ReplyListProps) {
     }
 
     const newReply: Reply = {
-      reply_code: Date.now().toString(), // 임시 코드 (고유값)
-      member_name: "현재 사용자", // TODO 실제 사용자 정보로 변경 필요
+      reply_code: Date.now().toString(),
+      member_name: userInfo?.name || "사용자",
       content,
       replies: [],
       create_at: new Date().toISOString().slice(0, 10),
@@ -48,13 +222,13 @@ export default function ReplyList({ postCode }: ReplyListProps) {
     setNewReply(newReply);
 
     try {
-      postReply({
+      await postReply({
         postCode: postCode,
         content: content,
         parentReplyCode: reReply_yn,
-      }).then((res) => {
-        loadReplies();
       });
+      // Reload first page to get the updated list
+      loadReplies(1, true);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         alert(error.response?.data.data);
@@ -65,58 +239,65 @@ export default function ReplyList({ postCode }: ReplyListProps) {
     }
   };
 
+  // 재귀적으로 대댓글에 새 댓글 추가
+  const addReplyToTree = (replies: Reply[], parentCode: string, newReply: Reply): Reply[] => {
+    return replies.map((reply) => {
+      if (reply.reply_code === parentCode) {
+        return {
+          ...reply,
+          replies: [...(reply.replies ?? []), newReply],
+        };
+      }
+      if (reply.replies && reply.replies.length > 0) {
+        return {
+          ...reply,
+          replies: addReplyToTree(reply.replies, parentCode, newReply),
+        };
+      }
+      return reply;
+    });
+  };
+
   const setNewReply = (newReply: Reply) => {
     setReplies((prev) => {
       if (!prev) return prev;
-      // 일반 댓글 추가
       if (reReply_yn === null) {
         return [...prev, newReply];
       }
-      // 대댓글(=부모 reply_code가 reReply_yn인 것)에 추가
-      return prev.map((parentReply) => {
-        if (parentReply.reply_code === reReply_yn) {
-          // parentReply.replies(대댓글 배열)가 있다고 가정
+      return addReplyToTree(prev, reReply_yn, newReply);
+    });
+  };
+
+  // 재귀적으로 대댓글에서 댓글 제거
+  const removeReplyFromTree = (replies: Reply[], replyCode: string): Reply[] => {
+    return replies
+      .filter((reply) => reply.reply_code !== replyCode)
+      .map((reply) => {
+        if (reply.replies && reply.replies.length > 0) {
           return {
-            ...parentReply,
-            replies: [...(parentReply.replies ?? []), newReply],
+            ...reply,
+            replies: removeReplyFromTree(reply.replies, replyCode),
           };
         }
-        return parentReply;
+        return reply;
       });
-    });
   };
 
   const rollbackReply = (newReply: Reply) => {
     setReplies((prev) => {
       if (!prev) return prev;
-      if (reReply_yn === null) {
-        // 일반 댓글 삭제
-        return prev.filter((reply) => reply.reply_code !== newReply.reply_code);
-      }
-      // 대댓글 삭제
-      return prev.map((parentReply) => {
-        if (parentReply.reply_code === reReply_yn) {
-          return {
-            ...parentReply,
-            replies: (parentReply.replies ?? []).filter((reReply) => reReply.reply_code !== newReply.reply_code),
-          };
-        }
-        return parentReply;
-      });
+      return removeReplyFromTree(prev, newReply.reply_code);
     });
   };
 
-  // 답글 클릭 로직 수정 (부모 댓글 / 대댓글 공통)
   const handleReplyClick = (replyCode: string) => {
-    // 이미 열려있는 경우 클릭 시 닫힘 (토글)
     if (reReply_yn === replyCode) {
       setReReply_yn(null);
-      setReplyContent(""); // 초기화
+      setReplyContent("");
     } else {
       setReReply_yn(replyCode);
-      setReplyContent(""); // 초기화
+      setReplyContent("");
     }
-    console.log(reReply_yn);
   };
 
   const handleEditOn = (replyCode: string, currentContent: string) => {
@@ -131,185 +312,136 @@ export default function ReplyList({ postCode }: ReplyListProps) {
   const handleDeleteReply = async (replyCode: string) => {
     if (confirm("댓글을 삭제하시겠습니까?")) {
       await deleteReply(replyCode);
-      loadReplies();
+      loadReplies(1, true);
+    }
+  };
+
+  const handleEditSave = async (replyCode: string) => {
+    await editReply(replyCode, editContent);
+    loadReplies(1, true);
+    setEditingReplyId(null);
+  };
+
+  const handleEditCancel = () => {
+    setEditingReplyId(null);
+  };
+
+  // 재귀적으로 좋아요 토글
+  const updateLikeInTree = (replies: Reply[], replyCode: string, isCurrentlyLiked: boolean): Reply[] => {
+    return replies.map((reply) => {
+      if (reply.reply_code === replyCode) {
+        return {
+          ...reply,
+          likes: isCurrentlyLiked ? reply.likes - 1 : reply.likes + 1,
+          is_liked: !isCurrentlyLiked,
+        };
+      }
+      if (reply.replies && reply.replies.length > 0) {
+        return {
+          ...reply,
+          replies: updateLikeInTree(reply.replies, replyCode, isCurrentlyLiked),
+        };
+      }
+      return reply;
+    });
+  };
+
+  // Like toggle handler with Optimistic UI
+  const handleLikeToggle = async (replyCode: string, isCurrentlyLiked: boolean) => {
+    // Optimistic UI update
+    setReplies((prev) => updateLikeInTree(prev, replyCode, isCurrentlyLiked));
+
+    try {
+      if (isCurrentlyLiked) {
+        await resetLikeReply(replyCode);
+      } else {
+        await setLikeReply(replyCode);
+      }
+    } catch (error) {
+      // Rollback on error
+      setReplies((prev) => updateLikeInTree(prev, replyCode, !isCurrentlyLiked));
+      console.error("Failed to toggle like:", error);
     }
   };
 
   useEffect(() => {
-    loadReplies();
-  }, []);
+    loadReplies(1, true);
+  }, [postCode]);
 
   return (
     <div className="border-t pt-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold">
           댓글
-          {/* TODO: 무한스크롤 구현 후 카운트 로직 삭제 */}
-          <span className="text-gray-500">
-            {(function countReplies(replies = []) {
-              let count = 0;
-              for (const reply of replies) {
-                count += 1;
-                if (Array.isArray(reply.replies) && reply.replies.length > 0) {
-                  count += countReplies(reply.replies);
-                }
-              }
-              return count;
-            })(replies)}
-          </span>
+          <span className="text-gray-500 ml-2">{totalCount}</span>
         </h3>
       </div>
       <div className="mb-6">
-        {" "}
-        {/* start create reply */}
         <div className="flex items-start space-x-4">
           <div className="flex-grow">
             <textarea
               className="w-full h-[90px] p-4 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-gray-200"
               placeholder="댓글을 작성해주세요."
               value={parentCommentContent}
-              onChange={(e) => setParentCommentContent(e.target.value)} // 부모 댓글 상태 반영
+              onChange={(e) => setParentCommentContent(e.target.value)}
             ></textarea>
           </div>
           <CustomButton onClick={handleReplySubmit} color="black" customClassName="h-[90px] px-6">
             <>등록</>
           </CustomButton>
         </div>
-      </div>{" "}
-      {/* end create reply */}
+      </div>
       <div className="space-y-6">
-        {" "}
-        {/* start reply rereply */}
         {replies.map((parentReply) => (
-          <div key={parentReply.reply_code} className="border-b pb-6">
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-center space-x-2">
-                <span className="font-semibold">{parentReply.member_name}</span>
-                <span className="text-sm text-gray-500">{parentReply.create_at}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                {/* 좋아요 버튼 (부모 댓글) */}
-                <CustomButton
-                  onClick={() => alert(`좋아요 버튼 클릭됨 (좋아요 수: ${parentReply.likes})`)}
-                  color="none">
-                  <i className="fas fa-heart mr-1 text-red-500"></i>
-                  {parentReply.likes}
-                </CustomButton>
-                {/* 답글 버튼 */}
-                <CustomButton onClick={() => handleReplyClick(parentReply.reply_code)} color="none">
-                  <i className="fas fa-reply mr-1"></i>답글
-                </CustomButton>
-                <CustomButton onClick={() => handleEditReply(parentReply.reply_code, parentReply.content)} color="none">
-                  <i className="fas fa-pencil"></i>수정
-                </CustomButton>
-                <CustomButton onClick={() => handleDeleteReply(parentReply.reply_code)} color="none">
-                  <i className="fas fa-trash mr-1"></i>삭제
-                </CustomButton>
-              </div>
-            </div>
-            {editingReplyId === parentReply.reply_code ? (
-              <>
-                <textarea
-                  className="w-full p-2 border rounded"
-                  value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
-                  rows={4}
-                />
-                <div className="mt-2 space-x-2 flex justify-end">
-                  <button
-                    onClick={async () => {
-                      await editReply(editingReplyId!, editContent);
-                      loadReplies();
-                      setEditingReplyId(null);
-                    }}
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow transition">
-                    저장
-                  </button>
-                  <button
-                    onClick={() => setEditingReplyId(null)}
-                    className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition">
-                    취소
-                  </button>
-                </div>
-              </>
-            ) : (
-              <p className="text-gray-800">{parentReply.content}</p>
-            )}
-            {/* 대댓글 렌더링 (있는 경우만) */}
-            {parentReply.replies && parentReply.replies.length > 0 && (
-              <div className="ml-6 mt-4 space-y-4">
-                {parentReply.replies.map((reReply) => (
-                  <div key={reReply.reply_code} className="border-l-2 pl-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex items-center space-x-2">
-                        <span className="font-semibold">{reReply.member_name}</span>
-                        <span className="text-sm text-gray-500">{reReply.create_at}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        {/* 좋아요 버튼 (대댓글) */}
-                        <CustomButton
-                          onClick={() => alert(`대댓글 좋아요 버튼 클릭됨 (좋아요 수: ${reReply.likes})`)}
-                          color="none">
-                          <i className="fas fa-heart mr-1 text-red-500"></i>
-                          {reReply.likes}
-                        </CustomButton>
-                        <CustomButton onClick={() => handleEditReply(reReply.reply_code, reReply.content)} color="none">
-                          <i className="fas fa-pencil"></i>수정
-                        </CustomButton>
-                        <CustomButton onClick={() => handleDeleteReply(reReply.reply_code)} color="none">
-                          <i className="fas fa-trash mr-1"></i>삭제
-                        </CustomButton>
-                      </div>
-                    </div>
-                    {editingReplyId === reReply.reply_code ? (
-                      <>
-                        <textarea
-                          className="w-full p-2 border rounded"
-                          value={editContent}
-                          onChange={(e) => setEditContent(e.target.value)}
-                          rows={4}
-                        />
-                        <div className="mt-2 space-x-2 flex justify-end">
-                          <button
-                            onClick={async () => {
-                              await editReply(editingReplyId!, editContent);
-                              loadReplies();
-                              setEditingReplyId(null);
-                            }}
-                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 shadow transition">
-                            저장
-                          </button>
-                          <button
-                            onClick={() => setEditingReplyId(null)}
-                            className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition">
-                            취소
-                          </button>
-                        </div>
-                      </>
-                    ) : (
-                      <p className="text-gray-800">{reReply.content}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* 대댓글 입력 폼 (항상 렌더링, 조건부) */}
-            {reReply_yn === parentReply.reply_code && (
-              <div className="flex items-start space-x-4 mt-2">
-                <textarea
-                  className="w-full h-[60px] p-2 border rounded-lg resize-none focus:outline-none"
-                  placeholder="답글을 작성해주세요."
-                  value={replyContent}
-                  onChange={(e) => setReplyContent(e.target.value)} // 상태값 정상 반영
-                ></textarea>
-                <CustomButton onClick={handleReplySubmit} color="black" customClassName="h-[60px] px-6">
-                  등록
-                </CustomButton>
-              </div>
-            )}
-          </div>
+          <ReplyItem
+            key={parentReply.reply_code}
+            reply={parentReply}
+            depth={0}
+            reReply_yn={reReply_yn}
+            replyContent={replyContent}
+            editingReplyId={editingReplyId}
+            editContent={editContent}
+            isAuthenticated={isAuthenticated}
+            onReplyClick={handleReplyClick}
+            onEditReply={handleEditReply}
+            onDeleteReply={handleDeleteReply}
+            onLikeToggle={handleLikeToggle}
+            onEditContentChange={setEditContent}
+            onEditSave={handleEditSave}
+            onEditCancel={handleEditCancel}
+            onReplyContentChange={setReplyContent}
+            onReplySubmit={handleReplySubmit}
+          />
         ))}
+
+        {/* 더보기 버튼 */}
+        {hasMore && !isLoading && (
+          <div className="flex justify-center py-4">
+            <button
+              onClick={() => loadReplies(pageNum + 1)}
+              className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700"
+            >
+              댓글 더보기
+            </button>
+          </div>
+        )}
+
+        {/* Loading indicator */}
+        {isLoading && (
+          <div className="flex justify-center py-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          </div>
+        )}
+
+        {/* End of comments indicator */}
+        {!hasMore && replies.length > 0 && (
+          <div className="text-center text-gray-500 py-4">마지막 댓글입니다</div>
+        )}
+
+        {/* No comments indicator */}
+        {!isLoading && replies.length === 0 && (
+          <div className="text-center text-gray-500 py-4">댓글이 없습니다. 첫 댓글을 작성해보세요!</div>
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import MyPageSideBar from "../../mypage/component/MyPageSideBar";
 import BreadCrumb from "../../common/component/BreadCrumb";
-import MyPageTable from "../../common/component/DataTableCustom";
+import DataTableCustom from "../../common/component/DataTableCustom";
 import MyPageManageRowButton from "../../mypage/component/button/MyPageManageRowButton";
 import MyPageActiveTabButton from "../../mypage/component/button/MyPageActiveTabButton";
 import { ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
@@ -10,6 +10,7 @@ import { AdminCommentColType } from "../type/AdminCommunity";
 import { Link } from "react-router-dom";
 import DeleteModal from "../../mypage/component/DeleteModal";
 import { getCommentAdminAll, recoverComment, restrictComment, searchCommentAdminAll } from "../api/admin";
+import { usePaginatedData } from "../../common/hooks/usePaginatedData";
 
 const AdminPageComment: React.FC = () => {
   const rowDef: RowDef<AdminCommentColType>[] = [
@@ -22,15 +23,47 @@ const AdminPageComment: React.FC = () => {
     { label: "사유", key: "deleteReason", isSortable: true, isSearchType: false },
   ];
 
-  const [comments, setComments] = useState<ReplySimpleInfo[]>([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("전체");
+  const [activeTab, setActiveTab] = useState("커뮤니티");
 
-  const openDeleteModal = (code: string) => {
+  // Get postType based on active tab
+  const getPostType = useCallback((tab: string): string => {
+    return tab === "북리뷰" ? "bookreview" : "community";
+  }, []);
+
+  // useMemo로 loadRowData 메모이제이션 - activeTab 변경 시 자동 갱신
+  const fetchData = useMemo(
+    () => (pageNum: number) => getCommentAdminAll(pageNum, getPostType(activeTab)),
+    [activeTab, getPostType]
+  );
+
+  // useMemo로 searchRowData 메모이제이션
+  const searchData = useMemo(
+    () => (req: any, pageNum: number) => searchCommentAdminAll(req, pageNum, getPostType(activeTab)),
+    [activeTab, getPostType]
+  );
+
+  // 커스텀 훅 사용
+  const {
+    data: comments,
+    totalPages,
+    currentPage,
+    isLoading,
+    error,
+    goToPage,
+    search,
+    resetSearch,
+    refresh,
+  } = usePaginatedData({
+    fetchData,
+    searchData,
+  });
+
+  const openDeleteModal = useCallback((code: string) => {
     setSelectedCode(code);
     setIsDeleteModalOpen(true);
-  };
+  }, []);
 
   const closeDeleteModal = () => {
     setIsDeleteModalOpen(false);
@@ -39,34 +72,28 @@ const AdminPageComment: React.FC = () => {
 
   const handleDelete = async (replyCode: string, deleteReason: string) => {
     await restrictComment(replyCode, deleteReason);
-    setComments((prev) =>
-      prev.map(
-        (reply) =>
-          reply.reply_code === replyCode
-            ? { ...reply, delYn: true, deleteReason: deleteReason } // delYn만 변경
-            : reply // 나머지는 그대로
-      )
-    );
+    refresh();
   };
 
-  const handleRecover = async (replyCode: string) => {
+  const handleRecover = useCallback(async (replyCode: string) => {
     if (confirm("게시글을 복구하시겠습니까?")) {
       await recoverComment(replyCode);
-      setComments((prev) =>
-        prev.map(
-          (reply) =>
-            reply.reply_code === replyCode
-              ? { ...reply, delYn: false, deleteReason: null } // delYn만 변경
-              : reply // 나머지는 그대로
-        )
-      );
+      refresh();
     }
+  }, [refresh]);
+
+  // Get detail page path based on post code prefix
+  const getDetailPath = (postCode: string) => {
+    if (postCode.startsWith("BR_")) {
+      return `/book-review/${postCode}`;
+    }
+    return `/boardDetail/${postCode}`;
   };
 
-  const renderColumn = (row: any, key: Extract<keyof AdminCommentColType, string>) => {
+  const renderColumn = useCallback((row: any, key: Extract<keyof AdminCommentColType, string>) => {
     switch (key) {
       case "content":
-        return <Link to={`/boardDetail/${row["post_code"]}`}>{row[key]}</Link>;
+        return <Link to={getDetailPath(row["post_code"])}>{row[key]}</Link>;
       case "manage":
         return row["delYn"] ? (
           <MyPageManageRowButton
@@ -93,7 +120,7 @@ const AdminPageComment: React.FC = () => {
       default:
         return <>{row[key]}</>;
     }
-  };
+  }, [handleRecover, openDeleteModal]);
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -104,21 +131,24 @@ const AdminPageComment: React.FC = () => {
             <BreadCrumb major="관리자" sub="댓글 관리" />
             <MyPageActiveTabButton
               actions={[
-                { label: "전체", color: "blue" },
                 { label: "커뮤니티", color: "yellow" },
-                // { label: "북리뷰", color: "red"},
-                // { label: "모임", color: "green"},
+                { label: "북리뷰", color: "red" },
               ]}
               setActiveTab={setActiveTab}
             />
-            <MyPageTable<ReplySimpleInfo, AdminCommentColType>
+            <DataTableCustom<ReplySimpleInfo, AdminCommentColType>
               rows={comments}
               rowDef={rowDef}
               getRowKey={(reply) => reply.reply_code}
               renderColumn={renderColumn}
-              setRowData={setComments}
-              loadRowData={getCommentAdminAll}
-              searchRowData={searchCommentAdminAll}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={goToPage}
+              isLoading={isLoading}
+              error={error}
+              searchEnabled={true}
+              onSearch={search}
+              onResetSearch={resetSearch}
             />
           </main>
         </div>

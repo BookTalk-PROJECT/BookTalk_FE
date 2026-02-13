@@ -1,30 +1,51 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React from "react";
 import MyPageSideBar from "../component/MyPageSideBar";
-import Pagenation from "../../common/component/Pagination";
-import MyPageTable from "../../common/component/DataTableCustom";
+import DataTableCustom from "../../common/component/DataTableCustom";
 import BreadCrumb from "../../common/component/BreadCrumb";
-import { myBookCommentMockData } from "../testdata/MyPageTestData";
-import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
-import { MyPageBookCommentType } from "../type/MyPageTable";
+import { RowDef } from "../../common/type/common";
+import { ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
+import { getMyBookReviewCommentAll, searchMyBookReviewComments } from "../api/MyPage";
+import { Link } from "react-router-dom";
+import { usePaginatedData } from "../../common/hooks/usePaginatedData";
+
+type MyPageBookReviewCommentColType = {
+  reply_code: string;
+  post_code: string;
+  content: string;
+  date: string;
+};
 
 const MyPageBookReviewComment: React.FC = () => {
-  const row: { label: string; key: keyof MyPageBookCommentType }[] = [
-    { label: "번호", key: "post_code" },
-    { label: "글 제목", key: "title" },
-    { label: "작성자", key: "author" },
-    { label: "내용", key: "content" },
-    { label: "작성일", key: "date" },
-    { label: "관리", key: "manage" },
+  const rowDef: RowDef<MyPageBookReviewCommentColType>[] = [
+    { label: "댓글 번호", key: "reply_code", isSortable: true, isSearchType: true },
+    { label: "리뷰 번호", key: "post_code", isSortable: true, isSearchType: true },
+    { label: "댓글 내용", key: "content", isSortable: true, isSearchType: true },
+    { label: "작성일", key: "date", isSortable: true, isSearchType: false },
   ];
 
-  {
-    /* 초기 검색 필터*/
-  }
-  const filterOption: { label: string; key: string }[] = [row[0], row[1], row[2], row[3]];
+  // 커스텀 훅 사용
+  const {
+    data: comments,
+    totalPages,
+    currentPage,
+    isLoading,
+    error,
+    goToPage,
+    search,
+    resetSearch,
+  } = usePaginatedData({
+    fetchData: getMyBookReviewCommentAll,
+    searchData: searchMyBookReviewComments,
+  });
 
-  const initialFilter: { label: string; key: string }[] = [row[1]];
-
-  const postKeys = myBookCommentMockData.length > 0 ? Object.keys(myBookCommentMockData[0]) : [];
+  const renderColumn = (row: any, key: Extract<keyof MyPageBookReviewCommentColType, string>) => {
+    switch (key) {
+      case "content":
+        return <Link to={`/book-review/${row.post_code}`}>{row[key]}</Link>;
+      default:
+        return <>{row[key]}</>;
+    }
+  };
 
   return (
     <div className="flex h-screen">
@@ -34,26 +55,21 @@ const MyPageBookReviewComment: React.FC = () => {
       <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
-            {/* 브레드크럼 */}
             <BreadCrumb major="북리뷰" sub="댓글 관리" />
-            {/* 테이블 */}
-            <MyPageTable
-              posts={myBookCommentMockData}
-              row={row}
-              initialFilter={initialFilter}
-              filterOptions={filterOption}
-              manageOption={
-                <MyPageManageRowButton
-                  actions={[
-                    { label: "수정", color: "green", onClick: () => alert("수정") },
-                    { label: "삭제", color: "red", onClick: () => alert("삭제") },
-                  ]}
-                />
-              }
-              postKeys={postKeys}
+            <DataTableCustom<ReplySimpleInfo, MyPageBookReviewCommentColType>
+              rows={comments}
+              rowDef={rowDef}
+              getRowKey={(comment) => comment.reply_code}
+              renderColumn={renderColumn}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={goToPage}
+              isLoading={isLoading}
+              error={error}
+              searchEnabled={true}
+              onSearch={search}
+              onResetSearch={resetSearch}
             />
-            {/* 페이지네이션 */}
-            <Pagenation totalPages={10} loadPageByPageNum={() => {}} />
           </main>
         </div>
       </div>

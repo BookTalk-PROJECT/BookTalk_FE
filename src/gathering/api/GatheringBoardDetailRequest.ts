@@ -16,9 +16,14 @@ export const deleteGatheringBoard = (postCode: string): void => {
   });
 };
 
-export const toggleLikeGatheringBoard = (postCode: string): void => {
-  axios.post(`${BASE}/likes/toggle/${postCode}`).catch((e) => {
-    console.error("좋아요 토글 실패:", e);
-    alert("좋아요 처리 중 오류가 발생했습니다.");
-  });
+// 좋아요 등록 (게시글)
+export const setLikePost = async (postId: string) => {
+  const response = await axios.post(`${BASE}/likes/set/${postId}`);
+  return response.data;
+};
+
+// 좋아요 해제 (게시글)
+export const resetLikePost = async (postId: string) => {
+  const response = await axios.post(`${BASE}/likes/reset/${postId}`);
+  return response.data;
 };

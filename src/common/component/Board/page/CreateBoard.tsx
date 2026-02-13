@@ -3,7 +3,7 @@ import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import CustomInput from "../../CustomInput";
 import CustomButton from "../../CustomButton";
-import { redirect, useNavigate, useSearchParams } from "react-router";
+import { useNavigate } from "react-router";
 import { CommuPostRequest } from "../type/BoardDetailTypes";
 import BreadCrumb from "../../BreadCrumb";
 import { uploadImage } from "../../../api/BoardApi";
@@ -11,7 +11,7 @@ import { uploadImage } from "../../../api/BoardApi";
 interface BoardCreateProps {
   categoryId?: string;
   redirectUri: string;
-  createPost: (arg0: CommuPostRequest, categoryId?: string) => void;
+  createPost: (arg0: CommuPostRequest, categoryId?: string) => Promise<void>;
   mainTopic: string;
   subTopic: string;
 }
@@ -19,15 +19,26 @@ interface BoardCreateProps {
 const CreateBoard: React.FC<BoardCreateProps> = ({ categoryId, redirectUri, createPost, mainTopic, subTopic }) => {
   const navigate = useNavigate();
   const editorRef = useRef<Editor>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [postData, setPostData] = useState<CommuPostRequest>({
     title: "",
     content: "",
     notification_yn: false,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = () => {
-    if (categoryId) createPost(postData, categoryId);
-    navigate(redirectUri);
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      if (categoryId) await createPost(postData, categoryId);
+      navigate(redirectUri);
+    } catch (error) {
+      alert('저장에 실패했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -38,12 +49,28 @@ const CreateBoard: React.FC<BoardCreateProps> = ({ categoryId, redirectUri, crea
     });
   };
 
-  // 에디터 내용 변경 시 실행할 핸들러
+  // 에디터 내용 변경 시 디바운스 적용
   const handleEditorChange = () => {
-    const editorInstance = editorRef.current?.getInstance();
-    const content = editorInstance?.getMarkdown() || ""; // 마크다운 형식으로 내용 가져오기
-    setPostData((prev) => ({ ...prev, content })); // 상태 업데이트
+    // 이전 타이머 취소
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // 300ms 후에 상태 업데이트
+    debounceTimerRef.current = setTimeout(() => {
+      const content = editorRef.current?.getInstance().getMarkdown() || "";
+      setPostData((prev) => ({ ...prev, content }));
+    }, 300);
   };
+
+  // cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -98,7 +125,6 @@ const CreateBoard: React.FC<BoardCreateProps> = ({ categoryId, redirectUri, crea
                     el: (() => {
                       const button = document.createElement("button");
                       button.innerHTML = "<i class='fas fa-undo'></i>";
-                      // eslint-disable-next-line react-hooks/refs
                       button.addEventListener("click", () => {
                         editorRef.current?.getInstance().exec("undo");
                       });
@@ -111,7 +137,6 @@ const CreateBoard: React.FC<BoardCreateProps> = ({ categoryId, redirectUri, crea
                     el: (() => {
                       const button = document.createElement("button");
                       button.innerHTML = "<i class='fas fa-redo'></i>";
-                      // eslint-disable-next-line react-hooks/refs
                       button.addEventListener("click", () => {
                         editorRef.current?.getInstance().exec("redo");
                       });
@@ -124,8 +149,8 @@ const CreateBoard: React.FC<BoardCreateProps> = ({ categoryId, redirectUri, crea
           </div>
           {/* 버튼 그룹 */}
           <div className="flex justify-end space-x-4">
-            <CustomButton onClick={handleSubmit} color="blue" customClassName="px-6 py-3">
-              <>등록하기</>
+            <CustomButton onClick={handleSubmit} color="blue" customClassName="px-6 py-3" disabled={isSubmitting}>
+              <>{isSubmitting ? '저장 중...' : '등록하기'}</>
             </CustomButton>
             <CustomButton onClick={() => window.history.back()} color="white" customClassName="px-6 py-3">
               <>취소</>

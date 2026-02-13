@@ -1,14 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import ButtonWrapper from "../../../common/component/Button";
 import { useNavigate, useSearchParams } from "react-router";
 import { Category, SubCategory } from "../type/board";
-import { SearchType } from "../../../common/type/common";
 import { PostSimpleInfo } from "../../../common/component/Board/type/BoardDetailTypes";
 import { getCategories } from "../../category/api/categoryApi";
 import { getBoards, searchBoards } from "../api/boardApi";
 import DataTableCustom from "../../../common/component/DataTableCustom";
 import { RowDef } from "../../../common/type/common";
 import { Link } from "react-router-dom";
+import { usePaginatedData } from "../../../common/hooks/usePaginatedData";
 
 type BoardTableColDef = {
   board_code: string;
@@ -29,8 +29,6 @@ const BoardList: React.FC = () => {
 
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [forceUpdate, setForceUpdate] = useState(0);
-  const [posts, setPosts] = useState<PostSimpleInfo[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const tabsRef = useRef<HTMLDivElement>(null);
@@ -91,10 +89,35 @@ const BoardList: React.FC = () => {
   useEffect(() => {
     if (activeSubCategory) {
       setSearchParams({ categoryId: activeSubCategory.categoryId.toString() });
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setForceUpdate((v) => v + 1);
     }
-  }, [activeSubCategory]);
+  }, [activeSubCategory, setSearchParams]);
+
+  // fetchData 함수 안정화 - activeSubCategory.categoryId가 변경될 때만 새 참조
+  const fetchData = useMemo(() => {
+    if (!activeSubCategory) return null;
+    return (pageNum: number) => getBoards(activeSubCategory.categoryId, pageNum);
+  }, [activeSubCategory?.categoryId]);
+
+  const searchData = useMemo(() => {
+    if (!activeSubCategory) return undefined;
+    return (cond: any, pageNum: number) =>
+      searchBoards(cond, activeSubCategory.categoryId, pageNum);
+  }, [activeSubCategory?.categoryId]);
+
+  // 커스텀 훅 사용 - fetchData가 null이 아닐 때만 유효
+  const {
+    data: posts,
+    totalPages,
+    currentPage,
+    isLoading,
+    error,
+    goToPage,
+    search,
+    resetSearch,
+  } = usePaginatedData({
+    fetchData: fetchData ?? (() => Promise.resolve({ msg: '', code: 0, data: { content: [], totalPages: 0, totalElements: 0 } })),
+    searchData,
+  });
 
   const renderColumn = (row: any, key: Extract<keyof BoardTableColDef, string>) => {
     switch (key) {
@@ -230,20 +253,20 @@ const BoardList: React.FC = () => {
             {renderCategoryTab()}
             {/* Active category display */}
             {renderCategoryBar()}
-            {activeSubCategory && (
+            {activeSubCategory && fetchData && (
               <DataTableCustom<PostSimpleInfo, BoardTableColDef>
                 rows={posts}
                 rowDef={rowDef}
                 getRowKey={(post) => post.board_code}
                 renderColumn={renderColumn}
-                setRowData={setPosts}
-                loadRowData={(pageNum) => {
-                  return getBoards(activeSubCategory.categoryId, pageNum);
-                }}
-                searchRowData={(cond, pageNum) => {
-                  return searchBoards(cond, activeSubCategory.categoryId, pageNum);
-                }}
-                forceUpdate={forceUpdate}
+                totalPages={totalPages}
+                currentPage={currentPage}
+                onPageChange={goToPage}
+                isLoading={isLoading}
+                error={error}
+                searchEnabled={true}
+                onSearch={search}
+                onResetSearch={resetSearch}
               />
             )}
           </div>

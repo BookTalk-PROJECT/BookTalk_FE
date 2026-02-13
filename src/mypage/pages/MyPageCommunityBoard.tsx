@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import MyPageSideBar from "../component/MyPageSideBar";
-import MyPageTable from "../../common/component/DataTableCustom";
+import DataTableCustom from "../../common/component/DataTableCustom";
 import BreadCrumb from "../../common/component/BreadCrumb";
 import { RowDef } from "../../common/type/common";
 import { PostSimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
 import { getMyBoardAll, searchMyBoards } from "../api/MyPage";
 import { Link } from "react-router-dom";
+import { usePaginatedData } from "../../common/hooks/usePaginatedData";
 
 type MyPageBoardColType = {
   board_code: string;
@@ -22,12 +23,25 @@ const MyPageCommunityBoard: React.FC = () => {
     { label: "날짜", key: "date", isSortable: true, isSearchType: false },
   ];
 
-  const [posts, setPosts] = useState<PostSimpleInfo[]>([]);
+  // 커스텀 훅 사용
+  const {
+    data: posts,
+    totalPages,
+    currentPage,
+    isLoading,
+    error,
+    goToPage,
+    search,
+    resetSearch,
+  } = usePaginatedData({
+    fetchData: getMyBoardAll,
+    searchData: searchMyBoards,
+  });
 
   const renderColumn = (row: any, key: Extract<keyof MyPageBoardColType, string>) => {
     switch (key) {
       case "title":
-        return <Link to={`/boardDetail/${row["board_code"]}`}>{row[key]}</Link>;
+        return <Link to={`/boardDetail/${row["board_code"]}?categoryId=${row["categoryId"]}`}>{row[key]}</Link>;
       default:
         return <>{row[key]}</>;
     }
@@ -42,14 +56,19 @@ const MyPageCommunityBoard: React.FC = () => {
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             <BreadCrumb major="커뮤니티" sub="게시글 관리" />
-            <MyPageTable<PostSimpleInfo, MyPageBoardColType>
+            <DataTableCustom<PostSimpleInfo, MyPageBoardColType>
               rows={posts}
               rowDef={rowDef}
               getRowKey={(post) => post.board_code}
               renderColumn={renderColumn}
-              setRowData={setPosts}
-              loadRowData={getMyBoardAll}
-              searchRowData={searchMyBoards}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={goToPage}
+              isLoading={isLoading}
+              error={error}
+              searchEnabled={true}
+              onSearch={search}
+              onResetSearch={resetSearch}
             />
           </main>
         </div>

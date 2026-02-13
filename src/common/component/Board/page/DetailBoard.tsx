@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CustomButton from "../../CustomButton";
-import { deleteReply, editReply, postReply } from "../../../../community/reply/api/replyApi";
 import { PostDetail } from "../type/BoardDetailTypes";
 import { ApiResponse } from "../../../type/ApiResponse";
-import axios from "axios";
 import { useNavigate } from "react-router";
 import BreadCrumb from "../../BreadCrumb";
 import ReplyList from "../../../../community/reply/page/ReplyList";
@@ -17,7 +15,8 @@ interface DetailBoardProps {
   listPageUri: string;
   GetBoardDetail: (postId: string) => Promise<ApiResponse<PostDetail>>;
   DeleteBoard: (postId: string) => void;
-  ToggleLikePost?: (postId: string) => void;
+  SetLikePost?: (postId: string) => Promise<void>;
+  ResetLikePost?: (postId: string) => Promise<void>;
   NavigateToNextPost?: () => void;
   NavigateToPrevPost?: () => void;
 }
@@ -31,16 +30,17 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
   listPageUri,
   GetBoardDetail,
   DeleteBoard,
-  ToggleLikePost,
+  SetLikePost,
+  ResetLikePost,
   NavigateToNextPost,
   NavigateToPrevPost,
 }) => {
   const navigate = useNavigate();
   const [detailData, setDetailData] = useState<PostDetail>();
+  const [isLikeLoading, setIsLikeLoading] = useState(false);
 
   // 댓글 데이터 불러오기
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/immutability
     loadDetailData();
   }, [postCode]);
 
@@ -78,7 +78,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
           <div className="flex items-center text-sm text-gray-500 pb-4 border-b">
             <span className="mr-4 flex items-center">
               <i className="fas fa-user mr-2"></i>
-              {detailData?.post.member_id}
+              {detailData?.post.author}
             </span>
             <span className="mr-4 flex items-center">
               <i className="fas fa-eye mr-2"></i>
@@ -97,7 +97,6 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
         </div>
         <div className="mb-8">
           <div className="prose max-w-none">
-            {/* <p className="text-gray-800 leading-relaxed">{detailData?.post.content}</p> */}
             {detailData && <Viewer initialValue={detailData.post.content} />}
           </div>
         </div>
@@ -106,12 +105,13 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
   };
 
   const LikeButton = () => {
-    // 좋아요 토글 상태관리 (Optimistic UI)
-    const handleLikeToggle = () => {
-      if (!postCode) {
-        return;
-      }
-      const newLikeState = !detailData?.post.is_liked;
+    // 좋아요 토글 상태관리 (Optimistic UI with race condition 방지)
+    const handleLikeToggle = async () => {
+      if (!postCode || isLikeLoading) return;
+      setIsLikeLoading(true);
+
+      const wasLiked = detailData?.post.is_liked;
+
       // Optimistic UI 업데이트
       setDetailData((prev) => {
         if (!prev) return prev;
@@ -119,16 +119,20 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
           ...prev,
           post: {
             ...prev.post,
-            isLike: newLikeState,
-            likes: newLikeState ? prev.post.likes_cnt + 1 : prev.post.likes_cnt - 1,
+            is_liked: !wasLiked,
+            likes_cnt: wasLiked ? prev.post.likes_cnt - 1 : prev.post.likes_cnt + 1,
           },
         };
       });
 
       try {
-        if (ToggleLikePost) ToggleLikePost(postCode);
+        if (wasLiked && ResetLikePost) {
+          await ResetLikePost(postCode);
+        } else if (!wasLiked && SetLikePost) {
+          await SetLikePost(postCode);
+        }
       } catch (error) {
-        console.error("좋아요 토글 중 오류:", error);
+        console.error("좋아요 처리 중 오류:", error);
         // 오류 발생 시 UI 롤백
         setDetailData((prev) => {
           if (!prev) return prev;
@@ -136,18 +140,22 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
             ...prev,
             post: {
               ...prev.post,
-              isLike: !newLikeState,
-              likes: !newLikeState ? prev.post.likes_cnt + 1 : prev.post.likes_cnt - 1,
+              is_liked: wasLiked,
+              likes_cnt: wasLiked ? prev.post.likes_cnt + 1 : prev.post.likes_cnt - 1,
             },
           };
         });
+      } finally {
+        setIsLikeLoading(false);
       }
     };
+
     return (
       <button
         onClick={handleLikeToggle}
+        disabled={isLikeLoading}
         className={
-          "px-6 py-3 bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200 flex items-center"
+          "px-6 py-3 bg-gray-100 rounded-button whitespace-nowrap cursor-pointer hover:bg-gray-200 flex items-center disabled:opacity-50"
         }>
         <i className={`fas fa-heart mr-2 ${detailData?.post.is_liked ? "text-red-500" : "text-gray-500"}`}></i>
         <span>좋아요</span>
@@ -190,7 +198,7 @@ const DetailBaord: React.FC<DetailBoardProps> = ({
     <div>
       <BreadCrumb major={mainTopic} sub={subTopic} />
       {PostDetails()}
-      <div className="flex items-center justify-center space-x-2 mb-8">{ToggleLikePost && LikeButton()}</div>
+      <div className="flex items-center justify-center space-x-2 mb-8">{(SetLikePost || ResetLikePost) && LikeButton()}</div>
       <ReplyList postCode={postCode} />
       {PostNavigateBar()}
     </div>

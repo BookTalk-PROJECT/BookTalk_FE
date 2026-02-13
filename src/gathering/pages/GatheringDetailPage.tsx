@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import Pagenation from "../../common/component/Pagination";
+import Pagination from "../../common/component/Pagination";
 import GatheringHeader from "../component/GatheringHeader";
 import CustomButton from "../../common/component/CustomButton";
 import { fetchGatheringBoardList } from "../api/GatheringDetailRequest";
@@ -122,10 +122,11 @@ const GatheringDetailPage: React.FC = () => {
               </div>
 
               {totalPages > 0 && (
-                <Pagenation
+                <Pagination
                   key={gatheringId}
                   totalPages={totalPages}
-                  loadPageByPageNum={(pageNum) => setCurrentPage(pageNum)}
+                  currentPage={currentPage}
+                  onPageChange={(pageNum) => setCurrentPage(pageNum)}
                 />
               )}
             </div>

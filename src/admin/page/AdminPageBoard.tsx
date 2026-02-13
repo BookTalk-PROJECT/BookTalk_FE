@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import MyPageSideBar from "../../mypage/component/MyPageSideBar";
 import BreadCrumb from "../../common/component/BreadCrumb";
-import MyPageTable from "../../common/component/DataTableCustom";
+import DataTableCustom from "../../common/component/DataTableCustom";
 import MyPageManageRowButton from "../../mypage/component/button/MyPageManageRowButton";
 import MyPageActiveTabButton from "../../mypage/component/button/MyPageActiveTabButton";
 import { RowDef } from "../../common/type/common";
 import { AdminBoardColType } from "../type/AdminCommunity";
-import { PostSimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
 import { Link } from "react-router-dom";
 import DeleteModal from "../../mypage/component/DeleteModal";
-import { getBoardAdminAll, recoverBoard, restrictBoard, searchBoardAdminAll } from "../api/admin";
+import {
+  getBoardAdminAll,
+  recoverBoard,
+  restrictBoard,
+  searchBoardAdminAll,
+  getBookReviewAdminAll,
+  searchBookReviewAdminAll,
+  restrictBookReview,
+  recoverBookReview,
+  AdminPostInfo,
+} from "../api/admin";
+import { usePaginatedData } from "../../common/hooks/usePaginatedData";
 
 const AdminPageBoard: React.FC = () => {
   const rowDef: RowDef<AdminBoardColType>[] = [
@@ -21,51 +31,84 @@ const AdminPageBoard: React.FC = () => {
     { label: "관리", key: "manage", isSortable: true, isSearchType: false },
     { label: "사유", key: "deleteReason", isSortable: true, isSearchType: false },
   ];
-  const [posts, setPosts] = useState<PostSimpleInfo[]>([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("전체");
+  const [activeTab, setActiveTab] = useState("커뮤니티");
+
+  // useMemo로 loadRowData 메모이제이션 - activeTab 변경 시 자동 갱신
+  const fetchData = useMemo(
+    () => (pageNum: number) =>
+      activeTab === "북리뷰" ? getBookReviewAdminAll(pageNum) : getBoardAdminAll(pageNum),
+    [activeTab]
+  );
+
+  // useMemo로 searchRowData 메모이제이션
+  const searchData = useMemo(
+    () => (cond: any, pageNum: number) =>
+      activeTab === "북리뷰" ? searchBookReviewAdminAll(cond, pageNum) : searchBoardAdminAll(cond, pageNum),
+    [activeTab]
+  );
+
+  // 커스텀 훅 사용
+  const {
+    data: posts,
+    totalPages,
+    currentPage,
+    isLoading,
+    error,
+    goToPage,
+    search,
+    resetSearch,
+    refresh,
+  } = usePaginatedData<AdminPostInfo>({
+    fetchData: fetchData as any,
+    searchData: searchData as any,
+  });
 
   const handleDelete = async (boardCode: string, deleteReason: string) => {
-    await restrictBoard(boardCode, deleteReason);
-    setPosts((prev) =>
-      prev.map(
-        (post) =>
-          post.board_code === boardCode
-            ? { ...post, delYn: true, deleteReason: deleteReason } // delYn만 변경
-            : post // 나머지는 그대로
-      )
-    );
-  };
-
-  const handleRecover = async (boardCode: string) => {
-    if (confirm("게시글을 복구하시겠습니까?")) {
-      await recoverBoard(boardCode);
-      setPosts((prev) =>
-        prev.map(
-          (post) =>
-            post.board_code === boardCode
-              ? { ...post, delYn: false, deleteReason: null } // delYn만 변경
-              : post // 나머지는 그대로
-        )
-      );
+    // Determine which API to use based on code prefix
+    if (boardCode.startsWith("BR_")) {
+      await restrictBookReview(boardCode, deleteReason);
+    } else {
+      await restrictBoard(boardCode, deleteReason);
     }
+    refresh();
   };
 
-  const openDeleteModal = (code: string) => {
+  const handleRecover = useCallback(async (boardCode: string) => {
+    if (confirm("게시글을 복구하시겠습니까?")) {
+      // Determine which API to use based on code prefix
+      if (boardCode.startsWith("BR_")) {
+        await recoverBookReview(boardCode);
+      } else {
+        await recoverBoard(boardCode);
+      }
+      refresh();
+    }
+  }, [refresh]);
+
+  const openDeleteModal = useCallback((code: string) => {
     setSelectedCode(code);
     setIsDeleteModalOpen(true);
-  };
+  }, []);
 
   const closeDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setSelectedCode(null);
   };
 
-  const renderColumn = (row: any, key: Extract<keyof AdminBoardColType, string>) => {
+  // Get detail page path based on post code prefix
+  const getDetailPath = (code: string) => {
+    if (code.startsWith("BR_")) {
+      return `/book-review/${code}`;
+    }
+    return `/boardDetail/${code}`;
+  };
+
+  const renderColumn = useCallback((row: any, key: Extract<keyof AdminBoardColType, string>) => {
     switch (key) {
       case "title":
-        return <Link to={`/boardDetail/${row["board_code"]}`}>{row[key]}</Link>;
+        return <Link to={getDetailPath(row["board_code"])}>{row[key]}</Link>;
       case "manage":
         return row["delYn"] ? (
           <MyPageManageRowButton
@@ -92,7 +135,7 @@ const AdminPageBoard: React.FC = () => {
       default:
         return <>{row[key]}</>;
     }
-  };
+  }, [handleRecover, openDeleteModal]);
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -103,21 +146,24 @@ const AdminPageBoard: React.FC = () => {
             <BreadCrumb major="관리자" sub="게시물 관리" />
             <MyPageActiveTabButton
               actions={[
-                { label: "전체", color: "blue" },
                 { label: "커뮤니티", color: "yellow" },
-                // { label: "북리뷰", color: "red"},
-                // { label: "모임", color: "green"},
+                { label: "북리뷰", color: "red" },
               ]}
               setActiveTab={setActiveTab}
             />
-            <MyPageTable<PostSimpleInfo, AdminBoardColType>
+            <DataTableCustom<AdminPostInfo, AdminBoardColType>
               rows={posts}
               rowDef={rowDef}
               getRowKey={(post) => post.board_code}
               renderColumn={renderColumn}
-              setRowData={setPosts}
-              loadRowData={getBoardAdminAll}
-              searchRowData={searchBoardAdminAll}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={goToPage}
+              isLoading={isLoading}
+              error={error}
+              searchEnabled={true}
+              onSearch={search}
+              onResetSearch={resetSearch}
             />
           </main>
         </div>

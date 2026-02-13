@@ -3,7 +3,7 @@ import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import CustomInput from "../../CustomInput";
 import CustomButton from "../../CustomButton";
-import { redirect, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { getBoardDetail } from "../../../../community/board/api/boardApi";
 import { CommuPostRequest } from "../type/BoardDetailTypes";
 import BreadCrumb from "../../BreadCrumb";
@@ -12,7 +12,7 @@ interface BoardEditProps {
   categoryId?: string;
   redirectUri: string;
   postCode: string;
-  editPost: (arg0: CommuPostRequest, postCode: string) => void;
+  editPost: (arg0: CommuPostRequest, postCode: string) => Promise<void>;
   mainTopic: string;
   subTopic: string;
 }
@@ -20,15 +20,27 @@ interface BoardEditProps {
 const EditBoard: React.FC<BoardEditProps> = ({ categoryId, redirectUri, postCode, editPost, mainTopic, subTopic }) => {
   const navigate = useNavigate();
   const editorRef = useRef<Editor>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [postData, setPostData] = useState<CommuPostRequest>({
     title: "",
     content: "",
     notification_yn: false,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  const handleSubmit = () => {
-    editPost(postData, postCode);
-    navigate(redirectUri);
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      await editPost(postData, postCode);
+      navigate(redirectUri);
+    } catch (error) {
+      alert('저장에 실패했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -39,32 +51,48 @@ const EditBoard: React.FC<BoardEditProps> = ({ categoryId, redirectUri, postCode
     });
   };
 
-  // 에디터 내용 변경 시 실행할 핸들러
+  // 에디터 내용 변경 시 디바운스 적용
   const handleEditorChange = () => {
-    const editorInstance = editorRef.current?.getInstance();
-    const content = editorInstance?.getMarkdown() || ""; // 마크다운 형식으로 내용 가져오기
-    setPostData((prev) => ({ ...prev, content })); // 상태 업데이트
+    // 이전 타이머 취소
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // 300ms 후에 상태 업데이트
+    debounceTimerRef.current = setTimeout(() => {
+      const content = editorRef.current?.getInstance().getMarkdown() || "";
+      setPostData((prev) => ({ ...prev, content }));
+    }, 300);
   };
 
-  const loadDetailData = async () => {
-    const res = await getBoardDetail(postCode);
-    setPostData({
-      title: res.data.post.title,
-      content: res.data.post.content,
-      notification_yn: res.data.post.notification_yn,
-    });
-  };
-
+  // cleanup debounce timer on unmount
   useEffect(() => {
-    loadDetailData();
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
   }, []);
 
+  // 초기 데이터 로드 - 순환 의존성 제거
   useEffect(() => {
-    // postData.content 변경될 때마다 반영
-    if (editorRef.current) {
-      editorRef.current.getInstance().setMarkdown(postData.content || "");
-    }
-  }, [postData.content]);
+    const loadData = async () => {
+      try {
+        const res = await getBoardDetail(postCode);
+        const { title, content, notification_yn } = res.data.post;
+        setPostData({ title, content, notification_yn });
+
+        // 초기 로딩 시에만 에디터 설정
+        if (editorRef.current && isInitialLoad) {
+          editorRef.current.getInstance().setMarkdown(content || "");
+          setIsInitialLoad(false);
+        }
+      } catch (error) {
+        console.error('Failed to load data:', error);
+      }
+    };
+    loadData();
+  }, [postCode, isInitialLoad]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -132,8 +160,8 @@ const EditBoard: React.FC<BoardEditProps> = ({ categoryId, redirectUri, postCode
 
           {/* 버튼 그룹 */}
           <div className="flex justify-end space-x-4">
-            <CustomButton onClick={handleSubmit} color="blue" customClassName="px-6 py-3">
-              <>등록하기</>
+            <CustomButton onClick={handleSubmit} color="blue" customClassName="px-6 py-3" disabled={isSubmitting}>
+              <>{isSubmitting ? '저장 중...' : '등록하기'}</>
             </CustomButton>
             <CustomButton onClick={() => window.history.back()} color="white" customClassName="px-6 py-3">
               <>취소</>

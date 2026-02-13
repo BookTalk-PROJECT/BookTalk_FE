@@ -6,6 +6,7 @@ import { getBookReview, deleteBookReview } from "../api/bookReviewApi";
 import { BookReviewDetail as BookReviewDetailType } from "../types/bookReview";
 import Loading from "../../common/component/Loading";
 import CustomButton from "../../common/component/CustomButton";
+import ReplyList from "../../community/reply/page/ReplyList";
 
 const BookReviewDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -133,6 +134,11 @@ const BookReviewDetail: React.FC = () => {
           <div className="prose max-w-none text-gray-800 leading-relaxed whitespace-pre-wrap">
             <p>{review.content}</p>
           </div>
+        </div>
+
+        {/* 댓글 섹션 */}
+        <div className="px-8 py-6">
+          <ReplyList postCode={review.code} />
         </div>
 
         {/* Action Buttons */}
