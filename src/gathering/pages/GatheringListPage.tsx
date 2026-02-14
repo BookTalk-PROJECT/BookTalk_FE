@@ -78,7 +78,7 @@ const GatheringListPage: React.FC = () => {
           <h2 className="text-3xl font-bold text-center mb-2">독서모임</h2>
           <p className="text-center text-gray-600 mb-8">함께 읽고 나누는 독서의 즐거움</p>
 
-          <div className="flex items-center justify-between mb-8 border-b border-gray-300 pb-2">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8 border-b border-gray-300 pb-4">
             {/* 왼쪽: 탭 필터 */}
             <div className="flex items-center gap-6">
               <div className="flex space-x-6">
@@ -104,7 +104,7 @@ const GatheringListPage: React.FC = () => {
               <div className="flex items-center gap-0">
                 {/* 드롭다운 - 검색 기준 선택 */}
                 <select
-                  className="border border-gray-300 py-2 px-4 text-sm text-gray-700 rounded-l-full focus:outline-none focus:ring-2 focus:ring-red-300 bg-white"
+                  className="border border-gray-300 py-2 px-4 text-sm text-gray-700 rounded-l-full focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-white"
                   defaultValue="전체">
                   <option value="전체">카테고리</option>
                   <option value="모임이름">모임이름</option>
@@ -123,7 +123,7 @@ const GatheringListPage: React.FC = () => {
                         handleSearch();
                       }
                     }}
-                    className="border border-l-0 border-gray-300 py-2 px-4 pr-12 text-sm text-gray-700 rounded-r-full focus:outline-none focus:ring-2 focus:ring-red-300 w-full"
+                    className="border border-l-0 border-gray-300 py-2 px-4 pr-12 text-sm text-gray-700 rounded-r-full focus:outline-none focus:ring-2 focus:ring-emerald-300 w-full"
                     placeholder="검색어를 입력해주세요..."
                   />
 
@@ -150,7 +150,7 @@ const GatheringListPage: React.FC = () => {
 
           {loading && (
             <div className="flex justify-center items-center mt-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
             </div>
           )}
 

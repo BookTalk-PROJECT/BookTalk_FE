@@ -7,4 +7,5 @@ export type ApiResponse<T> = {
 export type PageResponse<T> = {
   content: T[];
   totalPages: number;
+  totalElements: number;
 };

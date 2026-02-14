@@ -1,81 +1,64 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
-interface PagenationProps {
+interface PaginationProps {
   totalPages: number;
-  loadPageByPageNum: (pageNum: number) => void;
+  currentPage: number;
+  onPageChange: (page: number) => void;
 }
 
-const Pagenation: React.FC<PagenationProps> = ({ totalPages, loadPageByPageNum }) => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [pageRange, setPageRange] = useState<Array<number>>([]);
-
-  // pageRange 생성 함수
-  const getIntegerArray = (start: number, end: number) => {
+const Pagination: React.FC<PaginationProps> = ({
+  totalPages,
+  currentPage,
+  onPageChange,
+}) => {
+  // 페이지 범위 계산 (순수 계산, 부수효과 없음)
+  const pageRange = useMemo(() => {
+    if (totalPages < 1) return [];
+    const startVal = Math.floor((currentPage - 1) / 10) * 10 + 1;
+    const endVal = Math.min(startVal + 9, totalPages);
     const result = [];
-    for (let i = start; i <= end; i++) {
+    for (let i = startVal; i <= endVal; i++) {
       result.push(i);
     }
     return result;
-  };
-
-  // 페이지 범위 계산, currentPage 변경에 따라 동작
-  useEffect(() => {
-    if (totalPages < 1) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPageRange([]);
-      setCurrentPage(1);
-      return;
-    }
-    const startVal = Math.floor((currentPage - 1) / 10) * 10 + 1;
-    const endVal = Math.min(startVal + 9, totalPages);
-    setPageRange(getIntegerArray(startVal, endVal));
   }, [totalPages, currentPage]);
 
-  // currentPage 범위 자동 수정 (totalPages 변경 시 클리핑)
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCurrentPage((prev) => {
-      if (totalPages === 0) return 1;
-      return Math.min(prev, totalPages);
-    });
-  }, [totalPages]);
-
-  // 페이지 이동시 호출
-  useEffect(() => {
-    if (totalPages > 0) {
-      loadPageByPageNum(currentPage);
-    }
-  }, [currentPage, totalPages]);
-
-  // 렌더링
-  if (totalPages === 0) return null; // or <div>페이지 없음</div>
+  const isEmpty = totalPages === 0;
 
   return (
-    <div className="flex justify-center items-center space-x-2 p-4 border-t">
+    <div className="flex flex-wrap justify-center items-center gap-1 sm:gap-2 p-4 border-t">
       <button
-        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-        disabled={currentPage === 1}
-        className="!rounded-button whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
+        onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
+        disabled={isEmpty || currentPage === 1}
+        className="rounded-lg whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
         <i className="fas fa-chevron-left"></i>
       </button>
-      {pageRange.map((value) => (
+      {isEmpty ? (
         <button
-          key={value}
-          onClick={() => setCurrentPage(value)}
-          className={`!rounded-button whitespace-nowrap px-3 py-1 ${
-            currentPage === value ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
-          }`}>
-          {value}
+          disabled
+          className="rounded-lg whitespace-nowrap px-3 py-1 bg-emerald-600 text-white opacity-50">
+          1
         </button>
-      ))}
+      ) : (
+        pageRange.map((value) => (
+          <button
+            key={value}
+            onClick={() => onPageChange(value)}
+            className={`rounded-lg whitespace-nowrap px-3 py-1 ${
+              currentPage === value ? "bg-emerald-600 text-white" : "bg-gray-200 text-gray-700"
+            }`}>
+            {value}
+          </button>
+        ))
+      )}
       <button
-        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-        disabled={currentPage === totalPages}
-        className="!rounded-button whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
+        onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
+        disabled={isEmpty || currentPage === totalPages}
+        className="rounded-lg whitespace-nowrap px-3 py-1 bg-gray-200 text-gray-700 disabled:opacity-50">
         <i className="fas fa-chevron-right"></i>
       </button>
     </div>
   );
 };
 
-export default Pagenation;
+export default Pagination;

@@ -1,17 +1,30 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/static-components */
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { getBookReview, deleteBookReview } from "../api/bookReviewApi";
 import { BookReviewDetail as BookReviewDetailType } from "../types/bookReview";
 import Loading from "../../common/component/Loading";
 import CustomButton from "../../common/component/CustomButton";
+import ReplyList from "../../community/reply/page/ReplyList";
+import { useAuthStore } from "../../store";
 
 const BookReviewDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { userInfo } = useAuthStore();
+  const [searchParams] = useSearchParams();
   const [review, setReview] = useState<BookReviewDetailType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState<string>("");
+
+  const categoryId = searchParams.get("categoryId");
+  const page = searchParams.get("page");
+  const listUrl = `/book-review${categoryId
+    ? `?categoryId=${categoryId}${page ? `&page=${page}` : ''}`
+    : ''}`;
 
   useEffect(() => {
     if (id) {
@@ -22,7 +35,12 @@ const BookReviewDetail: React.FC = () => {
         })
         .catch((error) => {
           console.error("Failed to fetch book review:", error);
-          navigate("/book-review");
+          if (axios.isAxiosError(error) && error.response?.status === 400) {
+            setIsDeleted(true);
+            setDeleteMessage(error.response.data?.msg || "");
+          } else {
+            navigate("/book-review");
+          }
         })
         .finally(() => {
           setIsLoading(false);
@@ -49,11 +67,30 @@ const BookReviewDetail: React.FC = () => {
     return <Loading />;
   }
 
+  if (isDeleted) {
+    return (
+      <div className="bg-gray-50 min-h-screen py-10">
+        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="flex flex-col items-center justify-center py-20 text-gray-500">
+            <i className="fas fa-ban text-5xl mb-4 text-gray-400"></i>
+            <p className="text-xl font-semibold mb-2">삭제된 게시글입니다.</p>
+            {deleteMessage && (
+              <p className="text-sm text-gray-400 mb-6">{deleteMessage}</p>
+            )}
+            <CustomButton color="none" onClick={() => navigate(listUrl)}>
+              목록으로
+            </CustomButton>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!review) {
     return (
       <div className="text-center py-10">
         <p>리뷰를 찾을 수 없습니다.</p>
-        <CustomButton color="blue" onClick={() => navigate("/book-review")}>
+        <CustomButton color="primary" onClick={() => navigate("/book-review")}>
           목록으로
         </CustomButton>
       </div>
@@ -135,19 +172,26 @@ const BookReviewDetail: React.FC = () => {
           </div>
         </div>
 
+        {/* 댓글 섹션 */}
+        <div className="px-8 py-6">
+          <ReplyList postCode={review.code} />
+        </div>
+
         {/* Action Buttons */}
         <div className="px-8 py-4 bg-gray-50 border-t flex justify-between">
-          <CustomButton color="none" onClick={() => navigate("/book-review")}>
+          <CustomButton color="none" onClick={() => navigate(listUrl)}>
             목록으로
           </CustomButton>
-          <div className="flex space-x-2">
-            <CustomButton color="white" onClick={handleEdit}>
-              수정
-            </CustomButton>
-            <CustomButton color="red" onClick={handleDelete}>
-              삭제
-            </CustomButton>
-          </div>
+          {userInfo?.id != null && review.member_id === userInfo.id && (
+            <div className="flex space-x-2">
+              <CustomButton color="white" onClick={handleEdit}>
+                수정
+              </CustomButton>
+              <CustomButton color="red" onClick={handleDelete}>
+                삭제
+              </CustomButton>
+            </div>
+          )}
         </div>
       </div>
     </div>

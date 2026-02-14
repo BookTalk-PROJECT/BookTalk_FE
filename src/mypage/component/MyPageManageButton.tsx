@@ -5,6 +5,7 @@ type ButtonProperties = {
   label: string;
   color: "green" | "red" | "blue" | "gray" | "yellow";
   onClick?: () => void;
+  disabled?: boolean;
 };
 
 interface MyPageManageButtonProps {
@@ -30,7 +31,8 @@ const MyPageManageButton = ({ actions }: MyPageManageButtonProps) => {
               (() => {
                 console.log("온 클릭 이벤트 없음");
               })
-            }>
+            }
+            disabled={action.disabled}>
             <span className={`${colorMap[action.color]} font-medium`}>{action.label}</span>
           </ButtonWrapper>
           {index < actions.length - 1 && <span className="text-gray-400 mx-2">┆</span>}

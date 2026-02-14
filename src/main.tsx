@@ -2,6 +2,7 @@ import "./index.css";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router";
 import PrivateRoute from "./common/component/PrivateRoute";
+import AdminRoute from "./common/component/AdminRoute";
 import "./index.css";
 import DashBoardPage from "./dashboard/pages/DashBoardPage";
 import BoardList from "./community/board/pages/BoardList";
@@ -62,7 +63,7 @@ const AppContent = () => {
        <div className="grid grid-areas-layout grid-cols-layout grid-rows-layout gap-x-4 relative max-w-[390px] w-full bg-white shadow-md selection:bg-green-900 font-[pretendard]"> */}
           {/* {location.pathname !== "/login" && <Header />} */}
           <main
-            className={`grid-in-main ${location.pathname !== "/login" || !location.pathname.includes("/mypage") ? "my-3 px-[24px]" : ""}`}>
+            className={`grid-in-main ${location.pathname !== "/login" || !location.pathname.includes("/mypage") ? "my-3 px-3 sm:px-[24px]" : ""}`}>
             <Routes>
               {/* <Route path="/login" element={<LoginPage />} /> */}
               <Route path="" element={<Navigate to="/dashboard" />} />
@@ -274,36 +275,36 @@ const AppContent = () => {
               <Route
                 path="/admin/board"
                 element={
-                  <PrivateRoute>
+                  <AdminRoute>
                     <AdminPageBoard />
-                  </PrivateRoute>
+                  </AdminRoute>
                 }
               />{" "}
               {/* 최형석 관리자 게시물 관리 페이지 */}
               <Route
                 path="/admin/comment"
                 element={
-                  <PrivateRoute>
+                  <AdminRoute>
                     <AdminPageComment />
-                  </PrivateRoute>
+                  </AdminRoute>
                 }
               />{" "}
               {/* 최형석 관리자 댓글 관리 페이지 */}
               <Route
                 path="/admin/category"
                 element={
-                  <PrivateRoute>
+                  <AdminRoute>
                     <AdminCategory />
-                  </PrivateRoute>
+                  </AdminRoute>
                 }
               />{" "}
               {/* 최형석 관리자 카테고리 페이지 */}
               <Route
                 path="/admin/role"
                 element={
-                  <PrivateRoute>
+                  <AdminRoute>
                     <AdminRoleManage />
-                  </PrivateRoute>
+                  </AdminRoute>
                 }
               />{" "}
               {/* 최형석 관리자 권한관리 페이지 */}

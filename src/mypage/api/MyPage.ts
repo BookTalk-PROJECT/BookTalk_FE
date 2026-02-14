@@ -1,9 +1,8 @@
 import axios from "axios";
 import { MyPageMemberDataType, MyPageModifyMemberDataType } from "../type/MyPageTable";
-import { AdminBoardColType, AdminCommentColType } from "../../admin/type/AdminCommunity";
 import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
-import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
-import { Member } from "../../common/auth/type/type";
+import { ReplySimpleInfo, BookReviewSimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
+import { MyCommunityBoardSimpleInfo } from "../pages/MyPageCommunityBoard";
 import { SearchCondition } from "../../common/type/common";
 import { MyGatheringSimpleInfo } from "../pages/MyPageMyGatherings";
 import { MyGatheringBoardSimpleInfo } from "../pages/MyPageGatheringBoard";
@@ -24,38 +23,48 @@ export const modifyMember = async (memberData: MyPageModifyMemberDataType) => {
   return member.data;
 };
 
-//마이페이지 book review board 요청 get 메서드
-export async function getMyPageBookReviewBoard(userId: string) {
-  return new Promise<AdminBoardColType>((resolve, reject) => {
-    (async () => {
-      try {
-        const res = await axios.get<AdminBoardColType>(`/mypage/bookreview/board/${userId}`);
-        resolve(res.data);
-      } catch (err) {
-        reject(err);
-        console.log("error occurs while to get MyPage Board Data :" + err);
-      }
-    })();
-  });
-}
+// 북리뷰 게시글 조회
+export const getMyBookReviewBoardAll = async (pageNum: number): Promise<ApiResponse<PageResponse<BookReviewSimpleInfo>>> => {
+  const response = await axios.get<ApiResponse<PageResponse<BookReviewSimpleInfo>>>(
+    `${BASE_URL}/book-reviews/mylist?pageNum=${pageNum}`
+  );
+  return response.data;
+};
 
-//마이페이지 book review board comment 요청 get 메서드
-export async function getMyPageBookReviewComment(userId: string) {
-  return new Promise<AdminCommentColType>((resolve, reject) => {
-    (async () => {
-      try {
-        const res = await axios.get<AdminCommentColType>(`/mypage/bookreview/comment/${userId}`);
-        resolve(res.data);
-      } catch (err) {
-        reject(err);
-        console.log("error occurs while to get MyPage Board Data :" + err);
-      }
-    })();
-  });
-}
+// 북리뷰 게시글 검색
+export const searchMyBookReviewBoards = async (
+  req: SearchCondition,
+  pageNum: number
+): Promise<ApiResponse<PageResponse<BookReviewSimpleInfo>>> => {
+  const response = await axios.post<ApiResponse<PageResponse<BookReviewSimpleInfo>>>(
+    `${BASE_URL}/book-reviews/mylist/search?pageNum=${pageNum}`,
+    req
+  );
+  return response.data;
+};
 
-export const getMyBoardAll = async (pageNum: number): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
-  const response = await axios.get<ApiResponse<PageResponse<PostSimpleInfo>>>(
+// 북리뷰 댓글 조회
+export const getMyBookReviewCommentAll = async (pageNum: number): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
+  const response = await axios.get<ApiResponse<PageResponse<ReplySimpleInfo>>>(
+    `${BASE_URL}/reply/bookreview/mylist?pageNum=${pageNum}`
+  );
+  return response.data;
+};
+
+// 북리뷰 댓글 검색
+export const searchMyBookReviewComments = async (
+  req: SearchCondition,
+  pageNum: number
+): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
+  const response = await axios.post<ApiResponse<PageResponse<ReplySimpleInfo>>>(
+    `${BASE_URL}/reply/bookreview/mylist/search?pageNum=${pageNum}`,
+    req
+  );
+  return response.data;
+};
+
+export const getMyBoardAll = async (pageNum: number): Promise<ApiResponse<PageResponse<MyCommunityBoardSimpleInfo>>> => {
+  const response = await axios.get<ApiResponse<PageResponse<MyCommunityBoardSimpleInfo>>>(
     `${BASE_URL}/community/board/mylist?pageNum=${pageNum}`
   );
   return response.data;
@@ -64,8 +73,8 @@ export const getMyBoardAll = async (pageNum: number): Promise<ApiResponse<PageRe
 export const searchMyBoards = async (
   req: SearchCondition,
   pageNum: number
-): Promise<ApiResponse<PageResponse<PostSimpleInfo>>> => {
-  const response = await axios.post<ApiResponse<PageResponse<PostSimpleInfo>>>(
+): Promise<ApiResponse<PageResponse<MyCommunityBoardSimpleInfo>>> => {
+  const response = await axios.post<ApiResponse<PageResponse<MyCommunityBoardSimpleInfo>>>(
     `${BASE_URL}/community/board/mylist/search?pageNum=${pageNum}`,
     req
   );

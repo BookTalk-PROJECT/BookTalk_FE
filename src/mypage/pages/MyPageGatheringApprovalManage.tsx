@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 
 import MyPageSideBar from "../component/MyPageSideBar";
-import MyPageTable from "../../common/component/DataTableCustom";
+import DataTableCustom from "../../common/component/DataTableCustom";
 import BreadCrumb from "../../common/component/BreadCrumb";
 import { RowDef } from "../../common/type/common";
 
 import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
 import RequestQAModal from "../component/RequestQAModal";
 import { approveGatheringRequest, getGatheringApprovalList, rejectGatheringRequest } from "../api/MyPage";
+import { usePaginatedData } from "../../common/hooks/usePaginatedData";
 
 type ApprovalColType = {
   gathering_name: string;
@@ -52,18 +53,28 @@ const MyPageGatheringApprovalManage: React.FC = () => {
     { label: "상태", key: "status", isSortable: true, isSearchType: false },
   ];
 
-  const [rows, setRows] = useState<ApprovalRow[]>([]);
-  const [forceUpdate, setForceUpdate] = useState(0);
-
   const [isQAModalOpen, setIsQAModalOpen] = useState(false);
   const [selectedGatheringName, setSelectedGatheringName] = useState("");
   const [selectedQaJson, setSelectedQaJson] = useState("[]");
 
-  const openQAModal = (gatheringName: string, qaJson: string) => {
+  // 커스텀 훅 사용
+  const {
+    data: rows,
+    totalPages,
+    currentPage,
+    isLoading,
+    error,
+    goToPage,
+    refresh,
+  } = usePaginatedData({
+    fetchData: (pageNum: number) => getGatheringApprovalList(pageNum),
+  });
+
+  const openQAModal = useCallback((gatheringName: string, qaJson: string) => {
     setSelectedGatheringName(gatheringName);
     setSelectedQaJson(qaJson ?? "[]");
     setIsQAModalOpen(true);
-  };
+  }, []);
 
   const closeQAModal = () => {
     setIsQAModalOpen(false);
@@ -82,7 +93,7 @@ const MyPageGatheringApprovalManage: React.FC = () => {
       gathering_code: row.gathering_code,
       applicant_id: row.applicant_id,
     });
-    setForceUpdate((p) => p + 1);
+    refresh();
   };
 
   const onReject = async (row: ApprovalRow) => {
@@ -92,10 +103,10 @@ const MyPageGatheringApprovalManage: React.FC = () => {
       applicant_id: row.applicant_id,
       reject_reason: reason,
     });
-    setForceUpdate((p) => p + 1);
+    refresh();
   };
 
-  const renderColumn = (row: any, key: Extract<keyof ApprovalColType, string>) => {
+  const renderColumn = useCallback((row: any, key: Extract<keyof ApprovalColType, string>) => {
     const gatheringName = row.gathering_name ?? "";
     const applicantName = row.applicant_name ?? "";
     const qaJson = row.qa_json ?? "[]";
@@ -135,25 +146,27 @@ const MyPageGatheringApprovalManage: React.FC = () => {
       default:
         return <>{row[key]}</>;
     }
-  };
+  }, [openQAModal]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       <MyPageSideBar />
 
-      <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
+      <div className="flex-1 bg-gray-50 py-8 px-3 md:px-6 overflow-auto min-w-0">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             <BreadCrumb major="모임" sub="신청 승인 관리" />
 
-            <MyPageTable<ApprovalRow, ApprovalColType>
+            <DataTableCustom<ApprovalRow, ApprovalColType>
               rows={rows}
               rowDef={rowDef}
               getRowKey={(r) => `${r.gathering_code}_${r.applicant_id}`}
               renderColumn={renderColumn}
-              setRowData={setRows}
-              loadRowData={(pageNum) => getGatheringApprovalList(pageNum)}
-              forceUpdate={forceUpdate}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={goToPage}
+              isLoading={isLoading}
+              error={error}
             />
           </main>
         </div>

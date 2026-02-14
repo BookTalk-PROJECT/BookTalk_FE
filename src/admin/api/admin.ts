@@ -1,9 +1,20 @@
 import axios from "axios";
 import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
-import { PostSimpleInfo, ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
+import { PostSimpleInfo, ReplySimpleInfo, BookReviewSimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
 import { SearchCondition } from "../../common/type/common";
 import { MyPageMemberDataType } from "../../mypage/type/MyPageTable";
 import { Memberboard } from "../type/role";
+
+// Admin Post type that works for both community and book review
+export interface AdminPostInfo {
+  board_code: string;
+  title: string;
+  category: string;
+  author: string;
+  date: string;
+  delYn: boolean;
+  deleteReason: string | null;
+}
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -38,21 +49,57 @@ export const recoverBoard = async (boardCode: string): Promise<ApiResponse<strin
   return response.data;
 };
 
-export const getCommentAdminAll = async (pageNum: number): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
-  const response = await axios.get<ApiResponse<PageResponse<ReplySimpleInfo>>>(
-    `${BASE_URL}/reply/admin/all?pageNum=${pageNum}`
+// Book Review Admin APIs
+export const getBookReviewAdminAll = async (pageNum: number): Promise<ApiResponse<PageResponse<AdminPostInfo>>> => {
+  const response = await axios.get<ApiResponse<PageResponse<AdminPostInfo>>>(
+    `${BASE_URL}/book-reviews/admin/all?pageNum=${pageNum}`
   );
+  return response.data;
+};
+
+export const searchBookReviewAdminAll = async (
+  req: SearchCondition,
+  pageNum: number
+): Promise<ApiResponse<PageResponse<AdminPostInfo>>> => {
+  const response = await axios.post<ApiResponse<PageResponse<AdminPostInfo>>>(
+    `${BASE_URL}/book-reviews/admin/search?pageNum=${pageNum}`,
+    req
+  );
+  return response.data;
+};
+
+export const restrictBookReview = async (bookReviewId: string, del_reason: string): Promise<ApiResponse<string>> => {
+  const response = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/book-reviews/restrict`, {
+    targetCode: bookReviewId,
+    delReason: del_reason,
+  });
+  return response.data;
+};
+
+export const recoverBookReview = async (bookReviewId: string): Promise<ApiResponse<string>> => {
+  const response = await axios.patch<Promise<ApiResponse<string>>>(`${BASE_URL}/book-reviews/recover/${bookReviewId}`);
+  return response.data;
+};
+
+// Comment Admin APIs with postType filter
+export const getCommentAdminAll = async (
+  pageNum: number,
+  postType?: string
+): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
+  let url = `${BASE_URL}/reply/admin/all?pageNum=${pageNum}`;
+  if (postType) url += `&postType=${postType}`;
+  const response = await axios.get<ApiResponse<PageResponse<ReplySimpleInfo>>>(url);
   return response.data;
 };
 
 export const searchCommentAdminAll = async (
   req: SearchCondition,
-  pageNum: number
+  pageNum: number,
+  postType?: string
 ): Promise<ApiResponse<PageResponse<ReplySimpleInfo>>> => {
-  const response = await axios.post<ApiResponse<PageResponse<ReplySimpleInfo>>>(
-    `${BASE_URL}/reply/admin/search?pageNum=${pageNum}`,
-    req
-  );
+  let url = `${BASE_URL}/reply/admin/search?pageNum=${pageNum}`;
+  if (postType) url += `&postType=${postType}`;
+  const response = await axios.post<ApiResponse<PageResponse<ReplySimpleInfo>>>(url, req);
   return response.data;
 };
 

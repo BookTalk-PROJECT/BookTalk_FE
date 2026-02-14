@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import Pagenation from "../../common/component/Pagination";
+import Pagination from "../../common/component/Pagination";
 import GatheringHeader from "../component/GatheringHeader";
 import CustomButton from "../../common/component/CustomButton";
 import { fetchGatheringBoardList } from "../api/GatheringDetailRequest";
@@ -117,15 +117,16 @@ const GatheringDetailPage: React.FC = () => {
                 <div className="mb-4 p-3 text-sm rounded bg-red-50 text-red-700 border border-red-200">{errorMsg}</div>
               )}
 
-              <div className="overflow-hidden rounded-lg border">
+              <div className="overflow-x-auto rounded-lg border">
                 <BoardTableNoCategory posts={postList} requestUrl={requestUrl} />
               </div>
 
               {totalPages > 0 && (
-                <Pagenation
+                <Pagination
                   key={gatheringId}
                   totalPages={totalPages}
-                  loadPageByPageNum={(pageNum) => setCurrentPage(pageNum)}
+                  currentPage={currentPage}
+                  onPageChange={(pageNum) => setCurrentPage(pageNum)}
                 />
               )}
             </div>

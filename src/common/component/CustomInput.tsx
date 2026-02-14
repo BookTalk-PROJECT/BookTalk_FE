@@ -39,7 +39,7 @@ const CustomInputInput: React.FC<CustomInputProps> = (props) => {
 
   return (
     <div className="flex flex-col gap-1">
-      {label && <label className="block text-sm text-purple-700">{label}</label>}
+      {label && <label className="block text-sm text-emerald-700">{label}</label>}
       <div className="relative">
         {props.type === "date" ? (
           <DatePicker
@@ -48,7 +48,7 @@ const CustomInputInput: React.FC<CustomInputProps> = (props) => {
             onChange={props.onChange as (date: Date | null) => void}
             dateFormat="yyyy-MM-dd (eee)"
             placeholderText={props.placeholder}
-            className={`w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300
+            className={`w-full border border-emerald-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-300
                         rounded-lg px-4 py-2 transition duration-200 outline-none
                         placeholder:text-sm placeholder:text-gray-400 bg-white ${className}`}
           />
@@ -59,7 +59,7 @@ const CustomInputInput: React.FC<CustomInputProps> = (props) => {
             value={props.value}
             placeholder={props.placeholder}
             onChange={props.onChange}
-            className={`w-full border border-purple-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-300
+            className={`w-full border border-emerald-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-300
                         rounded-lg px-4 py-2 transition duration-200 outline-none
                         placeholder:text-sm placeholder:text-gray-400 bg-white ${className}`}
           />

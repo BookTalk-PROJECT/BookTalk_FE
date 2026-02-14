@@ -68,11 +68,14 @@ export const deleteBoard = async (postId: string): Promise<ApiResponse<string>> 
   return response.data;
 };
 
-// 좋아요 토글 (게시글)
-export const toggleLikePost = async (postId: string): Promise<ApiResponse<string>> => {
-  // <-- 아이디도 추가해줘야함 나중에 로그인 구현 시 추가할 예정
+// 좋아요 등록 (게시글)
+export const setLikePost = async (postId: string): Promise<ApiResponse<string>> => {
+  const response = await axios.post<ApiResponse<string>>(`${BASE_URL}/likes/set/${postId}`);
+  return response.data;
+};
 
-  // 실제 API 요청으로 변경할 경우
-  const response = await axios.post<Promise<ApiResponse<string>>>(`${BASE_URL}/board/togglelike/${postId}`, {});
+// 좋아요 해제 (게시글)
+export const resetLikePost = async (postId: string): Promise<ApiResponse<string>> => {
+  const response = await axios.post<ApiResponse<string>>(`${BASE_URL}/likes/reset/${postId}`);
   return response.data;
 };

@@ -1,30 +1,35 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useCallback } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 
 import MyPageSideBar from "../component/MyPageSideBar";
-import MyPageTable from "../../common/component/DataTableCustom";
+import DataTableCustom from "../../common/component/DataTableCustom";
 import BreadCrumb from "../../common/component/BreadCrumb";
 import { RowDef } from "../../common/type/common";
 
-import DeleteModal from "../component/DeleteModal"; // 경로 맞게 수정
-import MyPageManageRowButton from "../component/button/MyPageManageRowButton"; // 경로 맞게 수정
+import DeleteModal from "../component/DeleteModal";
+import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
 import { getMyGatheringCommentAll, searchMyGatheringComments } from "../api/MyPage";
+import { usePaginatedData } from "../../common/hooks/usePaginatedData";
 
 type MyPageGatheringCommentColType = {
   gathering_name: string;
   post_title: string;
   content: string;
   author: string;
-  del_yn: number | boolean; // 0/1 또는 true/false
-  reg_date: string; // yyyy-MM-dd
+  del_yn: number | boolean;
+  reg_date: string;
 };
 
 export type MyGatheringCommentSimpleInfo = MyPageGatheringCommentColType & {
-  reply_code: string; // rowKey / 삭제/복원 대상
-  post_code: string; // 링크 이동용(원하면)
+  reply_code: string;
+  post_code: string;
 };
 
 const MyPageGatheringComment: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const initialPage = pageParam ? parseInt(pageParam) : 1;
+
   const rowDef: RowDef<MyPageGatheringCommentColType>[] = [
     { label: "모임명", key: "gathering_name", isSortable: true, isSearchType: true },
     { label: "게시글명", key: "post_title", isSortable: true, isSearchType: true },
@@ -34,19 +39,39 @@ const MyPageGatheringComment: React.FC = () => {
     { label: "작성일", key: "reg_date", isSortable: true, isSearchType: false },
   ];
 
-  const [rows, setRows] = useState<MyGatheringCommentSimpleInfo[]>([]);
-
   // 삭제 모달
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedCode, setSelectedCode] = useState("");
 
-  // 테이블 강제 리로드
-  const [forceUpdate, setForceUpdate] = useState(0);
+  // 커스텀 훅 사용
+  const {
+    data: rows,
+    totalPages,
+    currentPage,
+    isLoading,
+    error,
+    goToPage,
+    search,
+    resetSearch,
+    refresh,
+  } = usePaginatedData({
+    fetchData: getMyGatheringCommentAll,
+    searchData: searchMyGatheringComments,
+    initialPage,
+  });
 
-  const openDeleteModal = (replyCode: string) => {
+  const handlePageChange = useCallback((page: number) => {
+    setSearchParams(
+      page > 1 ? { page: page.toString() } : {},
+      { replace: true }
+    );
+    goToPage(page);
+  }, [setSearchParams, goToPage]);
+
+  const openDeleteModal = useCallback((replyCode: string) => {
     setSelectedCode(replyCode);
     setIsDeleteModalOpen(true);
-  };
+  }, []);
 
   const closeDeleteModal = () => {
     setIsDeleteModalOpen(false);
@@ -57,20 +82,17 @@ const MyPageGatheringComment: React.FC = () => {
     // TODO: 실제 삭제 API 연결
     // await deleteReply(replyCode, deleteReason);
     console.log("[TODO] delete reply", { replyCode, deleteReason });
-
-    setForceUpdate((p) => p + 1);
+    refresh();
   };
 
-  const handleRestore = async (replyCode: string) => {
+  const handleRestore = useCallback(async (replyCode: string) => {
     // TODO: 실제 복원 API 연결
     // await restoreReply(replyCode);
     console.log("[TODO] restore reply", { replyCode });
+    refresh();
+  }, [refresh]);
 
-    setForceUpdate((p) => p + 1);
-  };
-
-  const renderColumn = (row: any, key: Extract<keyof MyPageGatheringCommentColType, string>) => {
-    // normalize 없음: 백엔드가 snake_case 정확히 내려줘야 함
+  const renderColumn = useCallback((row: any, key: Extract<keyof MyPageGatheringCommentColType, string>) => {
     const replyCode = row.reply_code ?? "";
     const postCode = row.post_code ?? "";
     const gatheringName = row.gathering_name ?? "";
@@ -86,7 +108,6 @@ const MyPageGatheringComment: React.FC = () => {
         return <>{gatheringName}</>;
 
       case "post_title":
-        // TODO: 게시글 상세 라우팅은 프로젝트에 맞게 수정
         return <Link to={`/gathering/boardDetail/${postCode}`}>{postTitle}</Link>;
 
       case "content":
@@ -109,26 +130,30 @@ const MyPageGatheringComment: React.FC = () => {
       default:
         return <>{row[key]}</>;
     }
-  };
+  }, [handleRestore, openDeleteModal]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       <MyPageSideBar />
 
-      <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
+      <div className="flex-1 bg-gray-50 py-8 px-3 md:px-6 overflow-auto min-w-0">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             <BreadCrumb major="모임" sub="댓글 관리" />
 
-            <MyPageTable<MyGatheringCommentSimpleInfo, MyPageGatheringCommentColType>
+            <DataTableCustom<MyGatheringCommentSimpleInfo, MyPageGatheringCommentColType>
               rows={rows}
               rowDef={rowDef}
               getRowKey={(r) => r.reply_code}
               renderColumn={renderColumn}
-              setRowData={setRows}
-              loadRowData={getMyGatheringCommentAll}
-              searchRowData={searchMyGatheringComments}
-              forceUpdate={forceUpdate}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+              isLoading={isLoading}
+              error={error}
+              searchEnabled={true}
+              onSearch={search}
+              onResetSearch={resetSearch}
             />
           </main>
         </div>

@@ -1,30 +1,18 @@
-import React, { useState, useEffect, useRef } from "react";
-import Pagenation from "../../common/component/Pagination";
+import React, { useCallback } from "react";
 import MyPageSideBar from "../../mypage/component/MyPageSideBar";
-import MyPageTable from "../../common/component/DataTableCustom";
+import DataTableCustom from "../../common/component/DataTableCustom";
 import BreadCrumb from "../../common/component/BreadCrumb";
 import MyPageManageRowButton from "../../mypage/component/button/MyPageManageRowButton";
-import { getAllMember, updateMemberRole } from "../api/role";
+import { updateMemberRole } from "../api/role";
 import { Memberboard } from "../type/role";
 import { AdminRoleColType } from "../type/AdminRole";
 import { RowDef } from "../../common/type/common";
 
 import { getMemberAdminAll, searchMemberAdminAll } from "../api/admin";
 import { AuthorityType } from "../../common/auth/type/type";
+import { usePaginatedData } from "../../common/hooks/usePaginatedData";
 
 const AdminRoleManage: React.FC = () => {
-  const [memberList, setMemberList] = useState<Memberboard[]>([]);
-
-  const manageButtonRef = useRef(null);
-
-  const [forceUpdate, setForceUpdate] = useState(0);
-
-  // useEffect(() => {
-  //   getAllMember().then((res) => {
-  //     setMemberList(res.data);
-  //   });
-  // }, []);
-
   const rowDef: RowDef<AdminRoleColType>[] = [
     { label: "번호", key: "id", isSortable: true, isSearchType: false },
     { label: "아이디", key: "email", isSortable: true, isSearchType: true },
@@ -34,44 +22,42 @@ const AdminRoleManage: React.FC = () => {
     { label: "관리", key: "manage", isSortable: true, isSearchType: false },
   ];
 
+  // 커스텀 훅 사용
+  const {
+    data: memberList,
+    totalPages,
+    currentPage,
+    isLoading,
+    error,
+    goToPage,
+    search,
+    resetSearch,
+    refresh,
+  } = usePaginatedData<Memberboard>({
+    fetchData: getMemberAdminAll,
+    searchData: searchMemberAdminAll,
+  });
+
   // 권한 변경 핸들러
-  // 권한 변경 핸들러
-  const handleRole = async (memberId: string, currentRole: string) => {
-    // 2. targetRole 계산 (AuthorityType에 맞는 문자열이어야 함)
+  const handleRole = useCallback(async (memberId: string, currentRole: string) => {
     const targetRole = currentRole === "ADMIN" ? "COMMON" : "ADMIN";
     const targetRoleName = targetRole === "ADMIN" ? "관리자" : "일반유저";
 
     if (confirm(`해당 회원을 '${targetRoleName}' 권한으로 변경하시겠습니까?`)) {
       try {
-        // API 호출 (API가 number를 요구한다면 Number(memberId)로 변환 필요, string이면 그대로 전달)
         await updateMemberRole(Number(memberId), targetRole);
-        // 만약 백엔드 API가 id를 string으로 받는다면: await updateMemberRole(memberId, targetRole);
-
-        setMemberList((prev) =>
-          prev.map((member) =>
-            member.id === memberId
-              ? ({
-                  ...member,
-                  // 3. authority 타입을 명시적으로 단언 (as AuthorityType)
-                  authority: targetRole as AuthorityType,
-                } as Memberboard) // 4. 최종 객체를 Memberboard 타입으로 단언하여 에러 해결
-              : member
-          )
-        );
         alert(`성공적으로 ${targetRoleName}로 변경되었습니다.`);
-
-        setForceUpdate((prev) => prev + 1);
+        refresh();
       } catch (error) {
         console.error(error);
         alert("권한 변경 중 오류가 발생했습니다.");
       }
     }
-  };
+  }, [refresh]);
 
-  const renderColumn = (row: Memberboard, key: Extract<keyof AdminRoleColType, string>) => {
+  const renderColumn = useCallback((row: Memberboard, key: Extract<keyof AdminRoleColType, string>) => {
     switch (key) {
       case "authority":
-        // 4. 여기서도 문자열 "ADMIN"이 아니라 Enum 사용
         return (
           <span
             className={`px-2 py-1 rounded-full text-xs font-semibold ${
@@ -81,7 +67,6 @@ const AdminRoleManage: React.FC = () => {
           </span>
         );
       case "manage":
-        // 5. Enum 비교 및 함수 호출 시 Enum 전달
         return row.authority === AuthorityType.ADMIN ? (
           <MyPageManageRowButton
             actions={[
@@ -106,28 +91,32 @@ const AdminRoleManage: React.FC = () => {
       default:
         return <>{row[key as keyof Memberboard]}</>;
     }
-  };
+  }, [handleRole]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       {/* 사이드바 */}
       <MyPageSideBar />
       {/* 메인 컨텐츠 */}
-      <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
+      <div className="flex-1 bg-gray-50 py-8 px-3 md:px-6 overflow-auto min-w-0">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             {/* 브레드크럼 */}
             <BreadCrumb major="관리자" sub="권한 관리" />
             {/* 테이블 */}
-            <MyPageTable
+            <DataTableCustom<Memberboard, AdminRoleColType>
               rows={memberList}
               rowDef={rowDef}
               getRowKey={(member) => member.id}
               renderColumn={renderColumn}
-              setRowData={setMemberList}
-              loadRowData={getMemberAdminAll}
-              searchRowData={searchMemberAdminAll}
-              forceUpdate={forceUpdate}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={goToPage}
+              isLoading={isLoading}
+              error={error}
+              searchEnabled={true}
+              onSearch={search}
+              onResetSearch={resetSearch}
             />
           </main>
         </div>

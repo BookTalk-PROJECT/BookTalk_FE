@@ -124,7 +124,7 @@ const BookSearchModal: React.FC<BookSearchModalProps> = ({ isOpen, onClose, onBo
         <div className="relative mb-4">
           <input
             type="text"
-            className="w-full border border-gray-300 rounded-lg pl-10 pr-12 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg pl-10 pr-12 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             placeholder="도서명을 입력 후 엔터"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

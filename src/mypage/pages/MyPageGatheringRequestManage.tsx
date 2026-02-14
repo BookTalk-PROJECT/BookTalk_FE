@@ -1,25 +1,22 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 
 import MyPageSideBar from "../component/MyPageSideBar";
-import MyPageTable from "../../common/component/DataTableCustom";
+import DataTableCustom from "../../common/component/DataTableCustom";
 import BreadCrumb from "../../common/component/BreadCrumb";
 import { RowDef } from "../../common/type/common";
 
-import MyPageManageRowButton from "../component/button/MyPageManageRowButton"; // 경로 맞게 수정
+import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
 import { getMyGatheringRequestAll } from "../api/MyPage";
 import RequestQAModal from "../component/RequestQAModal";
+import { usePaginatedData } from "../../common/hooks/usePaginatedData";
 
 type MyPageGatheringRequestColType = {
   gathering_name: string;
-
-  // 아래 3개는 테이블 표시를 위한 "가상 컬럼"
   qa_button: string;
   status: string;
   result: string;
-
-  // 서버에서 실제로 받아오는 필드(화면 표시/모달/철회 판단에 사용)
   gathering_code: string;
-  qa_json: string; // 질문/답변 JSON (프로시저에서 만들어서 내려줌)
+  qa_json: string;
   reject_reason?: string | null;
 };
 
@@ -33,21 +30,29 @@ const MyPageGatheringRequestManage: React.FC = () => {
     { label: "결과", key: "result", isSortable: false, isSearchType: false },
   ];
 
-  const [rows, setRows] = useState<MyGatheringRequestRow[]>([]);
-
   // Q/A 모달
   const [isQAModalOpen, setIsQAModalOpen] = useState(false);
   const [selectedGatheringName, setSelectedGatheringName] = useState("");
   const [selectedQaJson, setSelectedQaJson] = useState("");
 
-  // 리로드 트리거
-  const [forceUpdate, setForceUpdate] = useState(0);
+  // 커스텀 훅 사용
+  const {
+    data: rows,
+    totalPages,
+    currentPage,
+    isLoading,
+    error,
+    goToPage,
+    refresh,
+  } = usePaginatedData({
+    fetchData: (pageNum: number) => getMyGatheringRequestAll(pageNum),
+  });
 
-  const openQAModal = (gatheringName: string, qaJson: string) => {
+  const openQAModal = useCallback((gatheringName: string, qaJson: string) => {
     setSelectedGatheringName(gatheringName);
     setSelectedQaJson(qaJson ?? "[]");
     setIsQAModalOpen(true);
-  };
+  }, []);
 
   const closeQAModal = () => {
     setIsQAModalOpen(false);
@@ -67,10 +72,10 @@ const MyPageGatheringRequestManage: React.FC = () => {
     // TODO: 실제 철회 API 연결
     // await withdrawRecruitRequest(gatheringCode);
     console.log("[TODO] withdraw recruit request", { gatheringCode });
-    setForceUpdate((p) => p + 1);
+    refresh();
   };
 
-  const renderColumn = (row: any, key: Extract<keyof MyPageGatheringRequestColType, string>) => {
+  const renderColumn = useCallback((row: any, key: Extract<keyof MyPageGatheringRequestColType, string>) => {
     const gatheringCode = row.gathering_code ?? "";
     const gatheringName = row.gathering_name ?? "";
     const qaJson = row.qa_json ?? "[]";
@@ -119,25 +124,27 @@ const MyPageGatheringRequestManage: React.FC = () => {
       default:
         return <>{row[key]}</>;
     }
-  };
+  }, [openQAModal, statusLabel]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       <MyPageSideBar />
 
-      <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
+      <div className="flex-1 bg-gray-50 py-8 px-3 md:px-6 overflow-auto min-w-0">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             <BreadCrumb major="모임" sub="신청 관리" />
 
-            <MyPageTable<MyGatheringRequestRow, MyPageGatheringRequestColType>
+            <DataTableCustom<MyGatheringRequestRow, MyPageGatheringRequestColType>
               rows={rows}
               rowDef={rowDef}
               getRowKey={(r) => r.gathering_code}
               renderColumn={renderColumn}
-              setRowData={setRows}
-              loadRowData={(pageNum) => getMyGatheringRequestAll(pageNum)}
-              forceUpdate={forceUpdate}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={goToPage}
+              isLoading={isLoading}
+              error={error}
             />
           </main>
         </div>

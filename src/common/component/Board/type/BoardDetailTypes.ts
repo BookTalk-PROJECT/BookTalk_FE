@@ -27,13 +27,15 @@ export interface PostDetailInfo {
   imageUrl: string; // 대표 이미지 URL
   is_liked: boolean; // 해당 게시글을 좋아요했었는가
   notification_yn: boolean; // 공지 여부
+  del_yn: boolean; // 삭제 여부
   del_reason: string | null; // 삭제 사유
 }
 
 export interface Reply {
   //댓글조회 type
   reply_code: string; // 댓글 ID (PK)
-  member_name: string; // 댓글 작성자 (회원 ID)
+  member_id?: number; // 댓글 작성자 회원 ID
+  member_name: string; // 댓글 작성자 (회원 이름)
   post_code?: string; // 게시글 ID (매핑)
   content: string; // 댓글 내용
   p_reply_code?: number | null | undefined; // 부모 댓글 ID (대댓글일 경우)
@@ -42,6 +44,7 @@ export interface Reply {
   replies: Reply[]; // 대댓글 리스트 (2차 댓글)
   create_at: string; // 작성일
   likes: number; // 좋아요
+  is_liked?: boolean; // 좋아요 여부
 }
 
 export interface ReplySimpleInfo {
@@ -65,4 +68,14 @@ export interface CommuDetail extends PostDetailInfo {
 export interface ImageUploadRes {
   imageUrl: string;
   fileName: string;
+}
+
+export interface BookReviewSimpleInfo {
+  code: string;
+  book_title: string;
+  review_title: string;
+  author: string;
+  reg_date: string;
+  rating: number;
+  thumbnail_url: string;
 }

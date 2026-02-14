@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useCallback } from "react";
 import MyPageSideBar from "../component/MyPageSideBar";
-import MyPageTable from "../../common/component/DataTableCustom";
+import DataTableCustom from "../../common/component/DataTableCustom";
 import BreadCrumb from "../../common/component/BreadCrumb";
 import { RowDef } from "../../common/type/common";
-import { AdminCommentColType } from "../../admin/type/AdminCommunity";
 import { ReplySimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
 import { getMyCommentAll, searchMyComments } from "../api/MyPage";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { usePaginatedData } from "../../common/hooks/usePaginatedData";
 
 type MyPageCommentColType = {
   reply_code: string;
@@ -16,6 +16,10 @@ type MyPageCommentColType = {
 };
 
 const MyPageCommunityComment: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const initialPage = pageParam ? parseInt(pageParam) : 1;
+
   const rowDef: RowDef<MyPageCommentColType>[] = [
     { label: "댓글 번호", key: "reply_code", isSortable: true, isSearchType: true },
     { label: "글 번호", key: "post_code", isSortable: true, isSearchType: true },
@@ -23,7 +27,29 @@ const MyPageCommunityComment: React.FC = () => {
     { label: "작성일", key: "date", isSortable: true, isSearchType: false },
   ];
 
-  const [comments, setComments] = useState<ReplySimpleInfo[]>([]);
+  // 커스텀 훅 사용
+  const {
+    data: comments,
+    totalPages,
+    currentPage,
+    isLoading,
+    error,
+    goToPage,
+    search,
+    resetSearch,
+  } = usePaginatedData({
+    fetchData: getMyCommentAll,
+    searchData: searchMyComments,
+    initialPage,
+  });
+
+  const handlePageChange = useCallback((page: number) => {
+    setSearchParams(
+      page > 1 ? { page: page.toString() } : {},
+      { replace: true }
+    );
+    goToPage(page);
+  }, [setSearchParams, goToPage]);
 
   const renderColumn = (row: any, key: Extract<keyof MyPageCommentColType, string>) => {
     switch (key) {
@@ -35,22 +61,27 @@ const MyPageCommunityComment: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       {/* 사이드바 */}
       <MyPageSideBar />
       {/* 메인 컨텐츠 */}
-      <div className="flex-1 bg-gray-50 py-8 px-6 overflow-auto">
+      <div className="flex-1 bg-gray-50 py-8 px-3 md:px-6 overflow-auto min-w-0">
         <div className="w-full bg-white rounded-lg shadow-md p-6">
           <main className="space-y-6">
             <BreadCrumb major="커뮤니티" sub="댓글 관리" />
-            <MyPageTable<ReplySimpleInfo, MyPageCommentColType>
+            <DataTableCustom<ReplySimpleInfo, MyPageCommentColType>
               rows={comments}
               rowDef={rowDef}
               getRowKey={(comment) => comment.reply_code}
               renderColumn={renderColumn}
-              setRowData={setComments}
-              loadRowData={getMyCommentAll}
-              searchRowData={searchMyComments}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+              isLoading={isLoading}
+              error={error}
+              searchEnabled={true}
+              onSearch={search}
+              onResetSearch={resetSearch}
             />
           </main>
         </div>

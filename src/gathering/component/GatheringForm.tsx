@@ -308,7 +308,7 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
                     </span>
                     {/* 실제 선택 컨트롤 */}
                     <select
-                      className="text-[10px] border border-gray-300 rounded px-1.5 py-0.5 bg-white focus:outline-none focus:ring-1 focus:ring-purple-400"
+                      className="text-[10px] border border-gray-300 rounded px-1.5 py-0.5 bg-white focus:outline-none focus:ring-1 focus:ring-emerald-400"
                       value={book.complete_yn}
                       onChange={(e) => handleBookStatusChange(book.isbn, Number(e.target.value))}>
                       <option value={0}>진행중</option>
@@ -345,7 +345,7 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
             <div className="relative mb-4">
               <input
                 type="text"
-                className="w-full border border-gray-300 rounded-lg pl-10 pr-12 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                className="w-full border border-gray-300 rounded-lg pl-10 pr-12 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-300"
                 placeholder="도서명을 입력 후 엔터"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -547,7 +547,7 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">모임 상태</label>
               <select
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-300"
                 value={status}
                 onChange={(e) => setStatus(e.target.value as Status)}>
                 {STATUS_OPTIONS.map((o) => (
@@ -561,15 +561,15 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
 
           {/* 해시태그 */}
           <div className="mb-4">
-            <label className="block text-sm text-purple-700 mb-1">해시 태그</label>
-            <div className="w-full border border-purple-300 rounded p-2">
+            <label className="block text-sm text-emerald-700 mb-1">해시 태그</label>
+            <div className="w-full border border-emerald-300 rounded-lg p-2">
               <div className="flex flex-wrap gap-2 mb-2">
                 {hashtags.map((tag, index) => (
                   <span
                     key={index}
-                    className="flex items-center bg-purple-100 text-purple-700 text-sm px-2 py-1 rounded-full">
+                    className="flex items-center bg-emerald-100 text-emerald-700 text-sm px-2 py-1 rounded-full">
                     #{tag}
-                    <button onClick={() => removeHashtag(tag)} className="ml-1 text-purple-500 hover:text-purple-800">
+                    <button onClick={() => removeHashtag(tag)} className="ml-1 text-emerald-500 hover:text-emerald-800">
                       <i className="fas fa-times text-xs"></i>
                     </button>
                   </span>
@@ -591,7 +591,7 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
             <div className="flex items-center gap-4">
               <label
                 htmlFor="image-upload"
-                className="px-4 py-2 rounded-lg text-sm font-medium !rounded-button whitespace-nowrap cursor-pointer transition-all bg-gray-800 text-white hover:bg-gray-700">
+                className="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer transition-all bg-gray-800 text-white hover:bg-gray-700">
                 {isEdit ? "대표 이미지 변경" : "대표 이미지 추가"}
               </label>
               <input
@@ -653,13 +653,13 @@ const GatheringForm: React.FC<Props> = ({ mode, initial, onSubmit, onCancel }) =
 
           <div className="space-y-7">
             {questions.map((q) => (
-              <div key={q.id} className="bg-white border border-purple-200 shadow-sm rounded-lg p-4">
+              <div key={q.id} className="bg-white border border-emerald-200 shadow-sm rounded-lg p-4">
                 <div className="flex justify-between items-center">
                   <p className="text-sm">{q.question}</p>
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleRemoveQuestion(q.id)}
-                      className="bg-red-500 text-white w-6 h-6 flex items-center justify-center rounded !rounded-button whitespace-nowrap cursor-pointer">
+                      className="bg-red-500 text-white w-6 h-6 flex items-center justify-center rounded whitespace-nowrap cursor-pointer">
                       <i className="fas fa-minus"></i>
                     </button>
                   </div>
