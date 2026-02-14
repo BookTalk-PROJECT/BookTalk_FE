@@ -29,7 +29,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
   login: () => set({ isAuthenticated: true }),
   logout: async () => {
     try {
-      console.log("뭐뜨나");
       await axios.post(`${BASE_URL}/logout`, null, {
         withCredentials: true,
         // 로그아웃 요청임을 표시(인터셉터에서 예외 처리할 때 사용)
