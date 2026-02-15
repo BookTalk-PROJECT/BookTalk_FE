@@ -34,6 +34,7 @@ const GatheringEditPage: React.FC = () => {
   const [initial, setInitial] = useState<GatheringFormInitial | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     let ignore = false;
@@ -45,8 +46,8 @@ const GatheringEditPage: React.FC = () => {
         const detail = await getGatheringDetail(gatheringId);
         if (!ignore) setInitial(mapDetailToInitial(detail));
       } catch (e) {
-        console.error(e);
-        if (!ignore) setLoadError("모임 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+        const errorMessage = e instanceof Error ? e.message : "모임 정보를 불러오지 못했습니다.";
+        if (!ignore) setLoadError(errorMessage);
       } finally {
         if (!ignore) setLoading(false);
       }
@@ -57,14 +58,18 @@ const GatheringEditPage: React.FC = () => {
   }, [gatheringId]);
 
   const handleSubmit = async (fd: FormData) => {
-    if (!gatheringId) return;
+    if (!gatheringId || isSubmitting) return;
+
+    setIsSubmitting(true);
     try {
       await updateGathering(gatheringId, fd);
       alert("모임 정보가 수정되었습니다.");
       navigate(`/gathering/detail/${gatheringId}`);
     } catch (e) {
-      console.error(e);
-      alert("모임 정보 수정에 실패했습니다. 다시 시도해 주세요.");
+      const errorMessage = e instanceof Error ? e.message : "모임 정보 수정에 실패했습니다.";
+      alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -80,7 +85,13 @@ const GatheringEditPage: React.FC = () => {
           ) : loadError ? (
             <div className="py-24 text-center text-red-500">{loadError}</div>
           ) : initial ? (
-            <GatheringForm mode="edit" initial={initial} onSubmit={handleSubmit} onCancel={() => navigate(-1)} />
+            <GatheringForm
+              mode="edit"
+              initial={initial}
+              onSubmit={handleSubmit}
+              onCancel={() => navigate(-1)}
+              disabled={isSubmitting}
+            />
           ) : null}
         </div>
       </div>

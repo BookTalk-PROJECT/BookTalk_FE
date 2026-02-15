@@ -1,59 +1,75 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { JoinAnswer, RecruitQuestion } from "../type/GatheringJoin.types";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-export const sampleQuestions: RecruitQuestion[] = [
-  { id: 1, question: "이 모임에 가입하고자 하는 이유는 무엇인가요????", required: true, maxLength: 300 },
-  {
-    id: 2,
-    question: "최근에 읽은 책 중 가장 인상 깊었던 책은 무엇이며, 그 이유는 무엇인가요?",
-    required: true,
-    maxLength: 500,
-  },
-  { id: 3, question: "일주일에 독서에 할애할 수 있는 시간은 얼마나 되나요?", required: false, maxLength: 200 },
-  { id: 4, question: "본인이 선호하는 책 장르는 무엇인가요? (여러 장르 선택 가능)", required: true, maxLength: 300 },
-  {
-    id: 5,
-    question: "모임에서 진행하고 싶은 활동이나 제안이 있다면 자유롭게 작성해주세요.",
-    required: true,
-    maxLength: 500,
-  },
-];
-
-export const GetRecruitQuestion = async (gatheringId: string): Promise<RecruitQuestion[]> => {
-  console.log(`모임 ${gatheringId}번 질문목록 가져온데이?`);
-
-  // (선택) 인증이 필요한 경우 토큰 헤더 첨부
+/**
+ * 모임 가입 신청 질문 목록 조회
+ * @param gatheringId - 모임 ID
+ * @returns 가입 신청 질문 목록
+ * @throws {Error} API 요청 실패 시 에러
+ */
+export const getRecruitQuestions = async (gatheringId: string): Promise<RecruitQuestion[]> => {
   const token = localStorage.getItem("accessToken");
-  const config = token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
 
-  const res = await axios.get(`${API_BASE_URL}/gathering/${gatheringId}/recruitQuestions`, config);
+  if (!token) {
+    throw new Error("로그인이 필요합니다.");
+  }
 
-  // 백엔드가 배열을 그대로 주는 경우와 ResponseDto로 감싼 경우 모두 처리
-  const payload = Array.isArray(res.data) ? res.data : (res.data?.data ?? []);
+  try {
+    const res = await axios.get(`${API_BASE_URL}/gathering/${gatheringId}/recruitQuestions`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-  // 프론트에서 사용하기 위한 표준화 (required/maxLength는 기본값 유지)
-  const serverQuestions: RecruitQuestion[] = payload.map((q: any, index: number) => ({
-    id: q.id ?? q.recruit_question ?? index + 1,
-    question: q.content ?? q.question ?? "",
-    required: q.required ?? true,
-    maxLength: q.maxLength ?? 300,
-  }));
+    // 백엔드 ResponseDto 구조 처리
+    const payload = Array.isArray(res.data) ? res.data : res.data?.data ?? [];
 
-  return serverQuestions;
+    // 프론트엔드에서 사용하기 위한 표준화
+    const questions: RecruitQuestion[] = payload.map((q: any, index: number) => ({
+      id: q.id ?? q.recruit_question ?? index + 1,
+      question: q.content ?? q.question ?? "",
+      required: q.required ?? true,
+      maxLength: q.maxLength ?? 300,
+    }));
+
+    return questions;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const errorMessage = error.response?.data?.msg || "가입 질문을 불러오는데 실패했습니다.";
+      throw new Error(errorMessage);
+    }
+    throw new Error("가입 질문 조회 중 오류가 발생했습니다.");
+  }
 };
 
-// POST: 모임 가입 신청 API
-export const GatheringJoinRequest = async (gatheringId: string, answers: JoinAnswer[]) => {
+/**
+ * 모임 가입 신청 제출
+ * @param gatheringId - 모임 ID
+ * @param answers - 질문에 대한 답변 목록
+ * @returns API 응답 데이터
+ * @throws {Error} API 요청 실패 시 에러
+ */
+export const submitJoinRequest = async (gatheringId: string, answers: JoinAnswer[]) => {
   const token = localStorage.getItem("accessToken");
-  const config = token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
 
-  return (
-    await axios.post(
+  if (!token) {
+    throw new Error("로그인이 필요합니다.");
+  }
+
+  try {
+    const res = await axios.post(
       `${API_BASE_URL}/gathering/${gatheringId}/recruitRequest`,
-      { answers }, // { answers: [{questionId, answer}, ...] }
-      config
-    )
-  ).data;
+      { answers },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const errorMessage = error.response?.data?.msg || "모임 가입 신청에 실패했습니다.";
+      throw new Error(errorMessage);
+    }
+    throw new Error("모임 가입 신청 중 오류가 발생했습니다.");
+  }
 };

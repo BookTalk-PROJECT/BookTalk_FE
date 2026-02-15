@@ -1,17 +1,20 @@
-import axios from "axios";
-import { Question } from "../type/GatheringCreatePage.types";
+import axios, { AxiosError } from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-// 기본 질문
-export const mockQuestions: Question[] = [
-  { id: 1, question: "모임을 가입하려는 이유가 뭔가요?" },
-  { id: 2, question: "어떤 장르를 좋아하시나요?" },
-  { id: 3, question: "특별히 좋아하는 책이 있으신가요?" },
-];
-
+/**
+ * 모임 생성 API 요청
+ * @param formData - 모임 정보를 포함한 FormData
+ * @returns API 응답 데이터
+ * @throws {Error} API 요청 실패 시 에러
+ */
 export const createGathering = async (formData: FormData) => {
   const token = localStorage.getItem("accessToken");
+
+  if (!token) {
+    throw new Error("로그인이 필요합니다.");
+  }
+
   try {
     const response = await axios.post(`${API_BASE_URL}/gathering/create`, formData, {
       headers: {
@@ -21,7 +24,10 @@ export const createGathering = async (formData: FormData) => {
     });
     return response.data;
   } catch (error) {
-    console.error("모임 생성 실패:", error);
-    throw error;
+    if (error instanceof AxiosError) {
+      const errorMessage = error.response?.data?.msg || "모임 생성에 실패했습니다.";
+      throw new Error(errorMessage);
+    }
+    throw new Error("모임 생성 중 오류가 발생했습니다.");
   }
 };

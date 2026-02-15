@@ -61,9 +61,9 @@ export const fetchMockGatheringPosts = async (
         search: searchQuery || null,
       },
     });
-    return response.data?.data?.content || []; // 또는 response.data, 구조에 따라
+    return response.data?.data?.content || [];
   } catch (error) {
-    console.error("모임 리스트 불러오기 실패", error);
+    // 에러 발생 시 빈 배열 반환
     return [];
   }
 };
