@@ -1,10 +1,9 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 
-import axios from "axios";
-import React, { useState, useEffect, use } from "react";
-import { Navigate, useNavigate, useParams } from "react-router";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
 import { RecruitQuestion } from "../type/GatheringJoin.types";
-import { GatheringJoinRequest, GetRecruitQuestion, sampleQuestions } from "../api/GatheringJoinRequest";
+import { getRecruitQuestions, submitJoinRequest } from "../api/GatheringJoinRequest";
 
 const GatheringJoin: React.FC = () => {
   const navigate = useNavigate();
@@ -18,18 +17,19 @@ const GatheringJoin: React.FC = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const res = await GetRecruitQuestion(gatheringId!);
+        const res = await getRecruitQuestions(gatheringId!);
         setQuestions(res);
       } catch (error) {
-        console.error("질문 목록 API실패 더미 데이터 가져온데이? :", error);
-        setQuestions(sampleQuestions);
+        const errorMessage = error instanceof Error ? error.message : "질문 목록을 불러오는데 실패했습니다.";
+        alert(errorMessage);
+        navigate(-1);
       }
     };
 
     if (gatheringId) {
       fetchQuestions();
     }
-  }, [gatheringId]);
+  }, [gatheringId, navigate]);
 
   // 유효성 검사
   useEffect(() => {
@@ -86,14 +86,14 @@ const GatheringJoin: React.FC = () => {
     }));
 
     try {
-      await GatheringJoinRequest(gatheringId!, answerArray);
+      await submitJoinRequest(gatheringId!, answerArray);
       alert("모임 가입 신청이 완료되었습니다.");
-      navigate(-1);
       localStorage.removeItem("groupJoinAnswers");
       setAnswers({});
-    } catch (err) {
-      console.error("가입 신청 실패:", err);
-      alert("가입 신청 중 오류가 발생했습니다.");
+      navigate(-1);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "가입 신청 중 오류가 발생했습니다.";
+      alert(errorMessage);
     }
   };
 

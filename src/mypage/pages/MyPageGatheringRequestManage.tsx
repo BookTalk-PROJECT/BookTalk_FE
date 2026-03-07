@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useRef } from "react";
 
 import MyPageSideBar from "../component/MyPageSideBar";
 import DataTableCustom from "../../common/component/DataTableCustom";
@@ -6,7 +6,7 @@ import BreadCrumb from "../../common/component/BreadCrumb";
 import { RowDef } from "../../common/type/common";
 
 import MyPageManageRowButton from "../component/button/MyPageManageRowButton";
-import { getMyGatheringRequestAll } from "../api/MyPage";
+import { getMyGatheringRequestAll, withdrawGatheringRequest } from "../api/MyPage";
 import RequestQAModal from "../component/RequestQAModal";
 import { usePaginatedData } from "../../common/hooks/usePaginatedData";
 
@@ -35,6 +35,12 @@ const MyPageGatheringRequestManage: React.FC = () => {
   const [selectedGatheringName, setSelectedGatheringName] = useState("");
   const [selectedQaJson, setSelectedQaJson] = useState("");
 
+  // fetchData를 useCallback으로 메모이제이션 (무한 요청 방지)
+  const fetchData = useCallback(
+    (pageNum: number) => getMyGatheringRequestAll(pageNum),
+    []
+  );
+
   // 커스텀 훅 사용
   const {
     data: rows,
@@ -45,7 +51,7 @@ const MyPageGatheringRequestManage: React.FC = () => {
     goToPage,
     refresh,
   } = usePaginatedData({
-    fetchData: (pageNum: number) => getMyGatheringRequestAll(pageNum),
+    fetchData,
   });
 
   const openQAModal = useCallback((gatheringName: string, qaJson: string) => {
@@ -60,20 +66,29 @@ const MyPageGatheringRequestManage: React.FC = () => {
     setSelectedQaJson("");
   };
 
-  const statusLabel = useMemo(() => {
-    return (s: string) => {
-      if (s === "WAITING") return "대기";
-      if (s === "REJECT") return "거부";
-      return s ?? "";
-    };
+  const statusLabel = useCallback((s: string) => {
+    if (s === "WAITING") return "대기";
+    if (s === "REJECT") return "거부";
+    return s ?? "";
   }, []);
 
-  const handleWithdraw = async (gatheringCode: string) => {
-    // TODO: 실제 철회 API 연결
-    // await withdrawRecruitRequest(gatheringCode);
-    console.log("[TODO] withdraw recruit request", { gatheringCode });
-    refresh();
-  };
+  const handleWithdraw = useCallback(
+    async (gatheringCode: string, gatheringName: string) => {
+      if (!confirm(`"${gatheringName}" 모임의 가입 신청을 철회하시겠습니까?`)) {
+        return;
+      }
+
+      try {
+        await withdrawGatheringRequest(gatheringCode);
+        alert("가입 신청이 철회되었습니다.");
+        refresh();
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "철회에 실패했습니다.";
+        alert(errorMessage);
+      }
+    },
+    [refresh]
+  );
 
   const renderColumn = useCallback((row: any, key: Extract<keyof MyPageGatheringRequestColType, string>) => {
     const gatheringCode = row.gathering_code ?? "";
@@ -110,7 +125,7 @@ const MyPageGatheringRequestManage: React.FC = () => {
                 {
                   label: "철회",
                   color: "red",
-                  onClick: () => handleWithdraw(gatheringCode),
+                  onClick: () => handleWithdraw(gatheringCode, gatheringName),
                 },
               ]}
             />
@@ -124,7 +139,7 @@ const MyPageGatheringRequestManage: React.FC = () => {
       default:
         return <>{row[key]}</>;
     }
-  }, [openQAModal, statusLabel]);
+  }, [openQAModal, statusLabel, handleWithdraw]);
 
   return (
     <div className="flex min-h-screen">

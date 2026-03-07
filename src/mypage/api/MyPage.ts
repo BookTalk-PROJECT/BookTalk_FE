@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { MyPageMemberDataType, MyPageModifyMemberDataType } from "../type/MyPageTable";
 import { ApiResponse, PageResponse } from "../../common/type/ApiResponse";
 import { ReplySimpleInfo, BookReviewSimpleInfo } from "../../common/component/Board/type/BoardDetailTypes";
@@ -190,13 +190,56 @@ export const getGatheringApprovalList = async (pageNum: number): Promise<ApiResp
   return response.data;
 };
 
-export const approveGatheringRequest = async (req: ApproveReq) => {
-  // TODO: 백엔드 연결되면 실제 응답 타입에 맞춰 변경
-  const response = await axios.post(`${BASE_URL}/gathering/approve`, req);
-  return response.data;
+/**
+ * 모임 가입 신청 승인
+ * @param req - 승인 요청 정보
+ * @throws {Error} 승인 실패 시 에러
+ */
+export const approveGatheringRequest = async (req: ApproveReq): Promise<ApiResponse<void>> => {
+  try {
+    const response = await axios.post<ApiResponse<void>>(`${BASE_URL}/gathering/approve`, req);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const errorMessage = error.response?.data?.msg || "가입 승인에 실패했습니다.";
+      throw new Error(errorMessage);
+    }
+    throw new Error("가입 승인 중 오류가 발생했습니다.");
+  }
 };
 
-export const rejectGatheringRequest = async (req: RejectReq) => {
-  const response = await axios.post(`${BASE_URL}/gathering/reject`, req);
-  return response.data;
+/**
+ * 모임 가입 신청 거절
+ * @param req - 거절 요청 정보
+ * @throws {Error} 거절 실패 시 에러
+ */
+export const rejectGatheringRequest = async (req: RejectReq): Promise<ApiResponse<void>> => {
+  try {
+    const response = await axios.post<ApiResponse<void>>(`${BASE_URL}/gathering/reject`, req);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const errorMessage = error.response?.data?.msg || "가입 거절에 실패했습니다.";
+      throw new Error(errorMessage);
+    }
+    throw new Error("가입 거절 중 오류가 발생했습니다.");
+  }
+};
+
+/**
+ * 모임 가입 신청 철회
+ * @param gatheringCode - 모임 코드
+ * @throws {Error} 철회 실패 시 에러
+ */
+export const withdrawGatheringRequest = async (gatheringCode: string): Promise<ApiResponse<void>> => {
+  try {
+    const response = await axios.post<ApiResponse<void>>(`${BASE_URL}/gathering/withdraw/${gatheringCode}`);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const errorMessage = error.response?.data?.msg || "가입 신청 철회에 실패했습니다.";
+      throw new Error(errorMessage);
+    }
+    throw new Error("가입 신청 철회 중 오류가 발생했습니다.");
+  }
 };

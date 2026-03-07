@@ -57,6 +57,12 @@ const MyPageGatheringApprovalManage: React.FC = () => {
   const [selectedGatheringName, setSelectedGatheringName] = useState("");
   const [selectedQaJson, setSelectedQaJson] = useState("[]");
 
+  // fetchData를 useCallback으로 메모이제이션 (무한 요청 방지)
+  const fetchData = useCallback(
+    (pageNum: number) => getGatheringApprovalList(pageNum),
+    []
+  );
+
   // 커스텀 훅 사용
   const {
     data: rows,
@@ -67,7 +73,7 @@ const MyPageGatheringApprovalManage: React.FC = () => {
     goToPage,
     refresh,
   } = usePaginatedData({
-    fetchData: (pageNum: number) => getGatheringApprovalList(pageNum),
+    fetchData,
   });
 
   const openQAModal = useCallback((gatheringName: string, qaJson: string) => {
@@ -82,29 +88,56 @@ const MyPageGatheringApprovalManage: React.FC = () => {
     setSelectedQaJson("[]");
   };
 
-  const statusLabel = (s: string) => {
+  const statusLabel = useCallback((s: string) => {
     if (s === "WAITING") return "대기";
     if (s === "REJECT") return "거부";
     return s ?? "";
-  };
+  }, []);
 
-  const onApprove = async (row: ApprovalRow) => {
-    await approveGatheringRequest({
-      gathering_code: row.gathering_code,
-      applicant_id: row.applicant_id,
-    });
-    refresh();
-  };
+  const onApprove = useCallback(
+    async (row: ApprovalRow) => {
+      if (!confirm(`${row.applicant_name}님의 가입 신청을 승인하시겠습니까?`)) {
+        return;
+      }
 
-  const onReject = async (row: ApprovalRow) => {
-    const reason = window.prompt("거부 사유를 입력하세요", "") ?? "";
-    await rejectGatheringRequest({
-      gathering_code: row.gathering_code,
-      applicant_id: row.applicant_id,
-      reject_reason: reason,
-    });
-    refresh();
-  };
+      try {
+        await approveGatheringRequest({
+          gathering_code: row.gathering_code,
+          applicant_id: row.applicant_id,
+        });
+        alert("가입 신청이 승인되었습니다.");
+        refresh();
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "승인에 실패했습니다.";
+        alert(errorMessage);
+      }
+    },
+    [refresh]
+  );
+
+  const onReject = useCallback(
+    async (row: ApprovalRow) => {
+      const reason = window.prompt("거부 사유를 입력하세요", "");
+      if (!reason || reason.trim() === "") {
+        alert("거부 사유를 입력해주세요.");
+        return;
+      }
+
+      try {
+        await rejectGatheringRequest({
+          gathering_code: row.gathering_code,
+          applicant_id: row.applicant_id,
+          reject_reason: reason,
+        });
+        alert("가입 신청이 거부되었습니다.");
+        refresh();
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "거부에 실패했습니다.";
+        alert(errorMessage);
+      }
+    },
+    [refresh]
+  );
 
   const renderColumn = useCallback((row: any, key: Extract<keyof ApprovalColType, string>) => {
     const gatheringName = row.gathering_name ?? "";
@@ -146,7 +179,7 @@ const MyPageGatheringApprovalManage: React.FC = () => {
       default:
         return <>{row[key]}</>;
     }
-  }, [openQAModal]);
+  }, [openQAModal, statusLabel, onApprove, onReject]);
 
   return (
     <div className="flex min-h-screen">
